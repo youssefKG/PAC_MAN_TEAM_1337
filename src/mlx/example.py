@@ -58,11 +58,11 @@ def main():
     
     # Create a new image
     image = mlx.mlx_new_image(mlx_ptr, 128, 128)
-    mlx.mlx_resize_image(image, 10, 10)
     if not image:
         mlx.mlx_close_window(mlx_ptr)
         logging.critical(f"Error: {mlx.mlx_strerror(mlx.mlx_get_errno()).decode()}")
         exit(1)
+    mlx.mlx_resize_image(image, 10, 10)
     
     # Display the image in the window
     if mlx.mlx_image_to_window(mlx_ptr, image, 0, 0) == -1:
