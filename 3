@@ -1,0 +1,136 @@
+from src.mlx.libmlx import (
+    new_image,
+    ImageType,
+    RendererType,
+    image_to_window,
+    put_pixel,
+)
+from src.core.vector2 import Vector2
+from typing import Protocol
+from enum import Enum, auto
+from ..rgb_colors import RgbColors
+
+
+class ImageFormat(Enum):
+    PNG = auto()
+    XPM = auto()
+    PIXEL = auto()
+
+
+_DEFAULT_IMAGE_WIDTH = 100
+_DEFAULT_IMAGE_HEIGHT = 100
+
+class ImageInterface(Protocol):
+    def set_position(self, position: Vector2) -> None:
+        ...
+
+    def to_window(self) -> None:
+        ...
+
+    def move(self, v: Vector2) -> None:
+        ...
+
+    def update(self) -> None:
+        ...
+
+    def set_background_color(self, color: RgbColors) -> None:
+        ...
+
+    @property
+    def position(self) -> Vector2:
+        ...
+
+
+
+class _BaseImage:
+    def __init__(
+            self,
+            renderer: RendererType,
+            width: int,
+            height: int,
+            image_format: ImageFormat
+        ) -> None:
+        self._renderer: RendererType = renderer
+        self._width: int = width
+        self._height: int = height
+        self._position: Vector2 = Vector2(x=0., y=0.)
+        self._image_format: ImageFormat = image_format
+
+
+
+class PixelImage(_BaseImage):
+    def __init__(
+            self,
+            /, 
+            *,
+            renderer: RendererType,
+            width: int,
+            height: int,
+            image_format: ImageFormat
+        ) -> None:
+        super().__init__(
+                renderer=renderer,
+                width=width,
+                height=height,
+                image_format=image_format
+        )
+        self.__image: ImageType = new_image(self._renderer, width, height)
+
+    def set_position(self, position: Vector2) -> None:
+        self._position.add(position)
+
+    def to_window(self) -> None:
+        image_to_window(
+            self._renderer,
+            self.__image, int(self._position.x),
+            int(self._position.y)
+        )
+
+    def move(self, v: Vector2) -> None:
+        self._position.add(v)
+
+    def update(self) -> None:
+        self.__image.contents.instances[0].x = int(self._position.x)
+        self.__image.contents.instances[0].y = int(self._position.y)
+
+    def set_background_color(self, color: RgbColors) -> None:
+        for y in range(self._height):
+            for x in range(self._width):
+                put_pixel(self.__image, x, y, color.value)
+
+    @property
+    def position(self) -> Vector2:
+        return self._position
+
+class ImageFactory:
+    def __init__(self, renderer: RendererType) -> None:
+        self.__renderer: RendererType = renderer
+
+    def __call__(self,
+           image_format: ImageFormat=ImageFormat.PIXEL,
+           width: int=_DEFAULT_IMAGE_WIDTH,
+           height: int = _DEFAULT_IMAGE_HEIGHT
+       ) -> ImageInterface:
+        match image_format: 
+            case ImageFormat.PNG:
+                return  PixelImage(
+                    renderer=self.__renderer,
+                    width=width,
+                    height=height,
+                    image_format=image_format
+                )
+            case ImageFormat.XPM:
+                return  PixelImage(
+                    renderer=self.__renderer,
+                    width=width,
+                    height=height,
+                    image_format=image_format
+                )
+            case ImageFormat.PIXEL:
+                return PixelImage(
+                    renderer=self.__renderer,
+                    width=width,
+                    height=height,
+                    image_format=image_format
+                )
+

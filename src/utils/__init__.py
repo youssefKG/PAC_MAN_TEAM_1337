@@ -4,7 +4,7 @@ from typing import Callable
 import os
 import sys
 
-class COLORS(str, Enum):
+class _COLORS(str, Enum):
     """ANSI color codes"""
 
     BLACK = "\033[0;30m"
@@ -35,35 +35,35 @@ class COLORS(str, Enum):
 
 
 time_formatter: Callable[[], str] = lambda: "{color}[{date}]{reset_color}".format(
-    color=COLORS.LIGHT_GRAY.value,
+    color=_COLORS.LIGHT_GRAY.value,
     date=str(datetime.now()),
-    reset_color=COLORS.END.value,
+    reset_color=_COLORS.END.value,
 )
 
 
 stage_formatter: Callable[[str], str] = (
     lambda stage: "{color}[{stage}]{reset_color}".format(
-        color=COLORS.CYAN.value, stage=stage, reset_color=COLORS.END.value
+        color=_COLORS.CYAN.value, stage=stage, reset_color=_COLORS.END.value
     )
 )
 
 
 message_formatter: Callable[[str], str] = lambda message: "{color}{message}".format(
-    color=COLORS.BOLD.value, message=message
+    color=_COLORS.BOLD.value, message=message
 )
 
 
 class Logger:
     info_formater: str = "{bold}{color}[INFO]{reset_color}".format(
-        color=COLORS.LIGHT_BLUE.value,
-        bold=COLORS.BOLD.value,
-        reset_color=COLORS.END.value,
+        color=_COLORS.LIGHT_BLUE.value,
+        bold=_COLORS.BOLD.value,
+        reset_color=_COLORS.END.value,
     )
     warning_formater: str = "{color}[WARNNING]{reset_color}".format(
-        color=COLORS.YELLOW.value, reset_color=COLORS.END.value
+        color=_COLORS.YELLOW.value, reset_color=_COLORS.END.value
     )
     error_formater: str = "{color}[ERROR]{reset_color}".format(
-        color=COLORS.LIGHT_RED.value, reset_color=COLORS.END.value
+        color=_COLORS.LIGHT_RED.value, reset_color=_COLORS.END.value
     )
 
     @classmethod

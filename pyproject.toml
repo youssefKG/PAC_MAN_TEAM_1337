@@ -1,12 +1,9 @@
 [project]
-name = "mlx"
+name = "pac-man-team-1337"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
-
-[dependency-groups]
-dev = [
+dependencies = [
     "basedpyright>=1.40.1",
 ]

@@ -6,7 +6,7 @@
 import signal
 import logging
 import random
-from libmlx import *
+from src.mlx.libmlx import *
 
 # ============================================================================
 
@@ -33,7 +33,6 @@ def ft_randomize(param):
 
 @mlx_loop_hook_func
 def ft_hook(param):
-    mlx_ptr = ctypes.cast(param, ctypes.POINTER(mlx_t))
     if mlx.mlx_is_key_down(mlx_ptr, MLX_KEY_ESCAPE):
         mlx.mlx_close_window(mlx_ptr)
     if mlx.mlx_is_key_down(mlx_ptr, MLX_KEY_UP):

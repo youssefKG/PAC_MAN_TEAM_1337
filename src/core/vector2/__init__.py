@@ -38,6 +38,4 @@ class Vector2:
     def y(self, y_value: int) -> None:
         self.__y = y_value
 
-
-
 __all__ = ["Vector2"]

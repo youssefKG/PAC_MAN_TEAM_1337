@@ -11,6 +11,7 @@
 # ============================================================================
 
 import ctypes
+from typing import cast, Annotated, Callable
 from os import path
 from logging import critical
 from platform import system
@@ -18,7 +19,7 @@ from platform import system
 # ============================================================================
 
 try: # Load FFI Library
-    lib = 'libmlx42'
+    lib = 'src/mlx/libmlx42'
     system = system()
     if system == "Linux":
         lib_name = f"{lib}.so"
@@ -253,13 +254,6 @@ class mlx_image_t(ctypes.Structure):
         ("context", c_void_p)
     ]
 
-class mlx_instance_t(ctypes.Structure):
-    _fields_ = [
-        ("x", c_int32),
-        ("y", c_int32),
-        ("z", c_int32),
-        ("enabled", c_bool)
-    ]
 
 class mlx_t(ctypes.Structure):
     _fields_ = [
@@ -335,3 +329,105 @@ mlx.mlx_is_key_down.restype = c_bool
 # Hooks
 mlx.mlx_loop_hook.argtypes = [ctypes.POINTER(mlx_t), mlx_loop_hook_func, c_void_p]
 mlx.mlx_loop_hook.restype = c_bool
+
+
+# monitor width
+mlx.mlx_get_monitor_size.argtypes = [
+    ctypes.c_int32,
+    ctypes.POINTER(ctypes.c_int32),
+    ctypes.POINTER(ctypes.c_int32),
+]
+mlx.mlx_get_monitor_size.restype = None
+
+
+# set window size
+mlx.mlx_set_window_size.argtypes = [
+    ctypes.POINTER(mlx_t),
+    ctypes.c_int32,
+    ctypes.c_int32
+]
+mlx.mlx_set_window_size.restype = None
+
+
+# Texture to image
+mlx.mlx_texture_to_image.argtypes = [ctypes.POINTER(mlx_t), ctypes.POINTER(mlx_texture_t)]
+mlx.mlx_texture_to_image.restype = ctypes.POINTER(mlx_image_t)
+
+mlx.mlx_load_png.argtypes = [ctypes.c_char_p]
+mlx.mlx_load_png.restype = ctypes.POINTER(mlx_texture_t)
+
+
+RendererType = mlx_t
+Renderer = mlx.mlx_init
+
+ImageType = mlx_image_t
+hook = ctypes.CFUNCTYPE(None, c_void_p)
+loop = mlx.mlx_loop
+TextureType = mlx_texture_t
+
+
+refs = []
+def put_pixel(image: mlx_image_t, x: int, y: int, color: int) -> None:
+    mlx.mlx_put_pixel(image, x, y, color)
+
+def get_monitor_size() -> tuple[int ,int]:
+    width: ctypes.c_int32 = ctypes.c_int32()
+    height: ctypes.c_int32 = ctypes.c_int32()
+    monitor_index: ctypes.c_int32 = ctypes.c_int32(0)
+    mlx.mlx_get_monitor_size(monitor_index, ctypes.byref(width), ctypes.byref(height))
+    return width.value, height.value
+
+
+
+def image_to_window(mlx_ptr: mlx_t, image: mlx_image_t, x: int, y: int) -> None:
+     mlx.mlx_image_to_window(mlx_ptr, image, x, y)
+
+def new_image(mlx_ptr: mlx_t, width: int, height: int) -> ImageType:
+    texture = cast(ImageType, mlx.mlx_new_image(mlx_ptr, width, height))
+    refs.append(texture)
+    return  texture
+    
+
+def set_window_size(renderer: mlx_t, width: int, height: int) -> None:
+    mlx.mlx_set_window_size(renderer, ctypes.c_int32(width), ctypes.c_int32(height))
+
+def delete_image(renderer: mlx_t, image: mlx_image_t) -> None:
+    mlx.mlx_delete_image(renderer, image)
+
+
+def loop_hook(
+    renderer: RendererType,
+    function: Callable[[object], None],
+) -> None:
+    callback = hook(function)
+    refs.append(callback)
+    mlx.mlx_loop_hook(
+        renderer,
+        callback,
+        None,
+    )
+
+class _Clock:
+    def __call__(self) -> float:
+        elapsed_time: float = cast(float, mlx.mlx_get_time())
+        return elapsed_time
+
+
+def load_png(path: str) -> TextureType:
+    return cast(
+            TextureType,
+            cast(
+                 object,
+                 ctypes.cast(
+                     mlx.mlx_load_png(path.encode("ASCII")),
+                     ctypes.POINTER(mlx_texture_t)
+                 )
+             ),
+        )
+
+def texture_to_image(mlx_ptr: mlx_t, texture: mlx_texture_t) -> ImageType:
+    return cast(ImageType, mlx.mlx_texture_to_image(mlx_ptr, texture))
+
+Clock = _Clock()
+
+__all__ = ["Clock"]
