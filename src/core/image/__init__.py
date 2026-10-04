@@ -6,8 +6,10 @@ from src.mlx.libmlx import (
     image_to_window,
     put_pixel,
     load_png,
-    texture_to_image,
-    TextureType
+    # texture_to_image,
+    TextureType,
+    get_frames_of_images,
+    resize_image
 )
 from src.core.vector2 import Vector2
 from typing import Protocol
@@ -33,10 +35,7 @@ class ImageInterface(Protocol):
     def move(self, v: Vector2) -> None:
         ...
 
-    def update(self) -> None:
-        ...
-
-    def set_background_color(self, color: RgbColors) -> None:
+    def update(self, elapsed_time: float) -> None:
         ...
 
     @property
@@ -53,6 +52,7 @@ class FrameImage(BaseImage):
             height: int,
             image_format: ImageFormat,
             path: str,
+            time_per_frame: float,
             frames:  int = 1,
         ) -> None:
         super().__init__(
@@ -64,61 +64,58 @@ class FrameImage(BaseImage):
         self._path: str = path
         self._frames: int = 1
         self.__texture_image: TextureType = load_png(
-            "/home/totib/projects/PAC_MAN_TEAM_1337/src/assests/orange_ghost.png"
+            "src/assests/orange_ghost.png"
         )
-        self.__image: ImageType = texture_to_image(self._renderer, self.__texture_image)
-        self.__frames_image: list[ImageType] = list()
-        self.__set_frames()
+        self.__frames_image: list[ImageType] = get_frames_of_images(self._renderer, self.__texture_image, frames=8)
+        self.__time_passed: float = 0.
+        self.__current_frame_idx: int = 0
+        self.__is_backwords: bool = False
+        self.__time_per_frame: float = time_per_frame
+        for image_frame in self.__frames_image:
+            resize_image(image_frame, self._width, self._height)
 
-
-    def to_window(self) -> None:
-        pass
+    def image_to_window(self) -> None:
         image_to_window(
             self._renderer,
-            self.__image,
-            int(self._position.y),
-            int(self._position.x)
+            self.__frames_image[self.__current_frame_idx], int(self._position.x),
+            int(self._position.y)
         )
 
-    def __set_frames(self) -> None:
-        width: int = cast(int, self.__texture_image.contents.width)
-        height: int = cast(int, self.__texture_image.contents.height)
-        width_per_frame: int = width // self._frames
-        for frame_num in range(self._frames):
-            frame_image: ImageType = new_image(
+    def to_window(self) -> None:
+        for frame_image in self.__frames_image:
+            frame_image.contents.enabled = False
+            image_to_window(
                 self._renderer,
-                width_per_frame,
-                height,
+                frame_image,
+                int(self._position.y),
+                int(self._position.x)
             )
-            print(len(ctypes.c_void_p(frame_image.contents.pixels)))
 
-            start_x = frame_num * width_per_frame
+    @property
+    def __get_current_image(self) -> ImageType:
+        return self.__frames_image[self.__current_frame_idx]
 
-            for y in range(height):
-                for x in range(width_per_frame):
-                    dst_offset = (y * width_per_frame + x) * 4
-                    src_offset = (y * width + start_x + x) * 4
-
-                    frame_image.contents.pixels.pixels.contents.value[dst_offset:dst_offset + 4] = (
-                        self.__texture_image.contents.pixels.contents.value[
-                            src_offset:src_offset + 4
-                        ]
-                    )
-
-            self.__frames_image.append(frame_image)
     def move(self, v: Vector2) -> None:
         self._position.add(v)
 
-    def update(self) -> None:
-        pass
-        # self.__image.contents.instances[0].x = int(self._position.x)
-        # self.__image.contents.instances[0].y = int(self._position.y)
+    def update(self, elapsed_time: float) -> None:
+        print(elapsed_time)
+        current_image: ImageType = self.__get_current_image
+        if self.__time_passed >= self.__time_per_frame:
+            current_image.contents.enabled = False
+            if self.__current_frame_idx == len(self.__frames_image) - 1:
+                self.__current_frame_idx = 0
+            self.__current_frame_idx += 1
+            current_image = self.__get_current_image
+            current_image.contents.enabled = True
+            self.__time_passed -= self.__time_per_frame
+        self.__time_passed += elapsed_time
+        current_image.contents.instances[0].x = self._position.x
+        current_image.contents.instances[0].y = self._position.y
 
-    def set_background_color(self, color: RgbColors) -> None:
+    def move(self, vector: Vector2, dt: float) -> None:
         pass
-        # for y in range(self._height):
-        #     for x in range(self._width):
-        #         put_pixel(self.__image, x, y, color.value)
+
 
 
 class PixelImage(BaseImage):
@@ -150,7 +147,10 @@ class PixelImage(BaseImage):
     def move(self, v: Vector2) -> None:
         self._position.add(v)
 
-    def update(self) -> None:
+    def update(self, _: float) -> None:
+        pass
+
+    def update(self, elapsed_time: float) -> None:
         self.__image.contents.instances[0].x = int(self._position.x)
         self.__image.contents.instances[0].y = int(self._position.y)
 
@@ -169,7 +169,8 @@ class ImageFactory:
             width: int=_DEFAULT_IMAGE_WIDTH,
             height: int = _DEFAULT_IMAGE_HEIGHT,
             frames: int=1,
-            path: str = ""
+            path: str = "",
+            time_per_frame: float = 0.
        ) -> ImageInterface:
         match image_format: 
             case ImageFormat.PNG:
@@ -179,7 +180,8 @@ class ImageFactory:
                             height=height,
                             image_format=image_format,
                             frames=frames,
-                            path=path
+                            path=path,
+                            time_per_frame=time_per_frame
                         )
             case ImageFormat.XPM:
                 return  PixelImage(
@@ -195,4 +197,3 @@ class ImageFactory:
                     height=height,
                     image_format=image_format
                 )
-

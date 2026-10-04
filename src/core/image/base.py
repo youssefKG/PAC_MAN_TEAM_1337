@@ -20,11 +20,14 @@ class BaseImage:
         self._renderer: RendererType = renderer
         self._width: int = width
         self._height: int = height
-        self._position: Vector2 = Vector2(x=0., y=0.)
+        self._position: Vector2 = Vector2(x=10., y=10.)
         self._image_format: ImageFormat = image_format
 
     def set_position(self, position: Vector2) -> None:
         self._position.add(position)
+
+    def move(self, vector: Vector2) -> None:
+        self._position.add(vector)
 
     @property
     def position(self) -> Vector2:

@@ -35,13 +35,15 @@ class Engine:
             image_format: ImageFormat=ImageFormat.PIXEL,
             frames: int = 1,
             path: str = "",
+            time_per_frame: float = 0
         ) -> ImageInterface:
         return self.__image_factory(
             width=width,
             height=height,
             image_format=image_format,
             frames=frames,
-            path=path
+            path=path,
+            time_per_frame=time_per_frame
         )
 
     def set_window_to_monitor_size(self) -> None:

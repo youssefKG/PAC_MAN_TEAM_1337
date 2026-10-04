@@ -452,14 +452,14 @@ def get_frames_of_images(
         for y in range(texture_height):
             for x in range(image_width):
                 texture_x = start_x + x
-                index = (y * texture_width + texture_x) * 4
-                b: int = texture.contents.pixels[index]
-                g: int = texture.contents.pixels[index + 1]
-                r: int = texture.contents.pixels[index + 2]
-                a: int = texture.contents.pixels[index + 3]
+                index = (y * texture_width + texture_x)
+                a: int = texture.contents.pixels[index]
+                r: int = texture.contents.pixels[index + 1]
+                g: int = texture.contents.pixels[index + 2]
+                b: int = texture.contents.pixels[index + 3]
                 color = create_color(r, g, b, a)
-                # image.contents.pixels[x + y * image_width] = color
-                put_pixel(image, x, y, color)
+                image.contents.pixels[x + y * image_width] = color
+                # put_pixel(image, x, y, color)
         images.append(image)
     return images
 

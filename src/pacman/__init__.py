@@ -9,8 +9,8 @@ from src.core import (
 )
 from enum import Enum
 
-IMAGE_WIDTH = 100
-IMAGE_HEIGHT = 100
+IMAGE_WIDTH = 80
+IMAGE_HEIGHT = 80
 
 
 class GameState(Enum):
@@ -28,16 +28,17 @@ class Pacman:
             height=IMAGE_HEIGHT,
             image_format=ImageFormat.PIXEL
         )
-        self.__box_image.to_window()
-        self.__box_image.set_background_color(RgbColors.PINK)
-        # self.__orange_ghost_image: FrameImage = cast(FrameImage, self.__engine.new_image(
-        #     width=IMAGE_WIDTH,
-        #     height=IMAGE_HEIGHT ,
-        #     frames=7,
-        #     image_format=ImageFormat.PNG,
-        #     path="orange_ghost.png"
-        # ))
-        # self.__orange_ghost_image.to_window()
+        # self.__box_image.to_window()
+        # self.__box_image.set_background_color(RgbColors.PINK)
+        self.__orange_ghost_image: FrameImage = cast(FrameImage, self.__engine.new_image(
+            width=IMAGE_WIDTH,
+            height=IMAGE_HEIGHT ,
+            frames=7,
+            image_format=ImageFormat.PNG,
+            path="orange_ghost.png",
+            time_per_frame=2
+        ))
+        self.__orange_ghost_image.to_window()
 
 
     def run(self) -> None:
@@ -46,6 +47,7 @@ class Pacman:
 
     def __update(self, elapsed_time: float) -> None:
         self.__box_image.move(Vector2(x=elapsed_time + 1, y=elapsed_time + 1))
-        self.__box_image.update()
+        # self.__box_image.update(elapsed_time)
+        self.__orange_ghost_image.update(elapsed_time)
 
 __all__ = ["Pacman"]

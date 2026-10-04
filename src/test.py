@@ -1,4 +1,4 @@
-from ctypes import CDLL, c_char_p, c_int, c_double, Structure, POINTER, c_void_p, byref
+from ctypes import CDLL, c_char_p, c_int, c_double, Structure, POINTER, c_void_p, byref, pointer
 
 
 
@@ -14,9 +14,9 @@ gettimeofday.restype = c_int
 printf.argtypes = [c_char_p, c_double, c_int, c_char_p]
 printf.restype = c_int
 
-
 current_time: TimeVal = TimeVal()
-gettimeofday(byref(current_time), None)
+current_time_pointer = pointer(current_time)
+gettimeofday(current_time_pointer, None)
 print(current_time.tv_sec)
 # print(dir(current_time))
 # print(current_time.contents.tv_sec)
