@@ -56,5 +56,4 @@ class Vector2:
     def __str__(self) -> str:
         return f"x={self.__x}, y={self.__y}"
 
-
 __all__ = ["Vector2"]

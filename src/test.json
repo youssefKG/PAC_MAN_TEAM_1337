@@ -1,0 +1,25 @@
+{
+    "name": "bitmap_font_atlas",
+    "version": 1,
+    "atlas": {
+        "columns": 16,
+        "rows": 6,
+        "characters": 96,
+        "first_character": 32,
+
+        "origin": [
+            9,
+            8
+        ],
+
+        "cell": {
+            "width": 61,
+            "height": 112
+        },
+
+        "stride": {
+            "x": 71,
+            "y": 121
+        }
+    }
+}

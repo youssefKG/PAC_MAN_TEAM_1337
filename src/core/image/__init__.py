@@ -1,3 +1,4 @@
+from typing import override
 from src.mlx.libmlx import (
     new_image,
     ImageType,
@@ -9,52 +10,39 @@ from src.mlx.libmlx import (
     get_frames_of_images,
     resize_image
 )
-from src.core.vector2 import Vector2
-from typing import Protocol
-from .base import BaseImage, ImageFormat
+from .base import BaseImage, ImageFormat, ImageInterface
 from ..rgb_colors import RgbColors
-
-
-
 
 _DEFAULT_IMAGE_WIDTH = 100
 _DEFAULT_IMAGE_HEIGHT = 100
 
-class ImageInterface(Protocol):
-    def set_position(self, position: Vector2) -> None:
-        ...
-
-    def to_window(self) -> None:
-        ...
-
-    def move(self, v: Vector2) -> None:
-        ...
-
-    def update(self, elapsed_time: float) -> None:
-        ...
-
-    @property
-    def position(self) -> Vector2:
-        ...
-
 class FrameImage(BaseImage):
     def __init__(
-            self,
-            /, 
-            *,
-            renderer: RendererType,
-            width: int,
-            height: int,
-            image_format: ImageFormat,
-            path: str,
-            time_per_frame: float,
-            frames:  int = 1,
-        ) -> None:
+        self,
+        /, 
+        *,
+        renderer: RendererType,
+        width: int,
+        height: int,
+        image_format: ImageFormat,
+        path: str,
+        time_per_frame: float,
+        frames:  int = 1,
+        z_index: int = 1,
+        row: int,
+        col: int,
+        total_cols: int,
+        total_rows: int
+    ) -> None:
         super().__init__(
             renderer=renderer,
             width=width,
             height=height,
-            image_format=image_format
+            image_format=image_format,
+            row=row,
+            col=col,
+            total_cols=total_cols,
+            total_rows=total_rows
         )
         self._path: str = path
         self._frames: int = 1
@@ -86,10 +74,6 @@ class FrameImage(BaseImage):
                 int(self._position.x)
             )
 
-    @property
-    def __get_current_image(self) -> ImageType:
-        return self.__frames_image[self.__current_frame_idx]
-
     def update(self, elapsed_time: float) -> None:
         current_image: ImageType = self.__get_current_image
         if self.__time_passed >= self.__time_per_frame:
@@ -101,21 +85,12 @@ class FrameImage(BaseImage):
             current_image.contents.enabled = True
             self.__time_passed -= self.__time_per_frame
         self.__time_passed += elapsed_time
-        self.move(Vector2(x=1000., y=300.), elapsed_time)
         current_image.contents.instances[0].x = int(self._position.x)
         current_image.contents.instances[0].y = int(self._position.y)
 
-    def move(self, vector: Vector2, dt: float) -> None:
-        distance_vector: Vector2 = self._position.sub(vector)
-        distance_vector_normalized: Vector2 = distance_vector.normalize()
-        velocity =  Vector2(x=distance_vector_normalized.x * 15, y=distance_vector_normalized.y * 15)
-        self._position.move_to(
-            Vector2(
-                x=self._position.x + velocity.x * dt,
-                y=self._position.y + velocity.y * dt,
-            )
-        )
-
+    @property
+    def __get_current_image(self) -> ImageType:
+        return self.__frames_image[self.__current_frame_idx]
 
 class PixelImage(BaseImage):
     def __init__(
@@ -125,13 +100,23 @@ class PixelImage(BaseImage):
             renderer: RendererType,
             width: int,
             height: int,
-            image_format: ImageFormat
+            image_format: ImageFormat,
+            z_index: int,
+            row: int,
+            col: int,
+            total_cols: int,
+            total_rows: int
         ) -> None:
         super().__init__(
             renderer=renderer,
             width=width,
             height=height,
-            image_format=image_format
+            image_format=image_format,
+            z_index=z_index,
+            row=row,
+            col=col,
+            total_cols=total_cols,
+            total_rows=total_rows
         )
         self.__image: ImageType = new_image(self._renderer, width, height)
 
@@ -142,12 +127,6 @@ class PixelImage(BaseImage):
             self.__image, int(self._position.x),
             int(self._position.y)
         )
-
-    def move(self, v: Vector2) -> None:
-        self._position.add(v)
-
-    def update(self, _: float) -> None:
-        pass
 
     def update(self, elapsed_time: float) -> None:
         self.__image.contents.instances[0].x = int(self._position.x)
@@ -169,30 +148,52 @@ class ImageFactory:
             height: int = _DEFAULT_IMAGE_HEIGHT,
             frames: int=1,
             path: str = "",
-            time_per_frame: float = 0.
+            time_per_frame: float = 0.,
+            z_index: int = 1,
+            row: int = 1,
+            col: int = 1,
+            total_cols: int = 1,
+            total_rows: int = 1,
        ) -> ImageInterface:
         match image_format: 
             case ImageFormat.PNG:
-                return  FrameImage(
+                return FrameImage(
                             renderer=self.__renderer,
                             width=width,
                             height=height,
                             image_format=image_format,
                             frames=frames,
                             path=path,
-                            time_per_frame=time_per_frame
-                        )
+                            time_per_frame=time_per_frame,
+                            z_index=z_index,
+                            col=col,
+                            row=row,
+                            total_cols=total_cols,
+                            total_rows=total_rows
+                    )
             case ImageFormat.XPM:
                 return  PixelImage(
-                    renderer=self.__renderer,
-                    width=width,
-                    height=height,
-                    image_format=image_format
-                )
+                            renderer=self.__renderer,
+                            width=width,
+                            height=height,
+                            image_format=image_format,
+                            z_index=z_index,
+                            col=col,
+                            row=row,
+                            total_cols=total_cols,
+                            total_rows=total_rows
+                    )
             case ImageFormat.PIXEL:
                 return PixelImage(
-                    renderer=self.__renderer,
-                    width=width,
-                    height=height,
-                    image_format=image_format
-                )
+                            renderer=self.__renderer,
+                            width=width,
+                            height=height,
+                            image_format=image_format,
+                            z_index=z_index,
+                            col=col,
+                            row=row,
+                            total_cols=total_cols,
+                            total_rows=total_rows
+                    )
+
+__all__ = ["ImageFactory", "ImageFormat", "PixelImage", "ImageInterface"]

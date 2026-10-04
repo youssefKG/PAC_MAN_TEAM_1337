@@ -331,7 +331,6 @@ mlx.mlx_is_key_down.restype = c_bool
 mlx.mlx_loop_hook.argtypes = [ctypes.POINTER(mlx_t), mlx_loop_hook_func, c_void_p]
 mlx.mlx_loop_hook.restype = c_bool
 
-
 # monitor width
 mlx.mlx_get_monitor_size.argtypes = [
     ctypes.c_int32,
@@ -339,7 +338,6 @@ mlx.mlx_get_monitor_size.argtypes = [
     ctypes.POINTER(ctypes.c_int32),
 ]
 mlx.mlx_get_monitor_size.restype = None
-
 
 # set window size
 mlx.mlx_set_window_size.argtypes = [
@@ -377,8 +375,6 @@ def get_monitor_size() -> tuple[int ,int]:
     monitor_index: ctypes.c_int32 = ctypes.c_int32(0)
     mlx.mlx_get_monitor_size(monitor_index, ctypes.byref(width), ctypes.byref(height))
     return width.value, height.value
-
-
 
 def image_to_window(mlx_ptr: mlx_t, image: mlx_image_t, x: int, y: int) -> None:
      mlx.mlx_image_to_window(mlx_ptr, image, x, y)
@@ -426,6 +422,29 @@ def load_png(path: str) -> TextureType:
 def texture_to_image(mlx_ptr: mlx_t, texture: mlx_texture_t) -> ImageType:
     return cast(ImageType, mlx.mlx_texture_to_image(mlx_ptr, texture))
 
+def get_image_from_texture(
+        *,
+        mlx_ptr: mlx_t,
+        path: str,
+        col: int,
+        row: int,
+        total_cols: int,
+        total_rows: int,
+        image_width: int,
+        image_height: int
+    ) -> mlx_image_t:
+    texture: TextureType = load_png(path)
+    image_width: int = texture.contents.width // total_rows
+    image_height: int = texture.contents.height // total_cols
+    image: mlx_image_t = new_image(mlx_ptr, image_width, image_height)
+    texture_image: mlx_image_t = texture_to_image(mlx_ptr, texture)
+    start: int = col * image_width + row * image_height
+    for y in range(image_height):
+        for x in range(image_width):
+            color: int = 0
+            put_pixel(image, x, y, color)
+    return image
+
 def get_frames_of_images(
     mlx_ptr: RendererType,
     texture: mlx_texture_t,
@@ -436,14 +455,12 @@ def get_frames_of_images(
 
     texture_width: int = cast(int, cast(object, texture.contents.width))
     texture_height: int = cast(int, cast(object, texture.contents.height))
-
     image_width: int = texture_width // frames
     print(image_width)
     print(texture_height)
 
     for frame_idx in range(frames):
         start_x: int = frame_idx * image_width
-
         image: ImageType = new_image(
             mlx_ptr,
             image_width,
