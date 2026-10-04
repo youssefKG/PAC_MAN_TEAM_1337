@@ -1,6 +1,8 @@
 import sys
 
+from typing import override
 from src.utils import Logger
+import math
 
 class Vector2:
     def __init__(self, /, *, x: float, y: float) -> None:
@@ -37,5 +39,22 @@ class Vector2:
     @y.setter
     def y(self, y_value: int) -> None:
         self.__y = y_value
+
+    def magnitude(self, vector: 'Vector2 | None'=None) -> float:
+        if vector is None:
+            return math.sqrt(self.__x ** 2 + self.__y ** 2)
+        return math.sqrt((vector.x - self.__x) ** 2 + (vector.y - self.__y) ** 2)
+
+    def normalize(self) -> 'Vector2':
+        magnitude: float = self.magnitude()
+        return Vector2(x=self.__x / magnitude, y=self.__y / magnitude)
+    
+    def sub(self, vector: 'Vector2') -> 'Vector2':
+        return Vector2(x=vector.x - self.__x, y=vector.y - self.__y)
+
+    @override
+    def __str__(self) -> str:
+        return f"x={self.__x}, y={self.__y}"
+
 
 __all__ = ["Vector2"]

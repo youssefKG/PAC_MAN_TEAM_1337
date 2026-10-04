@@ -30,14 +30,14 @@ class Pacman:
         )
         # self.__box_image.to_window()
         # self.__box_image.set_background_color(RgbColors.PINK)
-        self.__orange_ghost_image: FrameImage = cast(FrameImage, self.__engine.new_image(
+        self.__orange_ghost_image: FrameImage = cast(FrameImage, cast(object, self.__engine.new_image(
             width=IMAGE_WIDTH,
             height=IMAGE_HEIGHT ,
             frames=7,
             image_format=ImageFormat.PNG,
             path="orange_ghost.png",
             time_per_frame=2
-        ))
+        )))
         self.__orange_ghost_image.to_window()
 
 

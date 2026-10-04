@@ -1,4 +1,3 @@
-import os
 from src.mlx.libmlx import (
     new_image,
     ImageType,
@@ -6,7 +5,6 @@ from src.mlx.libmlx import (
     image_to_window,
     put_pixel,
     load_png,
-    # texture_to_image,
     TextureType,
     get_frames_of_images,
     resize_image
@@ -15,9 +13,6 @@ from src.core.vector2 import Vector2
 from typing import Protocol
 from .base import BaseImage, ImageFormat
 from ..rgb_colors import RgbColors
-from pathlib import Path
-import ctypes
-from typing import cast
 
 
 
@@ -95,11 +90,7 @@ class FrameImage(BaseImage):
     def __get_current_image(self) -> ImageType:
         return self.__frames_image[self.__current_frame_idx]
 
-    def move(self, v: Vector2) -> None:
-        self._position.add(v)
-
     def update(self, elapsed_time: float) -> None:
-        print(elapsed_time)
         current_image: ImageType = self.__get_current_image
         if self.__time_passed >= self.__time_per_frame:
             current_image.contents.enabled = False
@@ -110,12 +101,20 @@ class FrameImage(BaseImage):
             current_image.contents.enabled = True
             self.__time_passed -= self.__time_per_frame
         self.__time_passed += elapsed_time
-        current_image.contents.instances[0].x = self._position.x
-        current_image.contents.instances[0].y = self._position.y
+        self.move(Vector2(x=1000., y=300.), elapsed_time)
+        current_image.contents.instances[0].x = int(self._position.x)
+        current_image.contents.instances[0].y = int(self._position.y)
 
     def move(self, vector: Vector2, dt: float) -> None:
-        pass
-
+        distance_vector: Vector2 = self._position.sub(vector)
+        distance_vector_normalized: Vector2 = distance_vector.normalize()
+        velocity =  Vector2(x=distance_vector_normalized.x * 15, y=distance_vector_normalized.y * 15)
+        self._position.move_to(
+            Vector2(
+                x=self._position.x + velocity.x * dt,
+                y=self._position.y + velocity.y * dt,
+            )
+        )
 
 
 class PixelImage(BaseImage):
