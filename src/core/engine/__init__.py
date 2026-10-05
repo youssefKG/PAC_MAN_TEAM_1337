@@ -1,5 +1,6 @@
 import sys
 from typing import Callable, cast
+from src.core.vector2 import Vector2
 from typing_extensions import Self
 from src.mlx.libmlx import  (
     Clock,
@@ -10,7 +11,7 @@ from src.mlx.libmlx import  (
     loop_hook,
     get_monitor_size
 )
-from src.core.image import ImageInterface, ImageFactory, ImageFormat
+from src.core.image import ImageInterface, ImageFactory, ImageType
 from src.utils import Logger
  
 class Engine:
@@ -69,22 +70,28 @@ class Engine:
             *,
             width: int,
             height: int,
-            image_format: ImageFormat=ImageFormat.PIXEL,
+            image_type: ImageType=ImageType.PIXEL_IMAGE,
             frames: int = 1,
             path: str = "",
             time_per_frame: float = 0,
             col: int = 1,
             row: int = 1,
-            total_colums: int = 1,
-            total_rows: int = 1
+            total_cols: int = 1,
+            total_rows: int = 1,
+            position: Vector2 | None=None,
         ) -> ImageInterface:
         return self.__image_factory(
             width=width,
             height=height,
-            image_format=image_format,
+            image_type=image_type,
             frames=frames,
             path=path,
-            time_per_frame=time_per_frame
+            time_per_frame=time_per_frame,
+            total_rows=total_rows,
+            total_cols=total_cols,
+            col=col,
+            row=row,
+            position=position
         )
 
     def set_window_to_monitor_size(self) -> None:

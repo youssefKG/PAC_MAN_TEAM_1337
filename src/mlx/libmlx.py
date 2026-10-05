@@ -359,7 +359,7 @@ mlx.mlx_load_png.restype = ctypes.POINTER(mlx_texture_t)
 RendererType = mlx_t
 Renderer = mlx.mlx_init
 
-ImageType = mlx_image_t
+Image = mlx_image_t
 hook = ctypes.CFUNCTYPE(None, c_void_p)
 loop = mlx.mlx_loop
 TextureType = mlx_texture_t
@@ -379,11 +379,10 @@ def get_monitor_size() -> tuple[int ,int]:
 def image_to_window(mlx_ptr: mlx_t, image: mlx_image_t, x: int, y: int) -> None:
      mlx.mlx_image_to_window(mlx_ptr, image, x, y)
 
-def new_image(mlx_ptr: mlx_t, width: int, height: int) -> ImageType:
-    texture = cast(ImageType, mlx.mlx_new_image(mlx_ptr, width, height))
+def new_image(mlx_ptr: mlx_t, width: int, height: int) -> mlx_image_t:
+    texture = cast(mlx_image_t, mlx.mlx_new_image(mlx_ptr, width, height))
     refs.append(texture)
     return  texture
-    
 
 def set_window_size(renderer: mlx_t, width: int, height: int) -> None:
     mlx.mlx_set_window_size(renderer, ctypes.c_int32(width), ctypes.c_int32(height))
@@ -419,30 +418,43 @@ def load_png(path: str) -> TextureType:
              ),
         )
 
-def texture_to_image(mlx_ptr: mlx_t, texture: mlx_texture_t) -> ImageType:
-    return cast(ImageType, mlx.mlx_texture_to_image(mlx_ptr, texture))
+def texture_to_image(mlx_ptr: mlx_t, texture: mlx_texture_t) -> mlx_image_t:
+    return cast(mlx_image_t, mlx.mlx_texture_to_image(mlx_ptr, texture))
 
-def get_image_from_texture(
+def resize_image(image: mlx_image_t, width: int, height: int) -> None:
+    _ = mlx.mlx_resize_image(image, width, height)
+
+def get_image_from_grid_texture(
         *,
-        mlx_ptr: mlx_t,
+        renderer: mlx_t,
         path: str,
         col: int,
         row: int,
         total_cols: int,
         total_rows: int,
-        image_width: int,
-        image_height: int
+        width: int,
+        height: int
     ) -> mlx_image_t:
     texture: TextureType = load_png(path)
-    image_width: int = texture.contents.width // total_rows
-    image_height: int = texture.contents.height // total_cols
-    image: mlx_image_t = new_image(mlx_ptr, image_width, image_height)
-    texture_image: mlx_image_t = texture_to_image(mlx_ptr, texture)
-    start: int = col * image_width + row * image_height
+    texture_width: int = cast(int, texture.contents.width)
+    texture_height: int = cast(int, texture.contents.height)
+    image_width: int = texture_width // total_cols
+    image_height: int = texture_height // total_rows
+    image: mlx_image_t = new_image(renderer, image_width, image_height)
+    texture_image: mlx_image_t = texture_to_image(renderer, texture)
+    start_x: int = col * image_width
+    start_y: int = row * texture_width * image_width
     for y in range(image_height):
         for x in range(image_width):
-            color: int = 0
-            put_pixel(image, x, y, color)
+            index: int = (start_x + x + (y * texture_width + start_y)) * 4
+            print(type(texture_image.contents.pixels))
+            t: int = texture_image.contents.pixels[index]
+            r: int = texture_image.contents.pixels[index + 1]
+            g: int = texture_image.contents.pixels[index + 2]
+            b: int = texture_image.contents.pixels[index + 3]
+            # color: int = create_color(r, g, b)
+            put_pixel(image, x, y, (t << 24 | r << 16 | g << 8 | b))
+    resize_image(image, width, height)
     return image
 
 def get_frames_of_images(
@@ -456,32 +468,24 @@ def get_frames_of_images(
     texture_width: int = cast(int, cast(object, texture.contents.width))
     texture_height: int = cast(int, cast(object, texture.contents.height))
     image_width: int = texture_width // frames
-    print(image_width)
-    print(texture_height)
-
     for frame_idx in range(frames):
         start_x: int = frame_idx * image_width
-        image: ImageType = new_image(
+        image: mlx_image_t = new_image(
             mlx_ptr,
             image_width,
             texture_height,
         )
         for y in range(texture_height):
             for x in range(image_width):
-                texture_x = start_x + x
-                index = (y * texture_width + texture_x) * 4
-                b: int = texture.contents.pixels[index]
-                g: int = texture.contents.pixels[index + 1]
-                r: int = texture.contents.pixels[index + 2]
-                a: int = texture.contents.pixels[index + 3]
-                color = create_color(r, g, b, a)
-                # image.contents.pixels[x + y * image_width] = color
-                put_pixel(image, x, y, color)
+                index = ((y * texture_width) + (start_x + x)) * 4
+                t: int = texture.contents.pixels[index + 0]
+                r: int = texture.contents.pixels[index + 1]
+                g: int = texture.contents.pixels[index + 2]
+                b: int = texture.contents.pixels[index + 3]
+                put_pixel(image, x, y, (t << 24 | r << 16 | g << 8 | b))
         images.append(image)
     return images
 
-def resize_image(image: ImageType, width: int, height: int) -> None:
-    _ = mlx.mlx_resize_image(image, width, height)
 
 Clock = _Clock()
 

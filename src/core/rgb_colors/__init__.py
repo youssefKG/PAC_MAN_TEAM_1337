@@ -3,7 +3,7 @@ from enum import Enum
 
 def create_color(r: int, g: int, b: int, t: int=0xFF000000) -> int:
     """Create a 32-bit ARGB color value from RGB components."""
-    return t | (r << 16) | (g << 8) | b
+    return 0xFF000000 | (r << 16) | (g << 8) | b
 
 
 class RgbColors(Enum):

@@ -1,5 +1,5 @@
 from .engine import Engine, engine
-from .image import ImageInterface, FrameImage, ImageFormat, PixelImage
+from .image import ImageInterface, FrameImage, ImageType, PixelImage, GridImage
 from .rgb_colors import RgbColors
 from .vector2 import Vector2
 from src.core.scene import Scene
@@ -11,7 +11,8 @@ __all__ = [
     "RgbColors",
     "Vector2",
     "FrameImage",
-    "ImageFormat",
+    "ImageType",
     "PixelImage",
-    "Scene"
+    "Scene",
+    "GridImage"
 ]

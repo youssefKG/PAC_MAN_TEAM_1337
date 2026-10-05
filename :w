@@ -7,8 +7,7 @@ from src.core import (
     Vector2,
     FrameImage, 
     ImageType,
-    GridImage,
-    
+    GridImage
 )
 
 IMAGE_WIDTH = 80
@@ -19,6 +18,7 @@ class Pacman:
         self,
      ) -> None:
         self.__engine: Engine = engine(monitor_size=True, title="PACMAN")
+        # self.__engine.set_window_to_monitor_size()
         self.__box_image: PixelImage = cast(
             PixelImage, self.__engine.new_image(
                 width=IMAGE_WIDTH,
@@ -26,33 +26,27 @@ class Pacman:
                 image_type=ImageType.PIXEL_IMAGE
             )
         )
-        layout_image: GridImage = cast(GridImage, cast(object, self.__engine.new_image(
-                width= 500,
-                height=500,
-                image_type=ImageType.GRID_IMAGE,
-                row=2,
-                col=2,
-                total_cols=5,
-                total_rows=4,
-                path="src/assests/menu/orange_border.png"
-        )))
-        layout_image.to_window()
         self.__box_image.to_window()
         self.__box_image.set_background_color(RgbColors.PINK)
         self.__orange_ghost_image: FrameImage = cast(
             FrameImage,
             cast(
                 object, self.__engine.new_image(
-                    width=40,
-                    height=40 ,
+                    width=IMAGE_WIDTH,
+                    height=IMAGE_HEIGHT ,
                     frames=7,
                     image_type=ImageType.FRAME_IMAGE,
                     path="orange_ghost.png",
-                    time_per_frame=2,
+                    time_per_frame=2
                 )
              )
         )
         self.__orange_ghost_image.to_window()
+        layout_image: GridImage = self.__engine.new_image(
+                width= 400,
+                height=400,
+                image_type=ImageType.GRID_IMAGE
+
 
     def run(self) -> None:
         self.__engine.game_loop(self.__update)
@@ -60,7 +54,7 @@ class Pacman:
 
     def __update(self, elapsed_time: float) -> None:
         self.__orange_ghost_image.move_to(
-            target=Vector2(x=2000.0, y=30.0),
+            target=Vector2(x=1000.0, y=30.0),
             dt=elapsed_time,
             speed_per_frame_unit=3
         )
