@@ -29,7 +29,7 @@ class Vector2:
         return self.__x
 
     @x.setter
-    def x(self, x_value: int) -> None:
+    def x(self, x_value: float) -> None:
         self.__x = x_value
 
     @property
@@ -37,8 +37,13 @@ class Vector2:
         return self.__y
 
     @y.setter
-    def y(self, y_value: int) -> None:
+    def y(self, y_value: float) -> None:
         self.__y = y_value
+
+    @override
+    def __eq__(self, vector: object) -> bool:
+        return isinstance(vector, Vector2) and vector.x == self.__x and vector.y == self.__y
+
 
     def magnitude(self, vector: 'Vector2 | None'=None) -> float:
         if vector is None:

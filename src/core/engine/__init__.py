@@ -9,10 +9,12 @@ from src.mlx.libmlx import  (
     RendererType,
     loop,
     loop_hook,
-    get_monitor_size
+    get_monitor_size,
+    get_mouse_position,
 )
 from src.core.image import ImageInterface, ImageFactory, ImageType
 from src.utils import Logger
+import time
  
 class Engine:
     def __init__(self,
@@ -23,6 +25,7 @@ class Engine:
         self.__image_factory: ImageFactory
         self.__elapsed_time: float
         self.__is_initialized: bool = False
+        self.__current_time: float
 
     def __call__(
         self,
@@ -53,7 +56,6 @@ class Engine:
         else:
             self.__window_width, self.__window_height = cast(int, window_width), cast(int, window_height)
         set_window_size(self.__renderer, self.__window_width, self.__window_height)
-        self.__elapsed_time = Clock()
         self.__renderer = Renderer(
             self.__window_width,
             self.__window_height,
@@ -62,6 +64,7 @@ class Engine:
         )
         self.__image_factory = ImageFactory(self.__renderer)
         self.__is_initialized = True
+        self.__current_time = time.time()
         return self
 
     def new_image(
@@ -99,13 +102,21 @@ class Engine:
         set_window_size(self.__renderer, self.__window_width, self.__window_height)
 
     def game_loop(self, callback: Callable[[float], None]) -> None:
-        self.__elapsed_time = Clock()
-        loop_hook(self.__renderer, lambda _: callback(self.__elapsed_time))
+        loop_hook(self.__renderer, lambda _: self.__game_loop(callback))
         loop(self.__renderer)
 
     @property
     def window_dimension(self) -> tuple[int, int]:
         return self.__window_width, self.__window_height
+
+    def get_mouse_position(self) -> Vector2:
+        x, y = get_mouse_position(self.__renderer)
+        return Vector2(x=x, y=y)
+
+    def __game_loop(self, callback: Callable[[float], None]) -> None:
+        elapsed_time = time.time() - self.__current_time
+        self.__current_time = time.time()
+        callback(elapsed_time)
 
 engine: Engine = Engine()
 __all__ = ["engine", "Engine"]

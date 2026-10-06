@@ -11,8 +11,7 @@
 # ============================================================================
 
 import ctypes
-from typing import cast, Annotated, Callable
-from src.core.rgb_colors import RgbColors, create_color
+from typing import cast, Callable
 from os import path
 from logging import critical
 from platform import system
@@ -265,6 +264,7 @@ class mlx_t(ctypes.Structure):
         ("delta_time", c_double)
     ]
 
+# pixels = np.ndarray((w, h), buffer=data, strides=(size_line, 4))
 # Function Callbacks
 # ============================================================================
 
@@ -354,6 +354,9 @@ mlx.mlx_texture_to_image.restype = ctypes.POINTER(mlx_image_t)
 
 mlx.mlx_load_png.argtypes = [ctypes.c_char_p]
 mlx.mlx_load_png.restype = ctypes.POINTER(mlx_texture_t)
+# mouse position
+mlx.mlx_get_mouse_pos.argtypes = [ctypes.POINTER(mlx_t), ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_int)]
+mlx.mlx_get_mouse_pos.restype = None
 
 
 RendererType = mlx_t
@@ -409,7 +412,7 @@ class _Clock:
         return elapsed_time
 
 
-def load_png(path: str) -> TextureType:
+def load_texture(path: str) -> TextureType:
     return cast(
             TextureType,
             cast(
@@ -424,6 +427,14 @@ def texture_to_image(mlx_ptr: mlx_t, texture: mlx_texture_t) -> mlx_image_t:
 def resize_image(image: mlx_image_t, width: int, height: int) -> None:
     _ = mlx.mlx_resize_image(image, width, height)
 
+def load_png_image(*, renderer: RendererType, path: str, width: int, height: int) -> mlx_image_t:
+    texture: mlx_texture_t = load_texture(path)
+    image_texture: mlx_image_t = texture_to_image(renderer, texture)
+    resize_image(image_texture, width, height)
+    return image_texture
+
+
+
 def get_image_from_grid_texture(
         *,
         renderer: mlx_t,
@@ -435,7 +446,7 @@ def get_image_from_grid_texture(
         width: int,
         height: int
     ) -> mlx_image_t:
-    texture: TextureType = load_png(path)
+    texture: TextureType = load_texture(path)
     texture_width: int = cast(int, texture.contents.width)
     texture_height: int = cast(int, texture.contents.height)
     image_width: int = texture_width // total_cols
@@ -447,7 +458,6 @@ def get_image_from_grid_texture(
     for y in range(image_height):
         for x in range(image_width):
             index: int = (start_x + x + (y * texture_width + start_y)) * 4
-            print(type(texture_image.contents.pixels))
             t: int = texture_image.contents.pixels[index]
             r: int = texture_image.contents.pixels[index + 1]
             g: int = texture_image.contents.pixels[index + 2]
@@ -457,36 +467,53 @@ def get_image_from_grid_texture(
     resize_image(image, width, height)
     return image
 
+import numpy as np
+
+
 def get_frames_of_images(
-    mlx_ptr: RendererType,
-    texture: mlx_texture_t,
+    *,
+    renderer: RendererType,
+    path: str,
+    width: int,
+    height: int,
     frames: int = 1,
 ) -> list[mlx_image_t]:
-
     images: list[mlx_image_t] = []
-
-    texture_width: int = cast(int, cast(object, texture.contents.width))
-    texture_height: int = cast(int, cast(object, texture.contents.height))
+    texture: TextureType = load_texture(path)
+    texture_image: Image = texture_to_image(renderer, texture)
+    texture_width: int = cast(
+        int,
+        cast(
+            object,
+            texture_image.contents.width
+        )
+    )
+    texture_height: int = cast(int, cast(object, texture_image.contents.height))
     image_width: int = texture_width // frames
     for frame_idx in range(frames):
         start_x: int = frame_idx * image_width
         image: mlx_image_t = new_image(
-            mlx_ptr,
+            renderer,
             image_width,
             texture_height,
         )
         for y in range(texture_height):
             for x in range(image_width):
                 index = ((y * texture_width) + (start_x + x)) * 4
-                t: int = texture.contents.pixels[index + 0]
-                r: int = texture.contents.pixels[index + 1]
-                g: int = texture.contents.pixels[index + 2]
-                b: int = texture.contents.pixels[index + 3]
+                t: int = texture_image.contents.pixels[index]
+                r: int = texture_image.contents.pixels[index + 1]
+                g: int = texture_image.contents.pixels[index + 2]
+                b: int = texture_image.contents.pixels[index + 3]
                 put_pixel(image, x, y, (t << 24 | r << 16 | g << 8 | b))
+        resize_image(image, width, height)
         images.append(image)
     return images
 
 
-Clock = _Clock()
+def get_mouse_position(mlx_ptr: mlx_t) -> tuple[int, int]:
+    width: ctypes.c_int = ctypes.c_int()
+    height: ctypes.c_int = ctypes.c_int()
+    mlx.mlx_get_mouse_pos(mlx_ptr, ctypes.byref(width), ctypes.byref(height))
+    return width.value, height.value
 
-__all__ = ["Clock"]
+Clock = _Clock()

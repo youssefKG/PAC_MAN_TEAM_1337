@@ -1,5 +1,6 @@
-from src.mlx.libmlx import Image, RendererType, TextureType, load_png, get_frames_of_images, image_to_window, resize_image
+from src.mlx.libmlx import Image, RendererType, get_frames_of_images, image_to_window, resize_image
 from .base import BaseImage, ImageType
+from src.core.vector2 import Vector2
 
 class FrameImage(BaseImage):
     def __init__(
@@ -12,6 +13,7 @@ class FrameImage(BaseImage):
         image_type: ImageType,
         path: str,
         time_per_frame: float,
+        position: Vector2 | None,
         frames:  int = 1,
         z_index: int = 10,
     ) -> None:
@@ -20,19 +22,21 @@ class FrameImage(BaseImage):
             width=width,
             height=height,
             image_type=image_type,
+            position=position
         )
         self._path: str = path
-        self._frames: int = 1
-        self.__texture_image: TextureType = load_png(
-            "src/assests/orange_ghost.png"
+        self.__frames: int = frames
+        self.__frames_image: list[Image] = get_frames_of_images(
+            renderer=self._renderer,
+            path=path,
+            frames=self.__frames,
+            width=self._width,
+            height=self._height
         )
-        self.__frames_image: list[Image] = get_frames_of_images(self._renderer, self.__texture_image, frames=8)
         self.__time_passed: float = 0.
+        print(self.__frames)
         self.__current_frame_idx: int = 0
-        self.__is_backwords: bool = False
         self.__time_per_frame: float = time_per_frame
-        for image_frame in self.__frames_image:
-            resize_image(image_frame, self._width, self._height)
 
     def image_to_window(self) -> None:
         image_to_window(

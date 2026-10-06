@@ -9,6 +9,7 @@ class ImageType(Enum):
     FRAME_IMAGE = auto()
     PIXEL_IMAGE = auto()
     GRID_IMAGE = auto()
+    PNG_IMAGE = auto()
 
 
 class ImageInterface(Protocol):
@@ -53,7 +54,7 @@ class BaseImage:
     def move_to(self, /, *,  target: Vector2, dt: float, speed_per_frame_unit: int=1) -> None:
         distance_vector: Vector2 = self._position.sub(target)
         distance_vector_normalized: Vector2 = distance_vector.normalize()
-        velocity =  Vector2(
+        velocity = Vector2(
             x=distance_vector_normalized.x * speed_per_frame_unit,
             y=distance_vector_normalized.y * speed_per_frame_unit
         )
@@ -67,3 +68,15 @@ class BaseImage:
     @property
     def position(self) -> Vector2:
         return self._position
+
+    @property
+    def z_index(self) -> int:
+        return self.__z_index
+
+    @property
+    def width(self) -> int:
+        return self._width
+
+    @property
+    def height(self) -> int:
+        return self._height

@@ -7,6 +7,7 @@ import signal
 import logging
 import random
 from src.mlx.libmlx import *
+import numpy as np
 
 # ============================================================================
 
@@ -21,15 +22,16 @@ def ft_pixel(r, g, b, a):
 
 @mlx_loop_hook_func
 def ft_randomize(param):
-    for i in range(image.contents.width):
-        for y in range(image.contents.height):
-            color = ft_pixel(
-                random.randint(0, 255),  # R
-                random.randint(0, 255),  # G
-                random.randint(0, 255),  # B
-                random.randint(0, 255)   # A
-            )
-            mlx.mlx_put_pixel(image, i, y, color)
+    pass
+    # for i in range(image.contents.width):
+    #     for y in range(image.contents.height):
+    #         color = ft_pixel(
+    #             random.randint(0, 255),  # R
+    #             random.randint(0, 255),  # G
+    #             random.randint(0, 255),  # B
+    #             random.randint(0, 255)   # A
+    #         )
+    #         mlx.mlx_put_pixel(image, i, y, color)
 
 @mlx_loop_hook_func
 def ft_hook(param):
@@ -57,11 +59,20 @@ def main():
     
     # Create a new image
     image = mlx.mlx_new_image(mlx_ptr, 128, 128)
+    mlx.mlx_resize_image(image, 100, 100)
+
+    arr = ctypes.c_char * (128 * 128 * 4)
+    view = arr.from_address(ctypes.addressof(image.contents.pixels))
+    np_arr = np.ndarray(shape=(128, 128), buffer=view, dtype=np.uint32, strides=(128, 4))
+    for y in range(10):
+        for x in range(10):
+            np_arr[x, y] = 0xFFFF0000
+            print(np_arr[x, y])
+
     if not image:
         mlx.mlx_close_window(mlx_ptr)
         logging.critical(f"Error: {mlx.mlx_strerror(mlx.mlx_get_errno()).decode()}")
         exit(1)
-    mlx.mlx_resize_image(image, 10, 10)
     
     # Display the image in the window
     if mlx.mlx_image_to_window(mlx_ptr, image, 0, 0) == -1:

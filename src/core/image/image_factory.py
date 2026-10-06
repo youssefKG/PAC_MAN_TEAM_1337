@@ -9,6 +9,7 @@ from .pixel_image import PixelImage
 from .grid_image import GridImage
 from .frame_image import FrameImage
 from .base import ImageType, ImageInterface
+from .png_image import PngImage
 
 _DEFAULT_IMAGE_WIDTH = 100
 
@@ -43,6 +44,7 @@ class ImageFactory:
                             path=path,
                             time_per_frame=time_per_frame,
                             z_index=z_index,
+                            position=position
                     )
             case ImageType.PIXEL_IMAGE:
                 return PixelImage(
@@ -65,4 +67,15 @@ class ImageFactory:
                             total_cols=total_cols,
                             path=path,
                             position=position
+                    )
+            case ImageType.PNG_IMAGE:
+                return PngImage(
+                            renderer=self.__renderer,
+                            width=width,
+                            height=height,
+                            image_type=image_type,
+                            z_index=z_index,
+                            path=path,
+                            position=position,
+                            time_per_frame=time_per_frame
                     )
