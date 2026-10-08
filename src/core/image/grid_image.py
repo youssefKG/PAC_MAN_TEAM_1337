@@ -9,8 +9,8 @@ class GridImage(BaseImage):
         /,
         *,
         renderer: RendererType,
-        width: int,
-        height: int,
+        width: int | float,
+        height: int | float,
         image_type: ImageType,
         position: Vector2 | None=None,
         total_cols: int,
@@ -18,7 +18,8 @@ class GridImage(BaseImage):
         col: int,
         row: int,
         path: str,
-        z_index: int = 1
+        z_index: int = 1,
+        parent: BaseImage | None,
     ) -> None:
         super().__init__(
             renderer=renderer,
@@ -26,7 +27,8 @@ class GridImage(BaseImage):
             height=height,
             image_type=image_type,
             position=position,
-            z_index=z_index
+            z_index=z_index,
+            parent=parent
         )
         self.__total_rows: int = total_rows
         self.__total_cols: int = total_cols

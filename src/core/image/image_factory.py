@@ -8,7 +8,7 @@ from src.core.vector2 import Vector2
 from .pixel_image import PixelImage
 from .grid_image import GridImage
 from .frame_image import FrameImage
-from .base import ImageType, ImageInterface
+from .base import ImageType, ImageInterface, BaseImage
 from .png_image import PngImage
 
 _DEFAULT_IMAGE_WIDTH = 100
@@ -21,8 +21,8 @@ class ImageFactory:
 
     def __call__(self,
             image_type: ImageType=ImageType.PIXEL_IMAGE,
-            width: int=_DEFAULT_IMAGE_WIDTH,
-            height: int = _DEFAULT_IMAGE_HEIGHT,
+            width: int | float=_DEFAULT_IMAGE_WIDTH,
+            height: int | float = _DEFAULT_IMAGE_HEIGHT,
             frames: int=1,
             path: str = "",
             time_per_frame: float = 0.,
@@ -31,8 +31,9 @@ class ImageFactory:
             col: int = 1,
             total_cols: int = 1,
             total_rows: int = 1,
+            parent: BaseImage | None = None,
             position: Vector2 | None = None,
-       ) -> ImageInterface:
+       ) -> BaseImage:
         match image_type: 
             case ImageType.FRAME_IMAGE:
                 return FrameImage(
@@ -44,7 +45,8 @@ class ImageFactory:
                             path=path,
                             time_per_frame=time_per_frame,
                             z_index=z_index,
-                            position=position
+                            position=position,
+                            parent=parent
                     )
             case ImageType.PIXEL_IMAGE:
                 return PixelImage(
@@ -52,7 +54,9 @@ class ImageFactory:
                             width=width,
                             height=height,
                             image_type=image_type,
+                            position=position,
                             z_index=z_index,
+                            parent=parent
                     )
             case ImageType.GRID_IMAGE:
                 return GridImage(
@@ -66,7 +70,8 @@ class ImageFactory:
                             total_rows=total_rows,
                             total_cols=total_cols,
                             path=path,
-                            position=position
+                            position=position,
+                            parent=parent
                     )
             case ImageType.PNG_IMAGE:
                 return PngImage(
@@ -77,5 +82,6 @@ class ImageFactory:
                             z_index=z_index,
                             path=path,
                             position=position,
-                            time_per_frame=time_per_frame
+                            time_per_frame=time_per_frame,
+                            parent=parent
                     )

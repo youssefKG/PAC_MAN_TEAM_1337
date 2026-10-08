@@ -44,7 +44,6 @@ class Vector2:
     def __eq__(self, vector: object) -> bool:
         return isinstance(vector, Vector2) and vector.x == self.__x and vector.y == self.__y
 
-
     def magnitude(self, vector: 'Vector2 | None'=None) -> float:
         if vector is None:
             return math.sqrt(self.__x ** 2 + self.__y ** 2)
@@ -60,5 +59,9 @@ class Vector2:
     @override
     def __str__(self) -> str:
         return f"x={self.__x}, y={self.__y}"
+
+    def __add__(self, vector: 'Vector2') -> 'Vector2':
+        return Vector2(x=vector.x + self.__x, y=vector.y + self.__y)
+
 
 __all__ = ["Vector2"]

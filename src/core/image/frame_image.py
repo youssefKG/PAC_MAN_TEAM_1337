@@ -1,4 +1,5 @@
-from src.mlx.libmlx import Image, RendererType, get_frames_of_images, image_to_window, resize_image
+from typing import override
+from src.mlx.libmlx import Image, RendererType, get_frames_of_images, image_to_window
 from .base import BaseImage, ImageType
 from src.core.vector2 import Vector2
 
@@ -8,21 +9,23 @@ class FrameImage(BaseImage):
         /, 
         *,
         renderer: RendererType,
-        width: int,
-        height: int,
+        width: int | float,
+        height: int | float,
         image_type: ImageType,
         path: str,
         time_per_frame: float,
         position: Vector2 | None,
         frames:  int = 1,
         z_index: int = 10,
+        parent: 'BaseImage | None'
     ) -> None:
         super().__init__(
             renderer=renderer,
             width=width,
             height=height,
             image_type=image_type,
-            position=position
+            position=position,
+            parent=parent
         )
         self._path: str = path
         self.__frames: int = frames
@@ -38,12 +41,6 @@ class FrameImage(BaseImage):
         self.__current_frame_idx: int = 0
         self.__time_per_frame: float = time_per_frame
 
-    def image_to_window(self) -> None:
-        image_to_window(
-            self._renderer,
-            self.__frames_image[self.__current_frame_idx], int(self._position.x),
-            int(self._position.y)
-        )
 
     def to_window(self) -> None:
         for frame_image in self.__frames_image:

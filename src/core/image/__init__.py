@@ -1,4 +1,4 @@
-from .base import ImageInterface, ImageType 
+from .base import ImageInterface, ImageType, BaseImage
 from .pixel_image import PixelImage
 from .frame_image import FrameImage
 from .grid_image import GridImage
@@ -13,5 +13,6 @@ __all__ = [
     "ImageInterface",
     "ImageType",
     "GridImage",
-    "PngImage"
+    "PngImage",
+    "BaseImage",
 ]

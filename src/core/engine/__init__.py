@@ -1,9 +1,9 @@
 import sys
 from typing import Callable, cast
+from src.core.image import BaseImage
 from src.core.vector2 import Vector2
 from typing_extensions import Self
 from src.mlx.libmlx import  (
-    Clock,
     set_window_size,
     Renderer,
     RendererType,
@@ -12,7 +12,7 @@ from src.mlx.libmlx import  (
     get_monitor_size,
     get_mouse_position,
 )
-from src.core.image import ImageInterface, ImageFactory, ImageType
+from src.core.image import ImageFactory, ImageType
 from src.utils import Logger
 import time
  
@@ -71,8 +71,8 @@ class Engine:
             self,
             /,
             *,
-            width: int,
-            height: int,
+            width: int | float,
+            height: int | float,
             image_type: ImageType=ImageType.PIXEL_IMAGE,
             frames: int = 1,
             path: str = "",
@@ -81,8 +81,9 @@ class Engine:
             row: int = 1,
             total_cols: int = 1,
             total_rows: int = 1,
+            parent: BaseImage | None = None,
             position: Vector2 | None=None,
-        ) -> ImageInterface:
+        ) -> BaseImage:
         return self.__image_factory(
             width=width,
             height=height,
@@ -94,7 +95,8 @@ class Engine:
             total_cols=total_cols,
             col=col,
             row=row,
-            position=position
+            position=position,
+            parent=parent
         )
 
     def set_window_to_monitor_size(self) -> None:
@@ -107,7 +109,7 @@ class Engine:
 
     @property
     def window_dimension(self) -> tuple[int, int]:
-        return self.__window_width, self.__window_height
+        return get_monitor_size()
 
     def get_mouse_position(self) -> Vector2:
         x, y = get_mouse_position(self.__renderer)

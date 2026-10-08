@@ -35,18 +35,26 @@ class BaseImage:
             /,
             *,
             renderer: RendererType,
-            width: int,
-            height: int,
+            width: int | float,
+            height: int | float,
             image_type: ImageType,
             position: Vector2 | None=None,
-            z_index: int = 1
+            top: int = 0,
+            right: int = 0,
+            left: int = 0,
+            bottom: int = 0,
+            z_index: int = 1,
+            parent: 'BaseImage | None' = None
         ) -> None:
         self._renderer: RendererType = renderer
-        self._width: int = width
-        self._height: int = height
-        self._position: Vector2 = position if position is not None else Vector2(x=.0, y=0.0)
+        self._width: int 
+        self._height: int
+        self.__set_dimensions(width=width, height=height, parent=parent)
         self.image_type: ImageType = image_type
         self.__z_index: int = z_index
+        self._position: Vector2 = position if position is not None else Vector2(x=.0, y=0.0)
+        self.parent: 'BaseImage | None' = parent
+        self.set_parent()
 
     def set_position(self, position: Vector2) -> None:
         self._position.add(position)
@@ -80,3 +88,35 @@ class BaseImage:
     @property
     def height(self) -> int:
         return self._height
+
+    def set_parent(self) -> None:
+        current_image: BaseImage | None = self
+        while current_image:
+            self._position.add(current_image.position)
+            current_image = current_image.parent
+
+
+    def __set_dimensions(
+        self,
+        *,
+        width: float | int ,
+        height: float | int,
+        parent: 'BaseImage | None'
+     ) -> None:
+        parent_width: int = 0 if parent is None else parent.width
+        parent_height: int = 0 if parent is None else parent.height
+        self._width = self.__set_dimension(width, parent_width)
+        self._height = self.__set_dimension(height, parent_height)
+
+    def __set_dimension(
+            self,
+            dim: float | int | None,
+            parent_dim: int,
+
+    ) -> int:
+        if dim is None:
+            return 0
+        elif isinstance(dim, int):
+            return dim
+        else:
+            return int(dim * parent_dim)

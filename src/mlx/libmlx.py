@@ -15,6 +15,7 @@ from typing import cast, Callable
 from os import path
 from logging import critical
 from platform import system
+import numpy as np
 
 # ============================================================================
 
@@ -433,6 +434,19 @@ def load_png_image(*, renderer: RendererType, path: str, width: int, height: int
     resize_image(image_texture, width, height)
     return image_texture
 
+def get_image_view(image: mlx_image_t, width: int, height: int) -> memoryview:
+    data_arr = ctypes.c_char * (width * height * 4)
+    data_view = memoryview(
+        data_arr.from_address(
+            ctypes.addressof(image.contents.pixels.contents)
+        )
+    ).cast('B')
+    return  data_view
+
+def set_background_color(image: mlx_image_t, color: int, width: int, height: int) -> None:
+    data_view = get_image_view(image, width, height)
+    pixels = np.ndarray(shape=(width, height), buffer=data_view, dtype=np.uint32)
+    pixels[:] = color
 
 
 def get_image_from_grid_texture(
@@ -453,22 +467,24 @@ def get_image_from_grid_texture(
     image_height: int = texture_height // total_rows
     image: mlx_image_t = new_image(renderer, image_width, image_height)
     texture_image: mlx_image_t = texture_to_image(renderer, texture)
-    start_x: int = col * image_width
-    start_y: int = row * texture_width * image_width
-    for y in range(image_height):
-        for x in range(image_width):
-            index: int = (start_x + x + (y * texture_width + start_y)) * 4
-            t: int = texture_image.contents.pixels[index]
-            r: int = texture_image.contents.pixels[index + 1]
-            g: int = texture_image.contents.pixels[index + 2]
-            b: int = texture_image.contents.pixels[index + 3]
-            # color: int = create_color(r, g, b)
-            put_pixel(image, x, y, (t << 24 | r << 16 | g << 8 | b))
+    start_x: int = col * image_width 
+    start_y: int = row  * image_height
+    texture_image_pixels = np.ndarray(
+            shape=(texture_height, texture_width),
+            buffer=get_image_view(texture_image, texture_width, texture_height),
+            dtype=np.uint32,
+        )
+    new_image_pixels = np.ndarray(
+            shape=(image_width, image_height),
+            buffer=get_image_view(image, image_width, image_height),
+            dtype=np.uint32,
+    )
+    new_image_pixels[:] = texture_image_pixels[
+        start_y: start_y + image_height,
+        start_x: start_x + image_width
+    ]
     resize_image(image, width, height)
     return image
-
-import numpy as np
-
 
 def get_frames_of_images(
     *,
@@ -488,23 +504,26 @@ def get_frames_of_images(
             texture_image.contents.width
         )
     )
-    texture_height: int = cast(int, cast(object, texture_image.contents.height))
+    image_height: int = cast(int, cast(object, texture_image.contents.height))
     image_width: int = texture_width // frames
+    texture_image_pixels = np.ndarray(
+        shape=(image_height, texture_width), 
+        buffer=get_image_view(texture_image, texture_width, image_height),
+        dtype=np.uint32
+    )
     for frame_idx in range(frames):
         start_x: int = frame_idx * image_width
         image: mlx_image_t = new_image(
             renderer,
             image_width,
-            texture_height,
+            image_height,
         )
-        for y in range(texture_height):
-            for x in range(image_width):
-                index = ((y * texture_width) + (start_x + x)) * 4
-                t: int = texture_image.contents.pixels[index]
-                r: int = texture_image.contents.pixels[index + 1]
-                g: int = texture_image.contents.pixels[index + 2]
-                b: int = texture_image.contents.pixels[index + 3]
-                put_pixel(image, x, y, (t << 24 | r << 16 | g << 8 | b))
+        image_pixels = np.ndarray(
+            shape=(image_width, image_height),
+            buffer=get_image_view(image, image_height, image_width),
+            dtype=np.uint32
+        )
+        image_pixels[:] = texture_image_pixels[0:image_height, start_x: start_x + image_width]
         resize_image(image, width, height)
         images.append(image)
     return images

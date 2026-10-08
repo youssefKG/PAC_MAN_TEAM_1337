@@ -3,8 +3,10 @@ from src.mlx.libmlx import (
     new_image,
     image_to_window,
     put_pixel,
-    Image
+    Image,
+    set_background_color
 )
+from src.core.vector2 import Vector2
 from .base import BaseImage, ImageType
 from src.core.rgb_colors import RgbColors
 
@@ -14,10 +16,12 @@ class PixelImage(BaseImage):
             /, 
             *,
             renderer: RendererType,
-            width: int,
-            height: int,
+            width: int | float,
+            height: int | float,
             image_type: ImageType,
+            position: Vector2 | None,
             z_index: int,
+            parent: BaseImage | None
         ) -> None:
         super().__init__(
             renderer=renderer,
@@ -25,8 +29,10 @@ class PixelImage(BaseImage):
             height=height,
             image_type=image_type,
             z_index=z_index,
+            position=position,
+            parent=parent
         )
-        self.__image: Image = new_image(self._renderer, width, height)
+        self.__image: Image = new_image(self._renderer, self._width, self._height)
 
 
     def to_window(self) -> None:
@@ -41,6 +47,4 @@ class PixelImage(BaseImage):
         self.__image.contents.instances[0].y = int(self._position.y)
 
     def set_background_color(self, color: RgbColors) -> None:
-        for y in range(self._height):
-            for x in range(self._width):
-                put_pixel(self.__image, x, y, color.value)
+        set_background_color(self.__image, color.value, self._width, self._height)

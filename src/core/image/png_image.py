@@ -8,13 +8,14 @@ class PngImage(BaseImage):
              /,
              *,
             renderer: RendererType,
-            width: int,
-            height: int,
+            width: int | float,
+            height: int | float,
             image_type: ImageType,
             path: str,
             time_per_frame: float,
             position: Vector2 | None=None,
             z_index: int = 1,
+            parent: BaseImage | None
     ) -> None:
         super().__init__(
                 renderer=renderer,
@@ -22,7 +23,8 @@ class PngImage(BaseImage):
                 height=height,
                 image_type=image_type,
                 position=position,
-                z_index=z_index
+                z_index=z_index,
+                parent=parent
         )
         self.__path: str = path
         self.__image: Image = load_png_image(
