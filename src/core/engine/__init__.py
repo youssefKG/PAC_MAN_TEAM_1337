@@ -43,7 +43,8 @@ class Engine:
                 "ENGINE"
             )
             sys.exit(1)
-        if not monitor_size and (window_width is None or window_height is not None):
+        if not monitor_size and (window_width is None or window_height is None):
+            print("monitor _size:" , monitor_size)
             Logger.error(
                 "indow_width and window_height must be provided "
                 + "when monitor_size is not specified.",
@@ -109,7 +110,7 @@ class Engine:
 
     @property
     def window_dimension(self) -> tuple[int, int]:
-        return get_monitor_size()
+        return self.__window_width, self.__window_height
 
     def get_mouse_position(self) -> Vector2:
         x, y = get_mouse_position(self.__renderer)

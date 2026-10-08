@@ -8,7 +8,12 @@ class Pacman:
     def __init__(
         self,
      ) -> None:
-        self.__engine: Engine = engine(monitor_size=True, title="PACMAN")
+        self.__engine: Engine = engine(
+           title="PACMAN",
+           monitor_size=True,
+           # window_width=800,
+           # window_height=300
+        )
         self.__menu_scene: MenuScene = MenuScene(engine)
         self.__menu_scene.renderer()
 

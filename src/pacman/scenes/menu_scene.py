@@ -5,7 +5,7 @@ from src.core import Scene, Engine
 import random
 
 
-TOTAL_SPIRITS = 40
+TOTAL_SPIRITS = 80
 
 class MenuScene(Scene):
     def __init__(self, engine: Engine) -> None:
@@ -26,66 +26,95 @@ class MenuScene(Scene):
         self.__layout_image: GridImage = cast(
             GridImage,
             self._engine.new_image(
-                width= 900,
-                height=400,
+                width= .65,
+                height=.85,
                 image_type=ImageType.GRID_IMAGE,
                 row=3,
                 col=4,
                 total_cols=5,
                 total_rows=4,
-                path="src/assests/menu/orange_border.png",
-                position=(0.1, 0.1),
+                path="src/assests/menu/nourdine.png",
+                position=(.5, 0.5),
                 parent=self.__transparent_background
             )
         )
+        self.__layout_image.to_center()
         self.__box_image2: PixelImage = cast(
                 PixelImage,
                  self._engine.new_image(
-                image_type=ImageType.PIXEL_IMAGE,
-                width=0.3,
-                height=300,
-                time_per_frame=10,
-                position=(0.5, 0.5),
-                parent=self.__layout_image)
+                    image_type=ImageType.PIXEL_IMAGE,
+                    width=.7,
+                    height=.7,
+                    time_per_frame=10,
+                    position=(.5, .5),
+                    parent=self.__layout_image
+                )
         )
-        self.__box_image2.set_background_color(RgbColors.RED)
+        self.__box_image2.set_background_color(RgbColors.WHITE)
+        self.__box_image2.to_center()
         self.__boucing_spirits: list[PngImage] = self.__generate_bouncing_spirits(TOTAL_SPIRITS)
         self.__velocity: list[Vector2] = self.__generate_random_velocities(TOTAL_SPIRITS)
         self.__orange_ghost_image: FrameImage = cast(
             FrameImage,
             self._engine.new_image(
-                width=100,
-                height=100 ,
+                width=0.03,
+                height=0.05,
                 frames=8,
                 image_type=ImageType.FRAME_IMAGE,
                 path="src/assests/orange_ghost.png",
-                time_per_frame=0.5,
+                time_per_frame=0.17,
+                parent=self.__box_image2,
+                position=(0, 0)
+            )
+        )
+        self.__pacman: FrameImage = cast(
+            FrameImage,
+            self._engine.new_image(
+                width=0.03,
+                height=0.05,
+                frames=8,
+                image_type=ImageType.FRAME_IMAGE,
+                path="src/assests/PacMan.png",
+                time_per_frame=0.17,
+                parent=self.__box_image2,
+                position=(0, 0)
             )
         )
 
     @override
     def update(self, elapsed_time: float) -> None:
         self.__bouncings_images_animation(elapsed_time)
-        self.__orange_ghost_image.move_to(
-            target=Vector2(x=1000., y=300.),
-            dt=elapsed_time,
-            speed_per_frame_unit=35
-        )
-        self.__orange_ghost_image.update(elapsed_time)
-
+        orange_ghost_target = Vector2(x=self.__box_image2.position.x, y=self.__box_image2.position.y)
+        orange_ghost_target.add(Vector2(x=self.__box_image2.width - self.__orange_ghost_image.width, y=0.))
+        if self.__orange_ghost_image.position.x != orange_ghost_target.x:
+            self.__orange_ghost_image.move_to(
+                target=orange_ghost_target,
+                dt=elapsed_time,
+                speed_per_frame_unit=155
+            )
+            self.__orange_ghost_image.update(elapsed_time)
+        pacman_target = Vector2(x=self.__box_image2.position.x, y=self.__box_image2.position.y)
+        pacman_target.add(Vector2(y=self.__box_image2.height - self.__pacman.height, x=0.))
+        if self.__pacman.position.y != pacman_target.y:
+            self.__pacman.move_to(
+                target=pacman_target,
+                dt=elapsed_time,
+                speed_per_frame_unit=155
+            )
+            self.__pacman.update(elapsed_time)
     def __bouncings_images_animation(self, elapsed_time: float) -> None:
         for idx, spirit in enumerate(self.__boucing_spirits):
             if (spirit.position == self.__velocity[idx]):
                 self.__velocity[idx].x = random.randrange(-self.__window_width, self.__window_width)
-                spirit.move_to(
-                    target=self.__velocity[idx],
-                    dt=elapsed_time,
-                    speed_per_frame_unit=400
-                )
             if spirit.position.y + spirit.height >= self.__window_height or spirit.position.y <= 0:
                 self.__velocity[idx].y = -self.__velocity[idx].y
             if spirit.position.x + spirit.width >= self.__window_width or spirit.position.x <= 0:
                 self.__velocity[idx].x = -self.__velocity[idx].x
+            spirit.move_to(
+                target=self.__velocity[idx],
+                dt=elapsed_time,
+                speed_per_frame_unit=400
+            )
             spirit.update(elapsed_time)
 
     def __generate_bouncing_spirits(self, total: int) -> list[PngImage]:
@@ -123,8 +152,10 @@ class MenuScene(Scene):
 
 
     def renderer(self) -> None:
+        self.__transparent_background.to_window()
         for spirit in self.__boucing_spirits:
              spirit.to_window()
         self.__layout_image.to_window()
         self.__box_image2.to_window()
         self.__orange_ghost_image.to_window()
+        self.__pacman.to_window()

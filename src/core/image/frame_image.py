@@ -39,7 +39,6 @@ class FrameImage(BaseImage):
         self.__time_passed: float = 0.
         self.__current_frame_idx: int = 0
         self.__time_per_frame: float = time_per_frame
-        print("ghost_position", self.position)
 
 
     def to_window(self) -> None:

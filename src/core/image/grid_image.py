@@ -44,7 +44,6 @@ class GridImage(BaseImage):
             width=self._width,
             height=self._height
         )
-        print("form grid image", self._position)
 
 
     def to_window(self) -> None:

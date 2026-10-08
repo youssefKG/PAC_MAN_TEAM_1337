@@ -1,16 +1,27 @@
+import sys
+from typing import Protocol
+from enum import Enum, auto
 from src.mlx.libmlx import (
     RendererType,
+    get_monitor_size
 )
 from src.core.vector2 import Vector2
-from enum import Enum, auto
-from typing import Protocol
-import sys
+from src.utils import Logger
 
 class ImageType(Enum):
     FRAME_IMAGE = auto()
     PIXEL_IMAGE = auto()
     GRID_IMAGE = auto()
     PNG_IMAGE = auto()
+
+class Position(Enum):
+    CENTER = auto()
+    LEFT = auto()
+    RIGHT = auto()
+    TOP = auto()
+    BOTTOM = auto()
+
+
 
 
 class ImageInterface(Protocol):
@@ -91,28 +102,26 @@ class BaseImage:
         return self._height
 
     def set_parent(self, coordinates: tuple[int | float, int | float]) -> None:
-        current_image: BaseImage | None = self
         x, y = coordinates
         position: Vector2 = Vector2(x=x, y=y)
+        parent: BaseImage | None = self.parent
         if isinstance(x, int) and isinstance(y, int):
-            while current_image:
-                position.add(current_image.position)
-                current_image = current_image.parent
+            if parent is not None:
+                position.add(parent.position)
             self._position = position
         elif isinstance(x, float) and isinstance(y, float):
-            parent: "BaseImage | None"  = self.parent
-            print("from float")
             if parent is None:
-                window_width, window_height = (0, 0)
+                window_width, window_height = get_monitor_size()
+                self._position = Vector2(x=window_width * x, y=window_height  * y)
             else:
-                print(parent.width, parent.height, x, y)
                 self._position = Vector2(x=parent.width * x, y=parent.height * y)
                 self._position.add(parent.position)
-                print(self.position.x, self.position.y)
         else:
-            print("invalid value: ", x, y)
+            Logger.error(f"invalid coordinates: {x}, {y}", "Position Setter in base Image")
             sys.exit(1)
 
+    def to_center(self) -> None:
+        self._position.add(Vector2(x=-(0.5 * self._width), y=-(0.5 * self._height)))
 
     def __set_dimensions(
         self,

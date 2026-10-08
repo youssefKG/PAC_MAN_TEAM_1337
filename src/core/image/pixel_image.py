@@ -33,7 +33,6 @@ class PixelImage(BaseImage):
             parent=parent
         )
         self.__image: Image = new_image(self._renderer, self._width, self._height)
-        print("background", self._position)
 
     def to_window(self) -> None:
         image_to_window(
