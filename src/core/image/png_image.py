@@ -13,7 +13,7 @@ class PngImage(BaseImage):
             image_type: ImageType,
             path: str,
             time_per_frame: float,
-            position: Vector2 | None=None,
+            position: tuple[int | float, int | float] | None=None,
             z_index: int = 1,
             parent: BaseImage | None
     ) -> None:

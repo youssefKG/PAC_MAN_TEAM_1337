@@ -12,7 +12,7 @@ class GridImage(BaseImage):
         width: int | float,
         height: int | float,
         image_type: ImageType,
-        position: Vector2 | None=None,
+        position: tuple[int | float, int | float] | None=None,
         total_cols: int,
         total_rows: int,
         col: int,
@@ -44,6 +44,7 @@ class GridImage(BaseImage):
             width=self._width,
             height=self._height
         )
+        print("form grid image", self._position)
 
 
     def to_window(self) -> None:

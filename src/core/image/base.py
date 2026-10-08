@@ -4,6 +4,7 @@ from src.mlx.libmlx import (
 from src.core.vector2 import Vector2
 from enum import Enum, auto
 from typing import Protocol
+import sys
 
 class ImageType(Enum):
     FRAME_IMAGE = auto()
@@ -38,7 +39,7 @@ class BaseImage:
             width: int | float,
             height: int | float,
             image_type: ImageType,
-            position: Vector2 | None=None,
+            position: tuple[int | float, int | float] | None=None,
             top: int = 0,
             right: int = 0,
             left: int = 0,
@@ -52,9 +53,9 @@ class BaseImage:
         self.__set_dimensions(width=width, height=height, parent=parent)
         self.image_type: ImageType = image_type
         self.__z_index: int = z_index
-        self._position: Vector2 = position if position is not None else Vector2(x=.0, y=0.0)
+        self._position: Vector2 = Vector2(x=0.0, y=0.0)
         self.parent: 'BaseImage | None' = parent
-        self.set_parent()
+        self.set_parent(position if position is not None else (0, 0))
 
     def set_position(self, position: Vector2) -> None:
         self._position.add(position)
@@ -89,11 +90,28 @@ class BaseImage:
     def height(self) -> int:
         return self._height
 
-    def set_parent(self) -> None:
+    def set_parent(self, coordinates: tuple[int | float, int | float]) -> None:
         current_image: BaseImage | None = self
-        while current_image:
-            self._position.add(current_image.position)
-            current_image = current_image.parent
+        x, y = coordinates
+        position: Vector2 = Vector2(x=x, y=y)
+        if isinstance(x, int) and isinstance(y, int):
+            while current_image:
+                position.add(current_image.position)
+                current_image = current_image.parent
+            self._position = position
+        elif isinstance(x, float) and isinstance(y, float):
+            parent: "BaseImage | None"  = self.parent
+            print("from float")
+            if parent is None:
+                window_width, window_height = (0, 0)
+            else:
+                print(parent.width, parent.height, x, y)
+                self._position = Vector2(x=parent.width * x, y=parent.height * y)
+                self._position.add(parent.position)
+                print(self.position.x, self.position.y)
+        else:
+            print("invalid value: ", x, y)
+            sys.exit(1)
 
 
     def __set_dimensions(
@@ -110,13 +128,11 @@ class BaseImage:
 
     def __set_dimension(
             self,
-            dim: float | int | None,
+            dim: float | int,
             parent_dim: int,
 
     ) -> int:
-        if dim is None:
-            return 0
-        elif isinstance(dim, int):
+        if isinstance(dim, int):
             return dim
         else:
             return int(dim * parent_dim)

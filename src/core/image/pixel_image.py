@@ -19,7 +19,7 @@ class PixelImage(BaseImage):
             width: int | float,
             height: int | float,
             image_type: ImageType,
-            position: Vector2 | None,
+            position: tuple[int | float, int | float] | None,
             z_index: int,
             parent: BaseImage | None
         ) -> None:
@@ -33,7 +33,7 @@ class PixelImage(BaseImage):
             parent=parent
         )
         self.__image: Image = new_image(self._renderer, self._width, self._height)
-
+        print("background", self._position)
 
     def to_window(self) -> None:
         image_to_window(

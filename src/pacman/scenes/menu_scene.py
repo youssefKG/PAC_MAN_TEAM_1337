@@ -5,6 +5,8 @@ from src.core import Scene, Engine
 import random
 
 
+TOTAL_SPIRITS = 40
+
 class MenuScene(Scene):
     def __init__(self, engine: Engine) -> None:
         super().__init__(engine)
@@ -17,39 +19,38 @@ class MenuScene(Scene):
                     image_type=ImageType.PIXEL_IMAGE,
                     width=self.__window_width,
                     height=self.__window_height,
-                    time_per_frame=10,
-                    position=Vector2(x=0., y=0.),
+                    position=(0, 0),
               )
         )
         self.__transparent_background.set_background_color(RgbColors.BLACK)
-        self.__transparent_background.to_window()
         self.__layout_image: GridImage = cast(
             GridImage,
             self._engine.new_image(
-                width= 1900,
-                height=1400,
+                width= 900,
+                height=400,
                 image_type=ImageType.GRID_IMAGE,
                 row=3,
                 col=4,
                 total_cols=5,
                 total_rows=4,
                 path="src/assests/menu/orange_border.png",
-                position=Vector2(x=40., y=40.)
+                position=(0.1, 0.1),
+                parent=self.__transparent_background
             )
         )
         self.__box_image2: PixelImage = cast(
                 PixelImage,
                  self._engine.new_image(
                 image_type=ImageType.PIXEL_IMAGE,
-                width=300,
+                width=0.3,
                 height=300,
                 time_per_frame=10,
-                position=Vector2(x=0., y=0.),
+                position=(0.5, 0.5),
                 parent=self.__layout_image)
         )
         self.__box_image2.set_background_color(RgbColors.RED)
-        self.__boucing_spirits: list[PngImage] = self.__generate_bouncing_spirits(500)
-        self.__velocity: list[Vector2] = self.__generate_random_velocities(500)
+        self.__boucing_spirits: list[PngImage] = self.__generate_bouncing_spirits(TOTAL_SPIRITS)
+        self.__velocity: list[Vector2] = self.__generate_random_velocities(TOTAL_SPIRITS)
         self.__orange_ghost_image: FrameImage = cast(
             FrameImage,
             self._engine.new_image(
@@ -76,15 +77,15 @@ class MenuScene(Scene):
         for idx, spirit in enumerate(self.__boucing_spirits):
             if (spirit.position == self.__velocity[idx]):
                 self.__velocity[idx].x = random.randrange(-self.__window_width, self.__window_width)
+                spirit.move_to(
+                    target=self.__velocity[idx],
+                    dt=elapsed_time,
+                    speed_per_frame_unit=400
+                )
             if spirit.position.y + spirit.height >= self.__window_height or spirit.position.y <= 0:
                 self.__velocity[idx].y = -self.__velocity[idx].y
             if spirit.position.x + spirit.width >= self.__window_width or spirit.position.x <= 0:
                 self.__velocity[idx].x = -self.__velocity[idx].x
-            spirit.move_to(
-                target=self.__velocity[idx],
-                dt=elapsed_time,
-                speed_per_frame_unit=100
-            )
             spirit.update(elapsed_time)
 
     def __generate_bouncing_spirits(self, total: int) -> list[PngImage]:
@@ -104,9 +105,9 @@ class MenuScene(Scene):
                                 ]
                         ),
                         time_per_frame=10,
-                        position=Vector2(
-                            x=random.randrange(0, self.__window_width),
-                            y=random.randrange(0, self.__window_height)
+                        position=(
+                            random.randrange(0, self.__window_width),
+                            random.randrange(0, self.__window_height)
                         )
                     )
                )

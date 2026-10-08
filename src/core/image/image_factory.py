@@ -1,14 +1,13 @@
 from src.mlx.libmlx import (
     RendererType,
 )
-from src.core.vector2 import Vector2
 
 
 # Images
 from .pixel_image import PixelImage
 from .grid_image import GridImage
 from .frame_image import FrameImage
-from .base import ImageType, ImageInterface, BaseImage
+from .base import ImageType, BaseImage
 from .png_image import PngImage
 
 _DEFAULT_IMAGE_WIDTH = 100
@@ -32,7 +31,7 @@ class ImageFactory:
             total_cols: int = 1,
             total_rows: int = 1,
             parent: BaseImage | None = None,
-            position: Vector2 | None = None,
+            position: tuple[int | float, int | float] | None = None,
        ) -> BaseImage:
         match image_type: 
             case ImageType.FRAME_IMAGE:

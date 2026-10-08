@@ -82,7 +82,7 @@ class Engine:
             total_cols: int = 1,
             total_rows: int = 1,
             parent: BaseImage | None = None,
-            position: Vector2 | None=None,
+            position: tuple[int | float, int | float] | None=None,
         ) -> BaseImage:
         return self.__image_factory(
             width=width,
