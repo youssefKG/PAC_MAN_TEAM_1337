@@ -7,6 +7,7 @@ from src.mlx.libmlx import (
 )
 from src.core.vector2 import Vector2
 from src.utils import Logger
+from src.core.text import Text
 
 class ImageType(Enum):
     FRAME_IMAGE = auto()
@@ -66,7 +67,8 @@ class BaseImage:
         self.__z_index: int = z_index
         self._position: Vector2 = Vector2(x=0.0, y=0.0)
         self.parent: 'BaseImage | None' = parent
-        self.set_parent(position if position is not None else (0, 0))
+        self._texts: list[Text] = list()
+        self.__init_position(position if position is not None else (0, 0))
 
     def set_position(self, position: Vector2) -> None:
         self._position.add(position)
@@ -101,7 +103,7 @@ class BaseImage:
     def height(self) -> int:
         return self._height
 
-    def set_parent(self, coordinates: tuple[int | float, int | float]) -> None:
+    def __init_position(self, coordinates: tuple[int | float, int | float]) -> None:
         x, y = coordinates
         position: Vector2 = Vector2(x=x, y=y)
         parent: BaseImage | None = self.parent
@@ -123,13 +125,35 @@ class BaseImage:
     def to_center(self) -> None:
         self._position.add(Vector2(x=-(0.5 * self._width), y=-(0.5 * self._height)))
 
+    def add_text(self, text: Text, position: tuple[int | float, int | float]) -> None:
+        x, y = position
+        parent: BaseImage | None = self.parent
+        text_position: Vector2 = Vector2(x=0., y=0.)
+        if isinstance(x, int) and isinstance(y, int):
+            if parent is None:
+                text_position.add(Vector2(x=x, y=y))
+            else:
+                text_position.add(Vector2(x=self._position.x + x, y=self._position.x + y))
+        elif isinstance(x, float) and isinstance(y, float):
+            if parent is None:
+                window_width, window_height = get_monitor_size()
+                text_position.add(Vector2(x=window_width * x, y=window_height * x))
+            else:
+                text_position.add(Vector2(x=parent.width * x,  y=parent.height * y))
+                text_position.add(parent.position)
+        else:
+            Logger.error("invalide coordinates ({x}, {y})", __name__)
+            sys.exit(1)
+        text.set_position(text_position)
+        self._texts.append(text)
+
     def __set_dimensions(
         self,
         *,
         width: float | int ,
         height: float | int,
         parent: 'BaseImage | None'
-     ) -> None:
+   ) -> None:
         parent_width: int = 0 if parent is None else parent.width
         parent_height: int = 0 if parent is None else parent.height
         self._width = self.__set_dimension(width, parent_width)

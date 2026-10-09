@@ -40,6 +40,8 @@ class PixelImage(BaseImage):
             self.__image, int(self._position.x),
             int(self._position.y)
         )
+        for text in self._texts:
+            text.to_window()
 
     def update(self, elapsed_time: float) -> None:
         self.__image.contents.instances[0].x = int(self._position.x)

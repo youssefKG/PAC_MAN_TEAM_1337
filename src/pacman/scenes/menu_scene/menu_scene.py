@@ -1,7 +1,16 @@
 from typing import override, cast
-from src.core import FrameImage, ImageType, GridImage, PngImage, PixelImage, RgbColors
-from src.core import Vector2
-from src.core import Scene, Engine
+from src.core import (
+    FrameImage,
+    ImageType,
+    GridImage,
+    PngImage,
+    PixelImage,
+    RgbColors,
+    Engine,
+    Scene,
+    Vector2,
+    Text
+)
 import random
 
 
@@ -13,6 +22,7 @@ class MenuScene(Scene):
         self.__window_width: int
         self.__window_height: int
         self.__window_width, self.__window_height = engine.window_dimension
+        self.__text: Text = self._engine.new_text(text="93434432432432", font_size=80, lettere_spacing=4)
         self.__transparent_background = cast(
                 PixelImage,
                     self._engine.new_image(
@@ -26,15 +36,15 @@ class MenuScene(Scene):
         self.__layout_image: GridImage = cast(
             GridImage,
             self._engine.new_image(
-                width= .65,
-                height=.85,
+                width= .55,
+                height=.65,
                 image_type=ImageType.GRID_IMAGE,
                 row=3,
                 col=4,
                 total_cols=5,
                 total_rows=4,
                 path="src/assests/menu/nourdine.png",
-                position=(.5, 0.5),
+                position=(.5, .5),
                 parent=self.__transparent_background
             )
         )
@@ -50,19 +60,20 @@ class MenuScene(Scene):
                     parent=self.__layout_image
                 )
         )
-        self.__box_image2.set_background_color(RgbColors.WHITE)
+        self.__box_image2.set_background_color(RgbColors.ORANGE)
         self.__box_image2.to_center()
+        self.__box_image2.add_text(self.__text, (244, 244))
         self.__boucing_spirits: list[PngImage] = self.__generate_bouncing_spirits(TOTAL_SPIRITS)
         self.__velocity: list[Vector2] = self.__generate_random_velocities(TOTAL_SPIRITS)
         self.__orange_ghost_image: FrameImage = cast(
             FrameImage,
             self._engine.new_image(
-                width=0.03,
-                height=0.05,
+                width=.03,
+                height=.05,
                 frames=8,
                 image_type=ImageType.FRAME_IMAGE,
                 path="src/assests/orange_ghost.png",
-                time_per_frame=0.17,
+                time_per_frame=.17,
                 parent=self.__box_image2,
                 position=(0, 0)
             )
@@ -70,12 +81,12 @@ class MenuScene(Scene):
         self.__pacman: FrameImage = cast(
             FrameImage,
             self._engine.new_image(
-                width=0.03,
-                height=0.05,
+                width=.03,
+                height=.05,
                 frames=8,
                 image_type=ImageType.FRAME_IMAGE,
                 path="src/assests/PacMan.png",
-                time_per_frame=0.17,
+                time_per_frame=.17,
                 parent=self.__box_image2,
                 position=(0, 0)
             )
@@ -90,7 +101,7 @@ class MenuScene(Scene):
             self.__orange_ghost_image.move_to(
                 target=orange_ghost_target,
                 dt=elapsed_time,
-                speed_per_frame_unit=155
+                speed_per_frame_unit=155,
             )
             self.__orange_ghost_image.update(elapsed_time)
         pacman_target = Vector2(x=self.__box_image2.position.x, y=self.__box_image2.position.y)
@@ -102,6 +113,7 @@ class MenuScene(Scene):
                 speed_per_frame_unit=155
             )
             self.__pacman.update(elapsed_time)
+
     def __bouncings_images_animation(self, elapsed_time: float) -> None:
         for idx, spirit in enumerate(self.__boucing_spirits):
             if (spirit.position == self.__velocity[idx]):
@@ -124,8 +136,8 @@ class MenuScene(Scene):
                     object,
                     self._engine.new_image(
                         image_type=ImageType.PNG_IMAGE,
-                        width=16,
-                        height=16,
+                        width=0.02,
+                        height=0.02,
                         path=random.choice(
                                 [
                                     "src/assests/ghost_static.png",
@@ -137,7 +149,8 @@ class MenuScene(Scene):
                         position=(
                             random.randrange(0, self.__window_width),
                             random.randrange(0, self.__window_height)
-                        )
+                        ),
+                        parent=self.__layout_image
                     )
                )
             ) for _ in range(total)]

@@ -53,6 +53,8 @@ class GridImage(BaseImage):
             int(self._position.x),
             int(self._position.y)
         )
+        for text in self._texts:
+            text.to_window()
 
     @override
     def move_to(self, /, *, target: Vector2, dt: float, speed_per_frame_unit: int=1) -> None:

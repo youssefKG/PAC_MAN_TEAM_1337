@@ -32,6 +32,6 @@ class RgbColors(Enum):
     OLIVE          = 0xFF808000
     MAROON         = 0xFF800000
     SILVER         = 0xFFC0C0C0
-    BLACK_TRANS    = 0x0F000000
+    BLACK_TRANS    = 0x0F000001
 
 __all__ = ["RgbColors"]

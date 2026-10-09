@@ -475,7 +475,7 @@ def get_image_from_grid_texture(
             dtype=np.uint32,
         )
     new_image_pixels = np.ndarray(
-            shape=(image_width, image_height),
+            shape=(image_height, image_width),
             buffer=get_image_view(image, image_width, image_height),
             dtype=np.uint32,
     )

@@ -2,6 +2,7 @@ import sys
 from typing import Callable, cast
 from src.core.image import BaseImage
 from src.core.vector2 import Vector2
+from src.core.text import Text
 from typing_extensions import Self
 from src.mlx.libmlx import  (
     set_window_size,
@@ -99,6 +100,20 @@ class Engine:
             position=position,
             parent=parent
         )
+
+    def new_text(
+            self, 
+            text: str,
+            font_size: int | float,
+            lettere_spacing: int
+     ) -> Text:
+        return Text(
+                renderer=self.__renderer,
+                text=text,
+                font_size=font_size,
+                lettere_spacing=lettere_spacing
+            )
+
 
     def set_window_to_monitor_size(self) -> None:
         self.__window_width, self.__window_height = get_monitor_size()
