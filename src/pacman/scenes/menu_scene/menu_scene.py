@@ -36,8 +36,8 @@ class MenuScene(Scene):
         self.__layout_image: GridImage = cast(
             GridImage,
             self._engine.new_image(
-                width= .55,
-                height=.65,
+                width= .75,
+                height=.85,
                 image_type=ImageType.GRID_IMAGE,
                 row=3,
                 col=4,
@@ -101,7 +101,7 @@ class MenuScene(Scene):
             self.__orange_ghost_image.move_to(
                 target=orange_ghost_target,
                 dt=elapsed_time,
-                speed_per_frame_unit=155,
+                speed_per_frame_unit=55,
             )
             self.__orange_ghost_image.update(elapsed_time)
         pacman_target = Vector2(x=self.__box_image2.position.x, y=self.__box_image2.position.y)
@@ -110,7 +110,7 @@ class MenuScene(Scene):
             self.__pacman.move_to(
                 target=pacman_target,
                 dt=elapsed_time,
-                speed_per_frame_unit=155
+                speed_per_frame_unit=55
             )
             self.__pacman.update(elapsed_time)
 
@@ -136,8 +136,8 @@ class MenuScene(Scene):
                     object,
                     self._engine.new_image(
                         image_type=ImageType.PNG_IMAGE,
-                        width=0.02,
-                        height=0.02,
+                        width=14,
+                        height=14,
                         path=random.choice(
                                 [
                                     "src/assests/ghost_static.png",
