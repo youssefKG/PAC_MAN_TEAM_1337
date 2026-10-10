@@ -27,12 +27,7 @@ class PngImage(BaseImage):
                 z_index=z_index,
         )
         self.__path: str = path
-        self.__image: Image = load_png_image(
-            renderer=self._renderer,
-            path=self.__path,
-            width=self._width,
-            height=self._height
-        )
+        self.__image: Image
         self.__time_passed: float = 0.
         self.__time_per_frame: float = time_per_frame
 

@@ -60,6 +60,9 @@ class BaseImage:
             z_index: int = 1,
         ) -> None:
         self._renderer: RendererType = renderer
+        self.__temp_width: int | float = width
+        self.__temp_height: int | float = height
+        self.__temp_position: tuple[int | float, int | float] | None= position
         self._width: int 
         self._height: int
         self.image_type: ImageType = image_type
@@ -67,14 +70,14 @@ class BaseImage:
         self._position: Vector2 = Vector2(x=0.0, y=0.0)
         self._parent: 'BaseImage | None' = None
         self._texts: list[Text] = list()
-        self.__init_position(position if position is not None else (0, 0))
 
     def set_position(self, position: Vector2) -> None:
         self._position.add(position)
 
-    def set_parent(self, parent: 'BaseImage') -> Self:
+    def set_parent(self, parent: 'BaseImage | None'=None) -> Self:
         self._parent = parent
-        self.__set_dimensions(width=self._width, height=self._height, parent=parent)
+        self.__set_dimensions(width=self.__temp_width, height=self.__temp_height, parent=parent)
+        self.__init_position(self.__temp_position if self.__temp_position is not None else (0, 0))
         return self
 
     def move_to(self, /, *,  target: Vector2, dt: float, speed_per_frame_unit: int=1) -> None:

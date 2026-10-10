@@ -9,7 +9,6 @@ from src.core import (
     Engine,
     Scene,
     Vector2,
-    Text
 )
 import random
 
@@ -29,14 +28,14 @@ class MenuScene(Scene):
                     width=self.__window_width,
                     height=self.__window_height,
                     position=(0, 0),
-              ).create()
+              ).set_parent().create()
         )
         self.__transparent_background.set_background_color(RgbColors.WHITE)
         self.__layout_image: GridImage = cast(
             GridImage,
             self._engine.new_image(
-                width= .45,
-                height=.55,
+                width= .55,
+                height=.65,
                 image_type=ImageType.GRID_IMAGE,
                 row=3,
                 col=4,
@@ -82,7 +81,7 @@ class MenuScene(Scene):
                 path="src/assests/orange_ghost.png",
                 time_per_frame=.17,
                 position=(0, 0)
-            ).set_parent(self.__layout_image).create()
+            ).set_parent(self.__box_image2).create()
         )
         self.__pacman: FrameImage = cast(
             FrameImage,
@@ -94,7 +93,7 @@ class MenuScene(Scene):
                 path="src/assests/PacMan.png",
                 time_per_frame=.17,
                 position=(0, 0)
-            ).set_parent(self.__layout_image).create()
+            ).set_parent(self.__box_image2).create()
         )
 
     @override
@@ -154,7 +153,7 @@ class MenuScene(Scene):
                             random.randrange(0, self.__window_width),
                             random.randrange(0, self.__window_height)
                         ),
-                    ).set_parent(self.__layout_image)
+                    ).set_parent(self.__box_image2).create()
             ) for _ in range(total)]
 
     def __generate_random_velocities(self, total: int) -> list[Vector2]:
@@ -170,7 +169,7 @@ class MenuScene(Scene):
         self.__transparent_background.to_window()
         for spirit in self.__boucing_spirits:
              spirit.to_window()
-        # self.__layout_image.to_window()
-        # self.__box_image2.to_window()
-        # self.__orange_ghost_image.to_window()
-        # self.__pacman.to_window()
+        self.__layout_image.to_window()
+        self.__box_image2.to_window()
+        self.__orange_ghost_image.to_window()
+        self.__pacman.to_window()

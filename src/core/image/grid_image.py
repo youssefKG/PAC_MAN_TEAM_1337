@@ -33,7 +33,7 @@ class GridImage(BaseImage):
         self.__total_cols: int = total_cols
         self.__row: int = row
         self.__col: int = col
-        self.__path: str
+        self.__path: str = path
         self.__image: Image
 
     def to_window(self) -> None:
