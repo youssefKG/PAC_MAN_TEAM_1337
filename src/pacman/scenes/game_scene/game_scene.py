@@ -44,7 +44,6 @@ class GameScene(Scene):
             .set_parent(self.__transparent_background)
             .to_center().create()
         )
-        
         self.__box_image2: PixelImage = cast(
             PixelImage,
             self._engine.new_image(
@@ -57,7 +56,6 @@ class GameScene(Scene):
             .set_parent(self.__layout_image)
             .to_center().create()
         )
-
         self.__box_image2.set_background_color(RgbColors.OLIVE)
 
     @override
@@ -69,3 +67,4 @@ class GameScene(Scene):
         self.__transparent_background.to_window()
         self.__layout_image.to_window()
         self.__box_image2.to_window()
+
