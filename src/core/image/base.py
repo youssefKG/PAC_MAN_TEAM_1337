@@ -132,12 +132,12 @@ class BaseImage:
         if isinstance(x, int) and isinstance(y, int):
             if parent is None:
                 text_position.add(Vector2(x=x, y=y))
+                print('is set here')
             else:
                 text_position.add(Vector2(x=self._position.x + x, y=self._position.x + y))
         elif isinstance(x, float) and isinstance(y, float):
             if parent is None:
-                window_width, window_height = get_monitor_size()
-                text_position.add(Vector2(x=window_width * x, y=window_height * x))
+                text_position.add(Vector2(x=self._width * x, y=self._height * y))
             else:
                 text_position.add(Vector2(x=parent.width * x,  y=parent.height * y))
                 text_position.add(parent.position)

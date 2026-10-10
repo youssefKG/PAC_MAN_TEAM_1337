@@ -9,7 +9,6 @@ from src.core import (
     Engine,
     Scene,
     Vector2,
-    Text
 )
 import random
 
@@ -22,7 +21,6 @@ class MenuScene(Scene):
         self.__window_width: int
         self.__window_height: int
         self.__window_width, self.__window_height = engine.window_dimension
-        self.__text: Text = self._engine.new_text(text="93434432432432", font_size=80, lettere_spacing=4)
         self.__transparent_background = cast(
                 PixelImage,
                     self._engine.new_image(
@@ -32,12 +30,12 @@ class MenuScene(Scene):
                     position=(0, 0),
               )
         )
-        self.__transparent_background.set_background_color(RgbColors.BLACK)
+        self.__transparent_background.set_background_color(RgbColors.WHITE)
         self.__layout_image: GridImage = cast(
             GridImage,
             self._engine.new_image(
-                width= .75,
-                height=.85,
+                width= .45,
+                height=.55,
                 image_type=ImageType.GRID_IMAGE,
                 row=3,
                 col=4,
@@ -60,9 +58,17 @@ class MenuScene(Scene):
                     parent=self.__layout_image
                 )
         )
-        self.__box_image2.set_background_color(RgbColors.ORANGE)
+        self.__box_image2.set_background_color(RgbColors.OLIVE)
         self.__box_image2.to_center()
-        self.__box_image2.add_text(self.__text, (244, 244))
+        self.__transparent_background.add_text(
+            self._engine.new_text(
+                text="PACMAN",
+                font_size=45,
+                lettere_spacing=3,
+                color=RgbColors.ORANGE
+            ),
+            (5, 0)
+        )
         self.__boucing_spirits: list[PngImage] = self.__generate_bouncing_spirits(TOTAL_SPIRITS)
         self.__velocity: list[Vector2] = self.__generate_random_velocities(TOTAL_SPIRITS)
         self.__orange_ghost_image: FrameImage = cast(
@@ -136,8 +142,8 @@ class MenuScene(Scene):
                     object,
                     self._engine.new_image(
                         image_type=ImageType.PNG_IMAGE,
-                        width=14,
-                        height=14,
+                        width=18,
+                        height=18,
                         path=random.choice(
                                 [
                                     "src/assests/ghost_static.png",

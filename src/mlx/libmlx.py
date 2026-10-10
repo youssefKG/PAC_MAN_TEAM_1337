@@ -16,6 +16,7 @@ from os import path
 from logging import critical
 from platform import system
 import numpy as np
+from src.core.rgb_colors import RgbColors
 
 # ============================================================================
 
@@ -443,9 +444,10 @@ def get_image_view(image: mlx_image_t, width: int, height: int) -> memoryview:
     ).cast('B')
     return  data_view
 
-def set_background_color(image: mlx_image_t, color: int, width: int, height: int) -> None:
-    data_view = get_image_view(image, width, height)
-    pixels = np.ndarray(shape=(width, height), buffer=data_view, dtype=np.uint32)
+def set_background_color(image: mlx_image_t, color: int) -> None:
+    image_width: int = int(image.contents.width)
+    image_height: int = int(image.contents.height)
+    pixels = np.ndarray(shape=(image_height, image_width), buffer= get_image_view(image, image_width, image_height), dtype=np.uint32)
     pixels[:] = color
 
 
@@ -483,6 +485,19 @@ def get_image_from_grid_texture(
         start_y: start_y + image_height,
         start_x: start_x + image_width
     ]
+    resize_image(image, width, height)
+    return image
+
+def image_from_bit_map(renderer: mlx_t, bit_map: list[list[int]], width: int, height: int, color: int) -> mlx_image_t:
+    total_rows: int = len(bit_map)
+    total_cols: int = len(bit_map[0])
+    image: mlx_image_t = new_image(renderer, total_cols, total_rows)
+    image_view = get_image_view(image, total_cols, total_rows)
+    pixels = np.ndarray(shape=(total_rows, total_cols), buffer=image_view, dtype=np.uint32)
+    for y, row in enumerate(bit_map):
+        for x, col in enumerate(row):
+            if col == 1:
+                pixels[y, x] = color
     resize_image(image, width, height)
     return image
 

@@ -15,6 +15,7 @@ from src.mlx.libmlx import  (
 )
 from src.core.image import ImageFactory, ImageType
 from src.utils import Logger
+from src.core.rgb_colors import RgbColors
 import time
  
 class Engine:
@@ -105,13 +106,15 @@ class Engine:
             self, 
             text: str,
             font_size: int | float,
-            lettere_spacing: int
+            lettere_spacing: int,
+            color: RgbColors
      ) -> Text:
         return Text(
                 renderer=self.__renderer,
                 text=text,
                 font_size=font_size,
-                lettere_spacing=lettere_spacing
+                lettere_spacing=lettere_spacing,
+                color=color
             )
 
 

@@ -41,6 +41,7 @@ class PixelImage(BaseImage):
             int(self._position.y)
         )
         for text in self._texts:
+            print(text)
             text.to_window()
 
     def update(self, elapsed_time: float) -> None:
@@ -48,4 +49,4 @@ class PixelImage(BaseImage):
         self.__image.contents.instances[0].y = int(self._position.y)
 
     def set_background_color(self, color: RgbColors) -> None:
-        set_background_color(self.__image, color.value, self._width, self._height)
+        set_background_color(self.__image, color.value)
