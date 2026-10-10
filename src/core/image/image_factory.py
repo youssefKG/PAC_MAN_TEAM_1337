@@ -30,7 +30,6 @@ class ImageFactory:
             col: int = 1,
             total_cols: int = 1,
             total_rows: int = 1,
-            parent: BaseImage | None = None,
             position: tuple[int | float, int | float] | None = None,
        ) -> BaseImage:
         match image_type: 
@@ -45,7 +44,6 @@ class ImageFactory:
                             time_per_frame=time_per_frame,
                             z_index=z_index,
                             position=position,
-                            parent=parent
                     )
             case ImageType.PIXEL_IMAGE:
                 return PixelImage(
@@ -55,7 +53,6 @@ class ImageFactory:
                             image_type=image_type,
                             position=position,
                             z_index=z_index,
-                            parent=parent
                     )
             case ImageType.GRID_IMAGE:
                 return GridImage(
@@ -70,7 +67,6 @@ class ImageFactory:
                             total_cols=total_cols,
                             path=path,
                             position=position,
-                            parent=parent
                     )
             case ImageType.PNG_IMAGE:
                 return PngImage(
@@ -82,5 +78,4 @@ class ImageFactory:
                             path=path,
                             position=position,
                             time_per_frame=time_per_frame,
-                            parent=parent
                     )

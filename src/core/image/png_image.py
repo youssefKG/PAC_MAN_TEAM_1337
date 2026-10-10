@@ -1,6 +1,8 @@
 from src.mlx.libmlx import RendererType, Image, load_png_image, image_to_window
 from .base import BaseImage, ImageType
 from src.core.vector2 import Vector2
+from typing_extensions import Self
+from typing import override
 
 class PngImage(BaseImage):
     def __init__(
@@ -15,7 +17,6 @@ class PngImage(BaseImage):
             time_per_frame: float,
             position: tuple[int | float, int | float] | None=None,
             z_index: int = 1,
-            parent: BaseImage | None
     ) -> None:
         super().__init__(
                 renderer=renderer,
@@ -24,7 +25,6 @@ class PngImage(BaseImage):
                 image_type=image_type,
                 position=position,
                 z_index=z_index,
-                parent=parent
         )
         self.__path: str = path
         self.__image: Image = load_png_image(
@@ -39,6 +39,15 @@ class PngImage(BaseImage):
     def to_window(self) -> None:
         image_to_window(self._renderer, self.__image, int(self._position.x), int(self._position.y))
 
+    @override
+    def create(self) -> Self:
+        self.__image = load_png_image(
+            renderer=self._renderer,
+            path=self.__path,
+            width=self._width,
+            height=self._height
+        )
+        return self
 
     def update(self, elapsed_time: float) -> None:
         if self.__time_passed >= self.__time_per_frame:

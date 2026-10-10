@@ -1,5 +1,6 @@
 import sys
 from typing import Protocol
+from typing_extensions import Self
 from enum import Enum, auto
 from src.mlx.libmlx import (
     RendererType,
@@ -57,21 +58,24 @@ class BaseImage:
             left: int = 0,
             bottom: int = 0,
             z_index: int = 1,
-            parent: 'BaseImage | None' = None
         ) -> None:
         self._renderer: RendererType = renderer
         self._width: int 
         self._height: int
-        self.__set_dimensions(width=width, height=height, parent=parent)
         self.image_type: ImageType = image_type
         self.__z_index: int = z_index
         self._position: Vector2 = Vector2(x=0.0, y=0.0)
-        self.parent: 'BaseImage | None' = parent
+        self._parent: 'BaseImage | None' = None
         self._texts: list[Text] = list()
         self.__init_position(position if position is not None else (0, 0))
 
     def set_position(self, position: Vector2) -> None:
         self._position.add(position)
+
+    def set_parent(self, parent: 'BaseImage') -> Self:
+        self._parent = parent
+        self.__set_dimensions(width=self._width, height=self._height, parent=parent)
+        return self
 
     def move_to(self, /, *,  target: Vector2, dt: float, speed_per_frame_unit: int=1) -> None:
         distance_vector: Vector2 = self._position.sub(target)
@@ -106,7 +110,7 @@ class BaseImage:
     def __init_position(self, coordinates: tuple[int | float, int | float]) -> None:
         x, y = coordinates
         position: Vector2 = Vector2(x=x, y=y)
-        parent: BaseImage | None = self.parent
+        parent: BaseImage | None = self._parent
         if isinstance(x, int) and isinstance(y, int):
             if parent is not None:
                 position.add(parent.position)
@@ -122,29 +126,28 @@ class BaseImage:
             Logger.error(f"invalid coordinates: {x}, {y}", "Position Setter in base Image")
             sys.exit(1)
 
-    def to_center(self) -> None:
+    def to_center(self) -> Self:
         self._position.add(Vector2(x=-(0.5 * self._width), y=-(0.5 * self._height)))
+        return self
 
     def add_text(self, text: Text, position: tuple[int | float, int | float]) -> None:
         x, y = position
-        parent: BaseImage | None = self.parent
-        text_position: Vector2 = Vector2(x=0., y=0.)
+        parent: BaseImage | None = self._parent
         if isinstance(x, int) and isinstance(y, int):
             if parent is None:
-                text_position.add(Vector2(x=x, y=y))
+                text.position.add(Vector2(x=x, y=y))
                 print('is set here')
             else:
-                text_position.add(Vector2(x=self._position.x + x, y=self._position.x + y))
+                text.position.add(Vector2(x=self._position.x + x, y=self._position.x + y))
         elif isinstance(x, float) and isinstance(y, float):
             if parent is None:
-                text_position.add(Vector2(x=self._width * x, y=self._height * y))
+                text.position.add(Vector2(x=self._width * x, y=self._height * y))
             else:
-                text_position.add(Vector2(x=parent.width * x,  y=parent.height * y))
-                text_position.add(parent.position)
+                text.position.add(Vector2(x=parent.width * x,  y=parent.height * y))
+                text.position.add(parent.position)
         else:
             Logger.error("invalide coordinates ({x}, {y})", __name__)
             sys.exit(1)
-        text.set_position(text_position)
         self._texts.append(text)
 
     def __set_dimensions(
@@ -158,6 +161,9 @@ class BaseImage:
         parent_height: int = 0 if parent is None else parent.height
         self._width = self.__set_dimension(width, parent_width)
         self._height = self.__set_dimension(height, parent_height)
+
+    def create(self) -> Self:
+        return self
 
     def __set_dimension(
             self,

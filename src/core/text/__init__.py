@@ -1,16 +1,12 @@
 import sys
 from typing import TypeAlias, Annotated
+from typing_extensions import Self
 from src.mlx.libmlx import Image, RendererType, image_to_window, image_from_bit_map, new_image, set_background_color
 
 from .characteres_bit_map import CHARACTERES_BIT_MAP
 from src.core.rgb_colors import RgbColors
 from src.core.vector2 import Vector2
 from src.utils import Logger
-
-
-
-
-
 
 class Text:
     def __init__(
@@ -65,8 +61,10 @@ class Text:
                 int(self.__position.y)
             )
 
-    def to_center(self) -> None:
-        text_width = len(self.__characteres_images) 
-        pass
+    def to_center(self) -> Self:
+        text_width = len(self.__text) * self.__font_size * self.__lettere_spacing
+        self.__position.x -= text_width // 2
+        self.__position.y -=  self.__font_size // 2
+        return self
 
 __all__ = ["Text"]

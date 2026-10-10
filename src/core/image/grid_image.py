@@ -1,4 +1,5 @@
 from typing import override
+from typing_extensions import Self
 from src.mlx.libmlx import RendererType, get_image_from_grid_texture, Image, image_to_window
 from .base import BaseImage, ImageType
 from src.core.vector2 import Vector2
@@ -19,7 +20,6 @@ class GridImage(BaseImage):
         row: int,
         path: str,
         z_index: int = 1,
-        parent: BaseImage | None,
     ) -> None:
         super().__init__(
             renderer=renderer,
@@ -28,23 +28,13 @@ class GridImage(BaseImage):
             image_type=image_type,
             position=position,
             z_index=z_index,
-            parent=parent
         )
         self.__total_rows: int = total_rows
         self.__total_cols: int = total_cols
         self.__row: int = row
         self.__col: int = col
-        self.__image: Image = get_image_from_grid_texture(
-            renderer=self._renderer,
-            path=path,
-            col=self.__col,
-            row=self.__row,
-            total_cols=self.__total_cols,
-            total_rows=self.__total_rows,
-            width=self._width,
-            height=self._height
-        )
-
+        self.__path: str
+        self.__image: Image
 
     def to_window(self) -> None:
         image_to_window(
@@ -55,6 +45,20 @@ class GridImage(BaseImage):
         )
         for text in self._texts:
             text.to_window()
+
+    @override
+    def create(self) -> Self:
+        self.__image = get_image_from_grid_texture(
+            renderer=self._renderer,
+            path=self.__path,
+            col=self.__col,
+            row=self.__row,
+            total_cols=self.__total_cols,
+            total_rows=self.__total_rows,
+            width=self._width,
+            height=self._height
+        )
+        return self
 
     @override
     def move_to(self, /, *, target: Vector2, dt: float, speed_per_frame_unit: int=1) -> None:

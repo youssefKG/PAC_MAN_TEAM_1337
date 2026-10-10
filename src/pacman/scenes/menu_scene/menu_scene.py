@@ -9,6 +9,7 @@ from src.core import (
     Engine,
     Scene,
     Vector2,
+    Text
 )
 import random
 
@@ -28,7 +29,7 @@ class MenuScene(Scene):
                     width=self.__window_width,
                     height=self.__window_height,
                     position=(0, 0),
-              )
+              ).create()
         )
         self.__transparent_background.set_background_color(RgbColors.WHITE)
         self.__layout_image: GridImage = cast(
@@ -43,10 +44,10 @@ class MenuScene(Scene):
                 total_rows=4,
                 path="src/assests/menu/nourdine.png",
                 position=(.5, .5),
-                parent=self.__transparent_background
             )
+            .set_parent(self.__transparent_background)
+            .to_center().create()
         )
-        self.__layout_image.to_center()
         self.__box_image2: PixelImage = cast(
                 PixelImage,
                  self._engine.new_image(
@@ -55,19 +56,19 @@ class MenuScene(Scene):
                     height=.7,
                     time_per_frame=10,
                     position=(.5, .5),
-                    parent=self.__layout_image
                 )
+                .set_parent(self.__layout_image)
+                .to_center().create()
         )
         self.__box_image2.set_background_color(RgbColors.OLIVE)
-        self.__box_image2.to_center()
         self.__transparent_background.add_text(
             self._engine.new_text(
                 text="PACMAN",
                 font_size=45,
                 lettere_spacing=3,
                 color=RgbColors.ORANGE
-            ),
-            (5, 0)
+            ).to_center(),
+            (.5, .5)
         )
         self.__boucing_spirits: list[PngImage] = self.__generate_bouncing_spirits(TOTAL_SPIRITS)
         self.__velocity: list[Vector2] = self.__generate_random_velocities(TOTAL_SPIRITS)
@@ -80,9 +81,8 @@ class MenuScene(Scene):
                 image_type=ImageType.FRAME_IMAGE,
                 path="src/assests/orange_ghost.png",
                 time_per_frame=.17,
-                parent=self.__box_image2,
                 position=(0, 0)
-            )
+            ).set_parent(self.__layout_image).create()
         )
         self.__pacman: FrameImage = cast(
             FrameImage,
@@ -93,9 +93,8 @@ class MenuScene(Scene):
                 image_type=ImageType.FRAME_IMAGE,
                 path="src/assests/PacMan.png",
                 time_per_frame=.17,
-                parent=self.__box_image2,
                 position=(0, 0)
-            )
+            ).set_parent(self.__layout_image).create()
         )
 
     @override
@@ -136,29 +135,26 @@ class MenuScene(Scene):
             spirit.update(elapsed_time)
 
     def __generate_bouncing_spirits(self, total: int) -> list[PngImage]:
-        return [cast(
-                PngImage,
+        return [
                 cast(
-                    object,
+                    PngImage,
                     self._engine.new_image(
                         image_type=ImageType.PNG_IMAGE,
                         width=18,
                         height=18,
                         path=random.choice(
-                                [
-                                    "src/assests/ghost_static.png",
-                                    "src/assests/blue_ghost_static.png",
-                                    "src/assests/pacman_static.png"
-                                ]
+                            [
+                                "src/assests/ghost_static.png",
+                                "src/assests/blue_ghost_static.png",
+                                "src/assests/pacman_static.png"
+                            ]
                         ),
                         time_per_frame=10,
                         position=(
                             random.randrange(0, self.__window_width),
                             random.randrange(0, self.__window_height)
                         ),
-                        parent=self.__layout_image
-                    )
-               )
+                    ).set_parent(self.__layout_image)
             ) for _ in range(total)]
 
     def __generate_random_velocities(self, total: int) -> list[Vector2]:
@@ -174,7 +170,7 @@ class MenuScene(Scene):
         self.__transparent_background.to_window()
         for spirit in self.__boucing_spirits:
              spirit.to_window()
-        self.__layout_image.to_window()
-        self.__box_image2.to_window()
-        self.__orange_ghost_image.to_window()
-        self.__pacman.to_window()
+        # self.__layout_image.to_window()
+        # self.__box_image2.to_window()
+        # self.__orange_ghost_image.to_window()
+        # self.__pacman.to_window()

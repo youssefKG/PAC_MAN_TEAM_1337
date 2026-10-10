@@ -2,11 +2,11 @@ from src.mlx.libmlx import (
     RendererType,
     new_image,
     image_to_window,
-    put_pixel,
     Image,
     set_background_color
 )
-from src.core.vector2 import Vector2
+from typing_extensions import Self
+from typing import override
 from .base import BaseImage, ImageType
 from src.core.rgb_colors import RgbColors
 
@@ -21,7 +21,6 @@ class PixelImage(BaseImage):
             image_type: ImageType,
             position: tuple[int | float, int | float] | None,
             z_index: int,
-            parent: BaseImage | None
         ) -> None:
         super().__init__(
             renderer=renderer,
@@ -30,9 +29,14 @@ class PixelImage(BaseImage):
             image_type=image_type,
             z_index=z_index,
             position=position,
-            parent=parent
         )
-        self.__image: Image = new_image(self._renderer, self._width, self._height)
+        self.__image: Image
+
+
+    @override
+    def create(self) -> Self:
+        self.__image = new_image(self._renderer, self._width, self._height)
+        return self
 
     def to_window(self) -> None:
         image_to_window(
