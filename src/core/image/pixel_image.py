@@ -45,7 +45,6 @@ class PixelImage(BaseImage):
             int(self._position.y)
         )
         for text in self._texts:
-            print(text)
             text.to_window()
 
     def update(self, elapsed_time: float) -> None:

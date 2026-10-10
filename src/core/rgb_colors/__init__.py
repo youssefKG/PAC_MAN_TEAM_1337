@@ -10,7 +10,7 @@ class RgbColors(Enum):
     BLACK          = 0xFF000000
     WHITE          = 0xFFFFFFFF
     RED            = 0xFFFF0000
-    GREEN          = 0xFF00FF00
+    GREEN          = 0x1F00FF80
     BLUE           = 0xFF0000FF
 
     YELLOW         = 0xFFFFFF00

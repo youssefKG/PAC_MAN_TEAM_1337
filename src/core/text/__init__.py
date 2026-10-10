@@ -65,10 +65,19 @@ class Text:
                 offset += self.__lettere_spacing
             offset += int(self.__font_size)
 
-    def to_center(self) -> Self:
+    def center_x(self) -> Self:
         text_width = len(self.__text) * (self.__font_size + (self.__lettere_spacing))
         self.__position.x -= text_width // 2
+        return self
+
+    def center_y(self) -> Self:
         self.__position.y -=  self.__font_size // 2
+        return self
+
+    def to_center(self) -> Self:
+        self.__position.y -=  self.__font_size // 2
+        text_width = len(self.__text) * (self.__font_size + (self.__lettere_spacing))
+        self.__position.x -= text_width // 2
         return self
 
 __all__ = ["Text"]
