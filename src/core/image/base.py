@@ -135,19 +135,11 @@ class BaseImage:
 
     def add_text(self, text: Text, position: tuple[int | float, int | float]) -> None:
         x, y = position
-        parent: BaseImage | None = self._parent
         if isinstance(x, int) and isinstance(y, int):
-            if parent is None:
-                text.position.add(Vector2(x=x, y=y))
-                print('is set here')
-            else:
-                text.position.add(Vector2(x=self._position.x + x, y=self._position.x + y))
+            text.position.add(Vector2(x=self._position.x, y=self._position.y))
         elif isinstance(x, float) and isinstance(y, float):
-            if parent is None:
-                text.position.add(Vector2(x=self._width * x, y=self._height * y))
-            else:
-                text.position.add(Vector2(x=parent.width * x,  y=parent.height * y))
-                text.position.add(parent.position)
+            text.position.add(Vector2(x=self._width * x,  y=self._height * y))
+            text.position.add(self._position)
         else:
             Logger.error("invalide coordinates ({x}, {y})", __name__)
             sys.exit(1)

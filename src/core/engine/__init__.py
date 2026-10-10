@@ -1,5 +1,5 @@
 import sys
-from typing import Callable, cast
+from typing import Callable, cast, TypeVar
 from src.core.image import BaseImage
 from src.core.vector2 import Vector2
 from src.core.text import Text
@@ -17,6 +17,8 @@ from src.core.image import ImageFactory, ImageType
 from src.utils import Logger
 from src.core.rgb_colors import RgbColors
 import time
+
+T = TypeVar("T")
  
 class Engine:
     def __init__(self,

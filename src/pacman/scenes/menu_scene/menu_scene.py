@@ -60,14 +60,14 @@ class MenuScene(Scene):
                 .to_center().create()
         )
         self.__box_image2.set_background_color(RgbColors.OLIVE)
-        self.__transparent_background.add_text(
+        self.__box_image2.add_text(
             self._engine.new_text(
-                text="PACMAN",
+                text="PACMAN1337",
                 font_size=45,
                 lettere_spacing=3,
                 color=RgbColors.ORANGE
             ).to_center(),
-            (.5, .5)
+            (0.5, 0.5)
         )
         self.__boucing_spirits: list[PngImage] = self.__generate_bouncing_spirits(TOTAL_SPIRITS)
         self.__velocity: list[Vector2] = self.__generate_random_velocities(TOTAL_SPIRITS)

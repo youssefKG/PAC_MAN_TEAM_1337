@@ -53,20 +53,16 @@ class Text:
                 self.__characteres_images.append(ch_image)
 
     def to_window(self) -> None:
-        offset: int = int(self.__position.x)
         for idx, image in enumerate(self.__characteres_images):
             image_to_window(
                 self.__renderer,
                 image,
-                offset,
+                int(self.__position.x),
                 int(self.__position.y)
             )
-            if idx != len(self.__characteres_images):
-                offset += self.__lettere_spacing
-            offset += int(self.__font_size)
 
     def to_center(self) -> Self:
-        text_width = len(self.__text) * (self.__font_size + (self.__lettere_spacing))
+        text_width = len(self.__text) * self.__font_size * self.__lettere_spacing
         self.__position.x -= text_width // 2
         self.__position.y -=  self.__font_size // 2
         return self
