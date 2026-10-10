@@ -1,4 +1,4 @@
-from src.pacman.scenes import MenuScene
+from src.pacman.scenes import MenuScene, GameScene
 from src.core import (
     Engine,
     engine,
@@ -14,7 +14,7 @@ class Pacman:
            # window_width=800,
            # window_height=300
         )
-        self.__menu_scene: MenuScene = MenuScene(engine)
+        self.__menu_scene: GameScene = GameScene(engine)
         self.__menu_scene.renderer()
 
     def run(self) -> None:

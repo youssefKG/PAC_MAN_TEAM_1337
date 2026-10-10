@@ -1,4 +1,5 @@
+from .game_scene import GameScene
 
 
 
-all = ["game_scene"]
+all = ["GameScene"]
