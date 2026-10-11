@@ -12,11 +12,11 @@ from src.pacman.utils import PacmanAssetsPath
 
 BUTTON_LAYOUT_PATH ="src/assests/menu/green_menu.png" 
 BUTTON_LAYOUT_COL = 3
-BUTTON_LAYOUT_ROW = 2
+BUTTON_LAYOUT_ROW = 3
 BUTTON_LAYOUT_TOTAL_COLS = 5
 BUTTON_LAYOUT_TOTAL_ROWS = 4
-BUTTON_WIDTH = .5
-BUTTON_HEIGHT = .2
+BUTTON_WIDTH = .85
+BUTTON_HEIGHT = .3
 GHOST_WIDTH = .03
 GHOST_HEIGHT = .05
 
@@ -26,8 +26,8 @@ class Menu:
         self.__layout_image: GridImage = cast(
             GridImage,
             self._engine.new_image(
-                width= .45,
-                height=.60,
+                width= .25,
+                height=.40,
                 image_type=ImageType.GRID_IMAGE,
                 row=3,
                 col=4,
@@ -100,7 +100,7 @@ class Menu:
                     total_cols=BUTTON_LAYOUT_TOTAL_COLS,
                     total_rows=BUTTON_LAYOUT_TOTAL_ROWS,
                     path=BUTTON_LAYOUT_PATH,
-                    position=(.5, .42)
+                    position=(.5, .5)
                 ).set_parent(self.__box_image2).to_center().create()
         )
         self.__play_button_background : PixelImage = cast(
@@ -138,7 +138,7 @@ class Menu:
                     total_cols=BUTTON_LAYOUT_TOTAL_COLS,
                     total_rows=BUTTON_LAYOUT_TOTAL_ROWS,
                     path=BUTTON_LAYOUT_PATH,
-                    position=(.5, .64)
+                    position=(.5, .80)
                 ).set_parent(self.__box_image2).to_center().create()
         )
         self.__quit_button_background: PixelImage = cast(

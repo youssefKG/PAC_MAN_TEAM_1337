@@ -70,15 +70,21 @@ class BaseImage:
         self._position: Vector2 = Vector2(x=.0, y=.0)
         self._parent: 'BaseImage | None' = None
         self._texts: list[Text] = list()
+        self.__childrens: list[BaseImage] = list()
 
     def set_position(self, position: Vector2) -> None:
         self._position.add(position)
 
     def set_parent(self, parent: 'BaseImage | None'=None) -> Self:
         self._parent = parent
+        if self._parent is not None:
+            self._parent.add_children(self)
         self.__set_dimensions(width=self.__temp_width, height=self.__temp_height, parent=parent)
         self.__init_position(self.__temp_position if self.__temp_position is not None else (0, 0))
         return self
+
+    def add_children(self, image: 'BaseImage') -> None:
+        self.__childrens.append(image)
 
     def move_to(self, /, *,  target: Vector2, dt: float, speed_per_frame_unit: int=1) -> None:
         distance_vector: Vector2 = self._position.sub(target)

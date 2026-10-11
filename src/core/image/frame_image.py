@@ -46,6 +46,7 @@ class FrameImage(BaseImage):
         return self
 
 
+    @override
     def to_window(self) -> None:
         for frame_image in self.__frames_image:
             frame_image.contents.enabled = False

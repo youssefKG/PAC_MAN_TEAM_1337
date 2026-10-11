@@ -5,9 +5,7 @@ from src.core import (
 )
 
 class Pacman:
-    def __init__(
-        self,
-     ) -> None:
+    def __init__(self) -> None:
         self.__engine: Engine = engine(
            title="PACMAN",
            monitor_size=True,
