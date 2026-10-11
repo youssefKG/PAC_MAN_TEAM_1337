@@ -534,7 +534,7 @@ def get_frames_of_images(
             image_height,
         )
         image_pixels = np.ndarray(
-            shape=(image_width, image_height),
+            shape=(image_height, image_width),
             buffer=get_image_view(image, image_height, image_width),
             dtype=np.uint32
         )

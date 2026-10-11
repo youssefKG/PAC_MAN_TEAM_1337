@@ -3,7 +3,6 @@ from .image import ImageInterface, FrameImage, ImageType, PixelImage, GridImage,
 from .rgb_colors import RgbColors
 from .vector2 import Vector2
 from src.core.text import Text
-from src.core.scene import Scene
 
 __all__ = [
     "Engine",
@@ -14,7 +13,6 @@ __all__ = [
     "FrameImage",
     "ImageType",
     "PixelImage",
-    "Scene",
     "GridImage",
     "PngImage",
     "Text"

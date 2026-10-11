@@ -1,6 +1,5 @@
 from .menu_scene import MenuScene
-from .game_scene import GameScene
+from .common import BouncingSpirits
 
 
-__all__ = ["MenuScene", "GameScene"]
-
+__all__ = ["MenuScene", "BouncingSpirits"]

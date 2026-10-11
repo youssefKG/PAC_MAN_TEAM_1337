@@ -28,7 +28,7 @@ class PngImage(BaseImage):
         )
         self.__path: str = path
         self.__image: Image
-        self.__time_passed: float = 0.
+        self.__time_passed: float = .0
         self.__time_per_frame: float = time_per_frame
 
     def to_window(self) -> None:

@@ -67,7 +67,7 @@ class BaseImage:
         self._height: int
         self.image_type: ImageType = image_type
         self.__z_index: int = z_index
-        self._position: Vector2 = Vector2(x=0.0, y=0.0)
+        self._position: Vector2 = Vector2(x=.0, y=.0)
         self._parent: 'BaseImage | None' = None
         self._texts: list[Text] = list()
 
@@ -130,7 +130,7 @@ class BaseImage:
             sys.exit(1)
 
     def to_center(self) -> Self:
-        self._position.add(Vector2(x=-(0.5 * self._width), y=-(0.5 * self._height)))
+        self._position.add(Vector2(x=-(.5 * self._width), y=-(.5 * self._height)))
         return self
 
     def add_text(self, text: Text, position: tuple[int | float, int | float]) -> None:

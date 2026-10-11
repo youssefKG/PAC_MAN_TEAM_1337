@@ -4,3 +4,7 @@ https://github.com/python/cpython/blob/main/Doc/library/ctypes.rst?utm_source=ch
 https://www.youtube.com/watch?v=-Ii3MrJFBkQ
 ## assets: HEATBAR:
 https://bdragon1727.itch.io/basic-pixel-health-bar-and-scroll-bar
+
+
+## update on the scene
+remove the scene from the core to src/pacman/scenes to base

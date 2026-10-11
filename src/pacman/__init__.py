@@ -1,4 +1,4 @@
-from src.pacman.scenes import MenuScene, GameScene
+from src.pacman.scenes import MenuScene, BouncingSpirits
 from src.core import (
     Engine,
     engine,
@@ -11,10 +11,12 @@ class Pacman:
         self.__engine: Engine = engine(
            title="PACMAN",
            monitor_size=True,
-           # window_width=800,
-           # window_height=300
+           # window_width=1900,
+           # window_height=1900
         )
-        self.__menu_scene: GameScene = GameScene(engine)
+        self.__menu_scene: MenuScene = MenuScene(engine)
+        self.__bouncing_spirits: BouncingSpirits = BouncingSpirits(self.__engine)
+        self.__bouncing_spirits.renderer()
         self.__menu_scene.renderer()
 
     def run(self) -> None:
@@ -22,6 +24,7 @@ class Pacman:
 
 
     def __update(self, elapsed_time: float) -> None:
+        self.__bouncing_spirits.update(elapsed_time)
         self.__menu_scene.update(elapsed_time)
 
 __all__ = ["Pacman"]
