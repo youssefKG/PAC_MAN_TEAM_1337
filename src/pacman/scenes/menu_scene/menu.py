@@ -81,7 +81,7 @@ class Menu:
         )
         self.__setting_button_background.add_text(
                 self._engine.new_text(
-                    text="Settings",
+                    text="SETTINGS",
                     lettere_spacing=3,
                     font_size=28,
                     color=RgbColors.WHITE).to_center(),
@@ -164,7 +164,7 @@ class Menu:
               .to_center(), position=(.5, .5))
         # ********************* END QUIT *************************
 
-        # ********************* START GHOST **********************
+        # ********************* START GHOSTS **********************
         self.__orange_ghost: FrameImage = cast(
             FrameImage,
             self._engine.new_image(
@@ -177,45 +177,57 @@ class Menu:
                 position=(0, 0)
             ).set_parent(self.__box_image2).create()
         )
-        self.__pacman: FrameImage = cast(
-            FrameImage,
-            self._engine.new_image(
-                width=.03,
-                height=.05,
-                frames=8,
-                image_type=ImageType.FRAME_IMAGE,
-                path="src/assests/greenGhost.png",
-                time_per_frame=.17,
-                position=(0, 0)
-            ).set_parent(self.__box_image2).create()
+        self.__orange_ghost_target_vector = Vector2(
+            x=self.__box_image2.position.x,
+            y=self.__box_image2.position.y
         )
-        self.__blue_ghost: FrameImage = cast(
-                FrameImage,
-                self._engine.new_image(
-                    width=GHOST_WIDTH,
-                    height=GHOST_HEIGHT,
-                    image_type=ImageType.FRAME_IMAGE,
-                    path=PacmanAssetsPath.BLUE_GHOST_FRAME,
-                    frames=8,
-                ).set_parent(self.__box_image2)
-        )
-        self.__orange_ghost_target = Vector2(x=self.__box_image2.position.x, y=self.__box_image2.position.y)
-        # self.__orange_ghost_target.add(Vector2(x=self.__box_image2.width - self.__orange_ghost_image.width, y=0.))
-        self.__pacman_target = Vector2(x=self.__box_image2.position.x, y=self.__box_image2.position.y)
-        # ********************* END GHOST **********************
+        # self.__blue_ghost: FrameImage = cast(
+        #         FrameImage,
+        #         self._engine.new_image(
+        #             width=GHOST_WIDTH,
+        #             height=GHOST_HEIGHT,
+        #             image_type=ImageType.FRAME_IMAGE,
+        #             path=PacmanAssetsPath.BLUE_GHOST_FRAME,
+        #             frames=8,
+        #             position=(
+        #                 self.__box_image2.position.x + self.__box_image2.width - GHOST_WIDTH,
+        #                 0
+        #             )
+        #         ).set_parent(self.__box_image2)
+        # )
+        # self.__blue_ghost_target_vector = Vector2(
+        #     x=float(self.__box_image2.position.x + self.__box_image2.width - GHOST_WIDTH),
+        #     y=float(self.__blue_ghost.position.y + self.__box_image2.height - GHOST_HEIGHT)
+        # )
+        # ********************* END GHOSTS **********************
         
 
     def update(self, elapsed_time: float) -> None:
+        # ***************** ORANGE_GHOST ************************
         if self.__orange_ghost.position.x >= self.__box_image2.position.x + self.__box_image2.width - self.__orange_ghost.width:
-            self.__orange_ghost_target.x = self.__box_image2.position.x
+            self.__orange_ghost_target_vector.x = self.__box_image2.position.x
         elif self.__orange_ghost.position.x <= self.__box_image2.position.x:
-            self.__orange_ghost_target.x = self.__box_image2.position.x - self.__orange_ghost.width + self.__box_image2.width
+            self.__orange_ghost_target_vector.x = self.__box_image2.position.x - GHOST_WIDTH + self.__box_image2.width
         self.__orange_ghost.move_to(
-            target=self.__orange_ghost_target,
+            target=self.__orange_ghost_target_vector,
             dt=elapsed_time,
             speed_per_frame_unit=45,
         )
         self.__orange_ghost.update(elapsed_time)
+        # ***************** END ORANGE_GHOST ************************
+
+        # ***************** END BLUE_GHOST ************************
+        # if self.__blue_ghost.position.y >= self.__box_image2.width + GHOST_WIDTH:
+        #     self.__blue_ghost_target_vector.y = self.__box_image2.position.y
+        # elif self.__blue_ghost.position.y <= self.__box_image2.position.y:
+        #     self.__blue_ghost_target_vector.y = self.__box_image2.position.y + self.__box_image2.height - GHOST_HEIGHT
+        # self.__blue_ghost.move_to(
+        #     target=self.__orange_ghost_target_vector,
+        #     dt=elapsed_time,
+        #     speed_per_frame_unit=45,
+        # )
+        # self.__blue_ghost.update(elapsed_time)
+        # ***************** END BLUE_GHOST ************************
 
     def renderer(self) -> None:
         self.__layout_image.to_window()
@@ -227,4 +239,4 @@ class Menu:
         self.__quit_button.to_window()
         self.__quit_button_background.to_window()
         self.__orange_ghost.to_window()
-        self.__pacman.to_window()
+        # self.__pacman.to_window()

@@ -1,4 +1,4 @@
-from typing import override, cast
+from typing import cast
 from src.core import (
     ImageType,
     PixelImage,
@@ -37,11 +37,8 @@ class MenuScene(BaseScene):
             (.5, 0.01))
         self.__menu: Menu = Menu(parent=self.__black_transparent_background , engine=self._engine)
 
-    @override
     def update(self, elapsed_time: float) -> None:
         self.__menu.update(elapsed_time)
-
-
 
     def renderer(self) -> None:
         self.__black_transparent_background.to_window()

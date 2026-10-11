@@ -126,7 +126,7 @@ class BaseImage:
                 self._position = Vector2(x=parent.width * x, y=parent.height * y)
                 self._position.add(parent.position)
         else:
-            Logger.error(f"invalid coordinates: {x}, {y}", "Position Setter in base Image")
+            Logger.error(f"invalid coordinates: {x}, {y}", __name__)
             sys.exit(1)
 
     def to_center(self) -> Self:
