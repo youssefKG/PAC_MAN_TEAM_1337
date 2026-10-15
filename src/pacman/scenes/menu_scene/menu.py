@@ -17,8 +17,8 @@ BUTTON_LAYOUT_TOTAL_COLS = 5
 BUTTON_LAYOUT_TOTAL_ROWS = 4
 BUTTON_WIDTH = .85
 BUTTON_HEIGHT = .3
-GHOST_WIDTH = .03
-GHOST_HEIGHT = .05
+GHOST_WIDTH = .05
+GHOST_HEIGHT = .08
 
 class Menu:
     def __init__(self, *, parent: PixelImage, engine: Engine) -> None:

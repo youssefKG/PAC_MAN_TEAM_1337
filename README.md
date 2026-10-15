@@ -8,3 +8,5 @@ https://bdragon1727.itch.io/basic-pixel-health-bar-and-scroll-bar
 
 ## update on the scene
 remove the scene from the core to src/pacman/scenes to base
+### lerp
+https://www.youtube.com/watch?v=LSNQuFEDOyQ

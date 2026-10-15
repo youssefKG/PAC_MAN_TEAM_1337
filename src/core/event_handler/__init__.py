@@ -1,4 +1,5 @@
 from enum import Enum, auto
+from array import array
 
 class Event(Enum):
     CLICK = auto()
