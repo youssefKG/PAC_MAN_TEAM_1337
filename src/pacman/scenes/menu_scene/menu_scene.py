@@ -42,4 +42,3 @@ class MenuScene(BaseScene):
 
     def renderer(self) -> None:
         self.__black_transparent_background.to_window()
-        self.__menu.renderer()

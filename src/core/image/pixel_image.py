@@ -38,12 +38,15 @@ class PixelImage(BaseImage):
         self.__image = new_image(self._renderer, self._width, self._height)
         return self
 
+    @override
     def to_window(self) -> None:
         image_to_window(
             self._renderer,
             self.__image, int(self._position.x),
             int(self._position.y)
         )
+        for child_image in self._childrens:
+            child_image.to_window()
         for text in self._texts:
             text.to_window()
 

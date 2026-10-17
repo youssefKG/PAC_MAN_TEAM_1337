@@ -70,7 +70,7 @@ class BaseImage:
         self._position: Vector2 = Vector2(x=.0, y=.0)
         self._parent: 'BaseImage | None' = None
         self._texts: list[Text] = list()
-        self.__childrens: list[BaseImage] = list()
+        self._childrens: list[BaseImage] = list()
 
     def set_position(self, position: Vector2) -> None:
         self._position.add(position)
@@ -84,7 +84,7 @@ class BaseImage:
         return self
 
     def add_children(self, image: 'BaseImage') -> None:
-        self.__childrens.append(image)
+        self._childrens.append(image)
 
     def move_to(self, /, *,  target: Vector2, dt: float, speed_per_frame_unit: int=1) -> None:
         distance_vector: Vector2 = self._position.sub(target)
@@ -115,6 +115,9 @@ class BaseImage:
     @property
     def height(self) -> int:
         return self._height
+
+    def to_window(self) -> None:
+        pass
 
     def __init_position(self, coordinates: tuple[int | float, int | float]) -> None:
         x, y = coordinates

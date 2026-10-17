@@ -36,6 +36,7 @@ class GridImage(BaseImage):
         self.__path: str = path
         self.__image: Image
 
+    @override
     def to_window(self) -> None:
         image_to_window(
             self._renderer,
@@ -43,6 +44,8 @@ class GridImage(BaseImage):
             int(self._position.x),
             int(self._position.y)
         )
+        for child_image in self._childrens:
+            child_image.to_window()
         for text in self._texts:
             text.to_window()
 
