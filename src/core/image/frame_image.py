@@ -1,6 +1,6 @@
 from typing import override
 from typing_extensions import Self
-from src.mlx.libmlx import Image, RendererType, get_frames_of_images, image_to_window
+from src.mlx.libmlx import Image, RendererType, get_frames_of_images, image_to_window, toggle_image, hide_image, display_image
 from .base import BaseImage, ImageType
 from src.core.vector2 import Vector2
 
@@ -47,9 +47,9 @@ class FrameImage(BaseImage):
 
 
     @override
-    def to_window(self) -> None:
+    def mount(self) -> None:
         for frame_image in self.__frames_image:
-            frame_image.contents.enabled = False
+            # toggle_image(frame_image)
             image_to_window(
                 self._renderer,
                 frame_image,
@@ -60,12 +60,12 @@ class FrameImage(BaseImage):
     def update(self, elapsed_time: float) -> None:
         current_image: Image = self.__get_current_image
         if self.__time_passed >= self.__time_per_frame:
-            current_image.contents.enabled = False
+            hide_image(current_image)
             if self.__current_frame_idx == len(self.__frames_image) - 1:
                 self.__current_frame_idx = 0
             self.__current_frame_idx += 1
             current_image = self.__get_current_image
-            current_image.contents.enabled = True
+            display_image(current_image)
             self.__time_passed -= self.__time_per_frame
         self.__time_passed += elapsed_time
         current_image.contents.instances[0].x = int(self._position.x)

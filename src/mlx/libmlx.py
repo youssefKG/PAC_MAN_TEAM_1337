@@ -351,13 +351,20 @@ mlx.mlx_set_window_size.restype = None
 
 
 # Texture to image
-mlx.mlx_texture_to_image.argtypes = [ctypes.POINTER(mlx_t), ctypes.POINTER(mlx_texture_t)]
+mlx.mlx_texture_to_image.argtypes = [
+    ctypes.POINTER(mlx_t),
+    ctypes.POINTER(mlx_texture_t)
+]
 mlx.mlx_texture_to_image.restype = ctypes.POINTER(mlx_image_t)
 
 mlx.mlx_load_png.argtypes = [ctypes.c_char_p]
 mlx.mlx_load_png.restype = ctypes.POINTER(mlx_texture_t)
 # mouse position
-mlx.mlx_get_mouse_pos.argtypes = [ctypes.POINTER(mlx_t), ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_int)]
+mlx.mlx_get_mouse_pos.argtypes = [
+    ctypes.POINTER(mlx_t),
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_int)
+]
 mlx.mlx_get_mouse_pos.restype = None
 
 
@@ -394,7 +401,6 @@ def set_window_size(renderer: mlx_t, width: int, height: int) -> None:
 
 def delete_image(renderer: mlx_t, image: mlx_image_t) -> None:
     mlx.mlx_delete_image(renderer, image)
-
 
 def loop_hook(
     renderer: RendererType,
@@ -549,5 +555,14 @@ def get_mouse_position(mlx_ptr: mlx_t) -> tuple[int, int]:
     height: ctypes.c_int = ctypes.c_int()
     mlx.mlx_get_mouse_pos(mlx_ptr, ctypes.byref(width), ctypes.byref(height))
     return width.value, height.value
+
+def toggle_image(image: mlx_image_t) -> None:
+    image.contents.enabled = not image.contents.enabled
+
+def hide_image(image: mlx_image_t) -> None:
+    image.contents.enabled = False
+
+def display_image(image: mlx_image_t) -> None:
+    image.contents.enabled = True
 
 Clock = _Clock()

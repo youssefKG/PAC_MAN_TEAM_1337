@@ -72,6 +72,6 @@ class BouncingSpirits:
 
 
     def renderer(self) -> None:
-        self.__transparent_background.to_window()
+        self.__transparent_background.mount()
         for spirit in self.__boucing_spirits:
-             spirit.to_window()
+             spirit.mount()

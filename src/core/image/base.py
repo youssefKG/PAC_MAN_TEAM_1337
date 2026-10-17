@@ -1,14 +1,19 @@
 import sys
-from typing import Protocol
+from typing import Protocol, Callable
 from typing_extensions import Self
 from enum import Enum, auto
 from src.mlx.libmlx import (
     RendererType,
-    get_monitor_size
+    image_to_window,
+    get_monitor_size,
+    hide_image,
+    display_image,
+    Image
 )
 from src.core.vector2 import Vector2
 from src.utils import Logger
 from src.core.text import Text
+from src.core.event import Event
 
 class ImageType(Enum):
     FRAME_IMAGE = auto()
@@ -22,8 +27,6 @@ class Position(Enum):
     RIGHT = auto()
     TOP = auto()
     BOTTOM = auto()
-
-
 
 
 class ImageInterface(Protocol):
@@ -71,6 +74,9 @@ class BaseImage:
         self._parent: 'BaseImage | None' = None
         self._texts: list[Text] = list()
         self._childrens: list[BaseImage] = list()
+        self.__events: dict[Event, Callable[[], None]] = dict()
+        self._is_visible: bool = False
+        self._image: Image
 
     def set_position(self, position: Vector2) -> None:
         self._position.add(position)
@@ -116,8 +122,27 @@ class BaseImage:
     def height(self) -> int:
         return self._height
 
-    def to_window(self) -> None:
-        pass
+    def mount(self) -> None:
+        image_to_window(
+            self._renderer,
+            self._image,
+            int(self._position.x),
+            int(self._position.y)
+        )
+        for child_image in self._childrens:
+            child_image.mount()
+        for text in self._texts:
+            text.to_window()
+
+    def unmount(self) -> None:
+        hide_image(self._image)
+
+    def hide(self) -> None:
+        hide_image(self._image)
+
+    def display(self) -> None:
+        display_image(self._image)
+
 
     def __init_position(self, coordinates: tuple[int | float, int | float]) -> None:
         x, y = coordinates
@@ -141,6 +166,9 @@ class BaseImage:
     def to_center(self) -> Self:
         self._position.add(Vector2(x=-(.5 * self._width), y=-(.5 * self._height)))
         return self
+
+    def set_mouse_hover(self, callback: Callable[[], None]) -> None:
+        pass
 
     def add_text(self, text: Text, position: tuple[int | float, int | float]) -> None:
         x, y = position

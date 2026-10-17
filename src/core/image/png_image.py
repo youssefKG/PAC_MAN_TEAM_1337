@@ -27,18 +27,21 @@ class PngImage(BaseImage):
                 z_index=z_index,
         )
         self.__path: str = path
-        self.__image: Image
         self.__time_passed: float = .0
         self.__time_per_frame: float = time_per_frame
+        self._image: Image
 
-    def to_window(self) -> None:
-        image_to_window(self._renderer, self.__image, int(self._position.x), int(self._position.y))
+    @override
+    def mount(self) -> None:
+        image_to_window(self._renderer, self._image, int(self._position.x), int(self._position.y))
+        for child_image in self._childrens:
+            child_image.mount()
         for text in self._texts:
             text.to_window()
 
     @override
     def create(self) -> Self:
-        self.__image = load_png_image(
+        self._image = load_png_image(
             renderer=self._renderer,
             path=self.__path,
             width=self._width,
@@ -51,6 +54,6 @@ class PngImage(BaseImage):
             self.__time_passed -= self.__time_per_frame
             return
         self.__time_passed += elapsed_time
-        self.__image.contents.instances[0].x = int(self._position.x)
-        self.__image.contents.instances[0].y = int(self._position.y)
+        self._image.contents.instances[0].x = int(self._position.x)
+        self._image.contents.instances[0].y = int(self._position.y)
         

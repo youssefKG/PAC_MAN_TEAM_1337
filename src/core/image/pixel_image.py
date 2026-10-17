@@ -30,29 +30,15 @@ class PixelImage(BaseImage):
             z_index=z_index,
             position=position,
         )
-        self.__image: Image
-
 
     @override
     def create(self) -> Self:
-        self.__image = new_image(self._renderer, self._width, self._height)
+        self._image = new_image(self._renderer, self._width, self._height)
         return self
 
-    @override
-    def to_window(self) -> None:
-        image_to_window(
-            self._renderer,
-            self.__image, int(self._position.x),
-            int(self._position.y)
-        )
-        for child_image in self._childrens:
-            child_image.to_window()
-        for text in self._texts:
-            text.to_window()
-
     def update(self, elapsed_time: float) -> None:
-        self.__image.contents.instances[0].x = int(self._position.x)
-        self.__image.contents.instances[0].y = int(self._position.y)
+        self._image.contents.instances[0].x = int(self._position.x)
+        self._image.contents.instances[0].y = int(self._position.y)
 
     def set_background_color(self, color: RgbColors) -> None:
-        set_background_color(self.__image, color.value)
+        set_background_color(self._image, color.value)

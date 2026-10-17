@@ -1,6 +1,6 @@
 from typing import override
 from typing_extensions import Self
-from src.mlx.libmlx import RendererType, get_image_from_grid_texture, Image, image_to_window
+from src.mlx.libmlx import RendererType, get_image_from_grid_texture, Image, toggle_image
 from .base import BaseImage, ImageType
 from src.core.vector2 import Vector2
 
@@ -34,24 +34,11 @@ class GridImage(BaseImage):
         self.__row: int = row
         self.__col: int = col
         self.__path: str = path
-        self.__image: Image
 
-    @override
-    def to_window(self) -> None:
-        image_to_window(
-            self._renderer,
-            self.__image,
-            int(self._position.x),
-            int(self._position.y)
-        )
-        for child_image in self._childrens:
-            child_image.to_window()
-        for text in self._texts:
-            text.to_window()
 
     @override
     def create(self) -> Self:
-        self.__image = get_image_from_grid_texture(
+        self._image: Image = get_image_from_grid_texture(
             renderer=self._renderer,
             path=self.__path,
             col=self.__col,
@@ -69,3 +56,7 @@ class GridImage(BaseImage):
 
     def update(self, elapsed_time: float) -> None:
         ...
+
+    def toggle(self) -> None:
+        toggle_image(self._image)
+

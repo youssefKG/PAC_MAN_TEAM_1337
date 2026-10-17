@@ -41,4 +41,4 @@ class MenuScene(BaseScene):
         self.__menu.update(elapsed_time)
 
     def renderer(self) -> None:
-        self.__black_transparent_background.to_window()
+        self.__black_transparent_background.mount()
