@@ -4,6 +4,8 @@ from src.core import (
     PixelImage,
     RgbColors,
     Engine,
+    FrameImage,
+    GridImage
 )
 from .menu import Menu
 from src.pacman.scenes.base import BaseScene
@@ -30,14 +32,29 @@ class MenuScene(BaseScene):
               ).set_parent().create()
         )
         self.__black_transparent_background.set_background_color(RgbColors.BLACK_TRANS)
-        self.__black_transparent_background.add_text(
+        self.__banner: GridImage = cast(
+                GridImage,
+                self._engine.new_image(
+                    width= 0.3,
+                    height=0.1,
+                    image_type=ImageType.GRID_IMAGE,
+                    row=5,
+                    col=4,
+                    total_cols=5,
+                    total_rows=8,
+                    path="src/assests/15.png",
+                    position=(.50, .0)
+            ).set_parent(self.__black_transparent_background).center_x().create()
+        )
+        self.__banner.add_text(
             self._engine.new_text(
-                text="PACMAN 1337",
-                font_size=55,
-                lettere_spacing=3,
+                text="PACMAN 42 PARIS",
+                font_size=40,
+                lettere_spacing=7,
                 color=RgbColors.WHITE
-            ).center_x(),
-            (.5, 0.01))
+            ).to_center(),
+            (.5, 0.5)
+        )
         self.__menu: Menu = Menu(
             parent=self.__black_transparent_background ,
             engine=self._engine,

@@ -41,33 +41,34 @@ class Menu:
         self.__pacman_state: PacmanState = pacman_state
         self.__active_button: MenuButton = MenuButton.SETTINGS
         self.__event_container: EventContainer = event_container
+        self.__parent: PixelImage = parent
         self.__menu_wrapper: GridImage = cast(
-                GridImage,
-                self._engine.new_image(
-                    width= .25,
-                    height=.40,
-                    image_type=ImageType.GRID_IMAGE,
-                    row=3,
-                    col=4,
-                    total_cols=5,
-                    total_rows=4,
-                    path="src/assests/menu/green_menu.png",
-                    position=(.5, .5),
-                    )
-                .set_parent(parent)
-                .to_center().create()
-                )
+            GridImage,
+            self._engine.new_image(
+                width= .25,
+                height=.40,
+                image_type=ImageType.GRID_IMAGE,
+                row=3,
+                col=4,
+                total_cols=5,
+                total_rows=4,
+                path="src/assests/menu/green_menu.png",
+                position=(.5, .5),
+            )
+            .set_parent(parent)
+            .to_center().create()
+        )
         self.__menu_background: PixelImage = cast(
-                PixelImage,
-                self._engine.new_image(
-                    image_type=ImageType.PIXEL_IMAGE,
-                    width=.7,
-                    height=.7,
-                    position=(.5, .5),
-                    )
-                .set_parent(self.__menu_wrapper)
-                .to_center().create()
-                )
+            PixelImage,
+            self._engine.new_image(
+                image_type=ImageType.PIXEL_IMAGE,
+                width=.7,
+                height=.7,
+                position=(.5, .5),
+            )
+            .set_parent(self.__menu_wrapper)
+            .to_center().create()
+        )
         self.__menu_background.set_background_color(RgbColors.GREEN)
         # ********************* START SETTINGS **********************
         self.__settings_button: GridImage = cast(
@@ -83,7 +84,7 @@ class Menu:
                     path=BUTTON_LAYOUT_PATH,
                     position=(.5, .2)
                     ).set_parent(self.__menu_background).to_center().create()
-                )
+        )
         self.__settings_button_background: PixelImage = cast(
                 PixelImage,
                 self._engine.new_image(
@@ -202,13 +203,13 @@ class Menu:
                 y=self.__menu_background.position.y
                 )
         self.__event_container.add_event(
-                key=Key.KEY_J,
-                callback=lambda: self.on_active_button_change(Key.KEY_J)
-                )
+            key=Key.KEY_J,
+            callback=lambda: self.on_active_button_change(Key.KEY_J)
+        )
         self.__event_container.add_event(
-                key=Key.KEY_K,
-                callback=lambda: self.on_active_button_change(Key.KEY_K)
-                )
+            key=Key.KEY_ENTER,
+            callback=lambda: self.on_active_button_change(Key.KEY_ENTER)
+        )
 
     def update(self, elapsed_time: float) -> None:
         # ***************** ORANGE_GHOST ************************
@@ -260,9 +261,12 @@ class Menu:
                 match self.__active_button:
                     case MenuButton.SETTINGS:
                         self.__pacman_state.change(GameState.SETTINGS)
+                        self.__menu_wrapper.unmount()
                     case MenuButton.PLAY:
                         self.__pacman_state.change(GameState.PLAY)
+                        self.__menu_wrapper.unmount()
                     case MenuButton.QUIT:
                         self.__pacman_state.change(GameState.QUIT)
+                        self.__menu_wrapper.unmount()
             case _:
                 pass

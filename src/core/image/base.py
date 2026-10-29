@@ -144,12 +144,10 @@ class BaseImage:
             child_image.mount()
         for text in self._texts:
             text.mount()
-        if self.__is_visible:
-            display_image(self._image)
+        display_image(self._image)
 
     def unmount(self) -> None:
-        if self.__is_visible:
-            hide_image(self._image)
+        hide_image(self._image)
         for child_image in self._childrens:
             child_image.unmount()
         for text in self._texts:
@@ -184,6 +182,10 @@ class BaseImage:
 
     def to_center(self) -> Self:
         self._position.add(Vector2(x=-(.5 * self._width), y=-(.5 * self._height)))
+        return self
+
+    def center_x(self) -> Self:
+        self._position.add(Vector2(x=-(.5 * self._width), y=0.))
         return self
 
     def add_text(self, text: Text, position: tuple[int | float, int | float]) -> None:
