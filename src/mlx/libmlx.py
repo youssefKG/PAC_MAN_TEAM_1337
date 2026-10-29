@@ -420,7 +420,6 @@ def loop_hook(
 
 def key_hook(renderer: RendererType, function: Callable[[int], None]) -> None:
     def my_hook(mlx_key_data: mlx_key_data_t, _: object) -> None:
-        print("key hook")
         function(mlx_key_data.key)
     callback = mlx_keyfunc(my_hook)
     refs.append(callback)
@@ -577,5 +576,9 @@ def hide_image(image: mlx_image_t) -> None:
 
 def display_image(image: mlx_image_t) -> None:
     image.contents.enabled = True
+
+
+def is_key_pressed(renderer: mlx_t, key: int) -> bool:
+    return cast(bool, cast(object, mlx.mlx_is_key_down(renderer, key)))
 
 Clock = _Clock()

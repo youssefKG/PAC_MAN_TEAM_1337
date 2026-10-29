@@ -16,7 +16,7 @@ from src.mlx.libmlx import  (
 from src.core.image import ImageFactory, ImageType
 from src.utils import Logger
 from src.core.rgb_colors import RgbColors
-from src.core.event import EventHandler
+from src.core.event import EventHandler, EventContainer
 import time
 
 T = TypeVar("T")
@@ -63,12 +63,6 @@ class Engine:
         else:
             self.__window_width, self.__window_height = cast(int, window_width), cast(int, window_height)
         set_window_size(self.__renderer, self.__window_width, self.__window_height)
-        self.__renderer = Renderer(
-            self.__window_width,
-            self.__window_height,
-            title.encode("ASCII"), 
-            True
-        )
         self.__event_handler = EventHandler(self.__renderer)
         self.__image_factory = ImageFactory(self.__renderer, self.__event_handler)
         self.__is_initialized = True
@@ -142,6 +136,9 @@ class Engine:
         elapsed_time = time.time() - self.__current_time
         self.__current_time = time.time()
         callback(elapsed_time)
+
+    def add_events_container(self, event_container: EventContainer) -> None:
+        self.__event_handler.add_container(event_container)
 
 engine: Engine = Engine()
 __all__ = ["engine", "Engine"]

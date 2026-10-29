@@ -8,16 +8,18 @@ from src.core import (
 from .menu import Menu
 from src.pacman.scenes.base import BaseScene
 from src.core.event import Key
+from src.pacman.game_state import PacmanState
 
 
 TOTAL_SPIRITS = 90
 
 class MenuScene(BaseScene):
-    def __init__(self, engine: Engine) -> None:
+    def __init__(self, engine: Engine, pacman_state: PacmanState) -> None:
         super().__init__(engine)
         self.__window_width: int
         self.__window_height: int
         self.__window_width, self.__window_height = engine.window_dimension
+        self.__pacman_state: PacmanState = pacman_state
         self.__black_transparent_background = cast(
                 PixelImage,
                     self._engine.new_image(
@@ -36,17 +38,22 @@ class MenuScene(BaseScene):
                 color=RgbColors.WHITE
             ).center_x(),
             (.5, 0.01))
-        self.__menu: Menu = Menu(parent=self.__black_transparent_background , engine=self._engine)
-
+        self.__menu: Menu = Menu(
+            parent=self.__black_transparent_background ,
+            engine=self._engine,
+            event_container=self._events_container,
+            pacman_state=self.__pacman_state
+        )
 
     def update(self, elapsed_time: float) -> None:
         self.__menu.update(elapsed_time)
 
-    def renderer(self) -> None:
-        self.__black_transparent_background.mount()
-        self.__black_transparent_background.add_event(Key.KEY_J, self.__black_transparent_background.unmount)
-        self.__black_transparent_background.add_event(Key.KEY_K, self.__black_transparent_background.mount)
+    def quit(self) -> None:
+        pass
 
+    def renderer(self) -> None:
+        self._events_container.on()
+        self.__black_transparent_background.mount()
 
     @property
     def parent(self) -> PixelImage:

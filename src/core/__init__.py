@@ -3,6 +3,7 @@ from .image import ImageInterface, FrameImage, ImageType, PixelImage, GridImage,
 from .rgb_colors import RgbColors
 from .vector2 import Vector2
 from src.core.text import Text
+from .event import EventContainer, Key
 
 __all__ = [
     "Engine",
@@ -15,5 +16,7 @@ __all__ = [
     "PixelImage",
     "GridImage",
     "PngImage",
-    "Text"
+    "Text",
+    "EventContainer",
+    "Key"
 ]

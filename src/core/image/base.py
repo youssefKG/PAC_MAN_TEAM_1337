@@ -83,6 +83,7 @@ class BaseImage:
         self.__event_handler: EventHandler = event_handler
         self.__id: str = str(uuid4())
         self._has_been_in_window: bool = False
+        self.__is_visible: bool = False
 
     def set_position(self, position: Vector2) -> None:
         self._position.add(position)
@@ -119,9 +120,6 @@ class BaseImage:
             )
         )
 
-    def add_event(self, key: Key, callback: Callable[[], None]) -> None:
-        self.__event_handler.add_event(self.__id, key, callback)
-
     @property
     def position(self) -> Vector2:
         return self._position
@@ -140,21 +138,18 @@ class BaseImage:
 
     def mount(self) -> None:
         if not self._has_been_in_window:
-            image_to_window(
-                self._renderer,
-                self._image,
-                int(self._position.x),
-                int(self._position.y)
-            )
+            image_to_window(self._renderer, self._image, int(self._position.x), int(self._position.y))
             self._has_been_in_window = True
         for child_image in self._childrens:
             child_image.mount()
         for text in self._texts:
             text.mount()
-        display_image(self._image)
+        if self.__is_visible:
+            display_image(self._image)
 
     def unmount(self) -> None:
-        hide_image(self._image)
+        if self.__is_visible:
+            hide_image(self._image)
         for child_image in self._childrens:
             child_image.unmount()
         for text in self._texts:
@@ -162,10 +157,11 @@ class BaseImage:
 
     def hide(self) -> None:
         hide_image(self._image)
+        self.__is_visible = False
 
     def display(self) -> None:
         display_image(self._image)
-
+        self.__is_visible = True
 
     def __init_position(self, coordinates: tuple[int | float, int | float]) -> None:
         x, y = coordinates
@@ -189,9 +185,6 @@ class BaseImage:
     def to_center(self) -> Self:
         self._position.add(Vector2(x=-(.5 * self._width), y=-(.5 * self._height)))
         return self
-
-    def set_mouse_hover(self, callback: Callable[[], None]) -> None:
-        pass
 
     def add_text(self, text: Text, position: tuple[int | float, int | float]) -> None:
         x, y = position
@@ -220,12 +213,7 @@ class BaseImage:
     def create(self) -> Self:
         return self
 
-    def __set_dimension(
-            self,
-            dim: float | int,
-            parent_dim: int,
-
-    ) -> int:
+    def __set_dimension(self, dim: float | int, parent_dim: int) -> int:
         if isinstance(dim, int):
             return dim
         else:
