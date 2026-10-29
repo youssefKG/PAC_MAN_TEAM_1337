@@ -368,6 +368,10 @@ mlx.mlx_get_mouse_pos.argtypes = [
 mlx.mlx_get_mouse_pos.restype = None
 
 
+# mlx key hook
+mlx.mlx_key_hook.argtypes = [ctypes.POINTER(mlx_t), mlx_keyfunc, c_void_p]
+mlx.mlx_key_hook.restype = None
+
 RendererType = mlx_t
 Renderer = mlx.mlx_init
 
@@ -375,7 +379,6 @@ Image = mlx_image_t
 hook = ctypes.CFUNCTYPE(None, c_void_p)
 loop = mlx.mlx_loop
 TextureType = mlx_texture_t
-
 
 refs: list[object] = []
 def put_pixel(image: mlx_image_t, x: int, y: int, color: int) -> None:
@@ -413,6 +416,16 @@ def loop_hook(
         callback,
         None,
     )
+
+
+def key_hook(renderer: RendererType, function: Callable[[int], None]) -> None:
+    def my_hook(mlx_key_data: mlx_key_data_t, _: object) -> None:
+        print("key hook")
+        function(mlx_key_data.key)
+    callback = mlx_keyfunc(my_hook)
+    refs.append(callback)
+    mlx.mlx_key_hook(renderer, callback, None)
+
 
 class _Clock:
     def __call__(self) -> float:

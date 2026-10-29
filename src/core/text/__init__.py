@@ -1,7 +1,7 @@
 import sys
 from typing_extensions import Self
 
-from src.mlx.libmlx import Image, RendererType, image_to_window, image_from_bit_map
+from src.mlx.libmlx import Image, RendererType, image_to_window, image_from_bit_map, display_image, hide_image
 from .characteres_bit_map import CHARACTERES_BIT_MAP
 from src.core.rgb_colors import RgbColors
 from src.core.vector2 import Vector2
@@ -27,6 +27,7 @@ class Text:
         self.__position: Vector2 = Vector2(x=.0, y=.0)
         self.__color: RgbColors = color
         self.__set_characteres_images()
+        self.__has_been_on_window = False
 
     def set_position(self, position: Vector2) -> None:
         self.__position = position
@@ -50,6 +51,29 @@ class Text:
                     self.__color.value
                 )
                 self.__characteres_images.append(ch_image)
+
+
+    def mount(self) -> None:
+        offset: int = int(self.__position.x)
+        if not self.__has_been_on_window:
+            for idx, image in enumerate(self.__characteres_images):
+                image_to_window(
+                    self.__renderer,
+                    image,
+                    offset,
+                    int(self.__position.y)
+                )
+                if idx != len(self.__characteres_images):
+                    offset += self.__lettere_spacing
+                offset += int(self.__font_size)
+                self.__has_been_on_window = True
+        else:
+            for  image in self.__characteres_images:
+                display_image(image)
+
+    def unmount(self) -> None:
+        for  image in self.__characteres_images:
+            hide_image(image)
 
     def to_window(self) -> None:
         offset: int = int(self.__position.x)

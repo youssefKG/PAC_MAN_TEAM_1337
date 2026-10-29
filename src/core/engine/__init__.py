@@ -16,6 +16,7 @@ from src.mlx.libmlx import  (
 from src.core.image import ImageFactory, ImageType
 from src.utils import Logger
 from src.core.rgb_colors import RgbColors
+from src.core.event import EventHandler
 import time
 
 T = TypeVar("T")
@@ -30,6 +31,7 @@ class Engine:
         self.__elapsed_time: float
         self.__is_initialized: bool = False
         self.__current_time: float
+        self.__event_handler: EventHandler
 
     def __call__(
         self,
@@ -67,9 +69,11 @@ class Engine:
             title.encode("ASCII"), 
             True
         )
-        self.__image_factory = ImageFactory(self.__renderer)
+        self.__event_handler = EventHandler(self.__renderer)
+        self.__image_factory = ImageFactory(self.__renderer, self.__event_handler)
         self.__is_initialized = True
         self.__current_time = time.time()
+        self.__event_handler.receive()
         return self
 
     def new_image(

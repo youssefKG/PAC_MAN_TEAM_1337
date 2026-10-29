@@ -3,6 +3,7 @@ from typing_extensions import Self
 from src.mlx.libmlx import RendererType, get_image_from_grid_texture, Image, toggle_image
 from .base import BaseImage, ImageType
 from src.core.vector2 import Vector2
+from src.core.event import EventHandler
 
 class GridImage(BaseImage):
     def __init__(
@@ -10,6 +11,7 @@ class GridImage(BaseImage):
         /,
         *,
         renderer: RendererType,
+        event_handler: EventHandler,
         width: int | float,
         height: int | float,
         image_type: ImageType,
@@ -23,6 +25,7 @@ class GridImage(BaseImage):
     ) -> None:
         super().__init__(
             renderer=renderer,
+            event_handler=event_handler,
             width=width,
             height=height,
             image_type=image_type,

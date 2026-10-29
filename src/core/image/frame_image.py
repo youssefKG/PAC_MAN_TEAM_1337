@@ -1,8 +1,9 @@
 from typing import override
 from typing_extensions import Self
-from src.mlx.libmlx import Image, RendererType, get_frames_of_images, image_to_window, toggle_image, hide_image, display_image
+from src.mlx.libmlx import Image, RendererType, get_frames_of_images, image_to_window, toggle_image, hide_image, display_image, hide_image
 from .base import BaseImage, ImageType
 from src.core.vector2 import Vector2
+from src.core.event import EventHandler
 
 class FrameImage(BaseImage):
     def __init__(
@@ -10,6 +11,7 @@ class FrameImage(BaseImage):
         /, 
         *,
         renderer: RendererType,
+        event_handler: EventHandler,
         width: int | float,
         height: int | float,
         image_type: ImageType,
@@ -21,6 +23,7 @@ class FrameImage(BaseImage):
     ) -> None:
         super().__init__(
             renderer=renderer,
+            event_handler=event_handler,
             width=width,
             height=height,
             image_type=image_type,
@@ -32,6 +35,7 @@ class FrameImage(BaseImage):
         self.__time_passed: float = 0.
         self.__current_frame_idx: int = 0
         self.__time_per_frame: float = time_per_frame
+        self.__is_hidden: bool = False
 
 
     @override
@@ -48,28 +52,37 @@ class FrameImage(BaseImage):
 
     @override
     def mount(self) -> None:
-        for frame_image in self.__frames_image:
-            # toggle_image(frame_image)
-            image_to_window(
-                self._renderer,
-                frame_image,
-                int(self._position.y),
-                int(self._position.x)
-            )
+        if not self._has_been_in_window:
+            for frame_image in self.__frames_image:
+                image_to_window(
+                    self._renderer,
+                    frame_image,
+                    int(self._position.y),
+                    int(self._position.x)
+                )
+        else:
+            display_image(self.__frames_image[self.__current_frame_idx])
+            self.__is_hidden = True
+
+    @override
+    def unmount(self) -> None:
+        hide_image(self.__frames_image[self.__current_frame_idx])
+        self.__is_hidden = True
 
     def update(self, elapsed_time: float) -> None:
-        current_image: Image = self.__get_current_image
-        if self.__time_passed >= self.__time_per_frame:
-            hide_image(current_image)
-            if self.__current_frame_idx == len(self.__frames_image) - 1:
-                self.__current_frame_idx = 0
-            self.__current_frame_idx += 1
-            current_image = self.__get_current_image
-            display_image(current_image)
-            self.__time_passed -= self.__time_per_frame
-        self.__time_passed += elapsed_time
-        current_image.contents.instances[0].x = int(self._position.x)
-        current_image.contents.instances[0].y = int(self._position.y)
+        if not self.__is_hidden:
+            current_image: Image = self.__get_current_image
+            if self.__time_passed >= self.__time_per_frame:
+                hide_image(current_image)
+                if self.__current_frame_idx == len(self.__frames_image) - 1:
+                    self.__current_frame_idx = 0
+                self.__current_frame_idx += 1
+                current_image = self.__get_current_image
+                display_image(current_image)
+                self.__time_passed -= self.__time_per_frame
+            self.__time_passed += elapsed_time
+            current_image.contents.instances[0].x = int(self._position.x)
+            current_image.contents.instances[0].y = int(self._position.y)
 
     @property
     def __get_current_image(self) -> Image:

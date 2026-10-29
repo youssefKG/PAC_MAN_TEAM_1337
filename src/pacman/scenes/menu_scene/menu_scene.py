@@ -7,6 +7,7 @@ from src.core import (
 )
 from .menu import Menu
 from src.pacman.scenes.base import BaseScene
+from src.core.event import Key
 
 
 TOTAL_SPIRITS = 90
@@ -37,8 +38,16 @@ class MenuScene(BaseScene):
             (.5, 0.01))
         self.__menu: Menu = Menu(parent=self.__black_transparent_background , engine=self._engine)
 
+
     def update(self, elapsed_time: float) -> None:
         self.__menu.update(elapsed_time)
 
     def renderer(self) -> None:
         self.__black_transparent_background.mount()
+        self.__black_transparent_background.add_event(Key.KEY_J, self.__black_transparent_background.unmount)
+        self.__black_transparent_background.add_event(Key.KEY_K, self.__black_transparent_background.mount)
+
+
+    @property
+    def parent(self) -> PixelImage:
+        return self.__black_transparent_background

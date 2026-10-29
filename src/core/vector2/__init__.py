@@ -1,7 +1,4 @@
-import sys
-
 from typing import override
-from src.utils import Logger
 import math
 
 class Vector2:

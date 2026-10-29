@@ -17,8 +17,8 @@ BUTTON_LAYOUT_TOTAL_COLS = 5
 BUTTON_LAYOUT_TOTAL_ROWS = 4
 BUTTON_WIDTH = .85
 BUTTON_HEIGHT = .3
-GHOST_WIDTH = .05
-GHOST_HEIGHT = .08
+GHOST_WIDTH = .5
+GHOST_HEIGHT = .5
 
 class Menu:
     def __init__(self, *, parent: PixelImage, engine: Engine) -> None:
@@ -45,7 +45,6 @@ class Menu:
                     image_type=ImageType.PIXEL_IMAGE,
                     width=.7,
                     height=.7,
-                    time_per_frame=10,
                     position=(.5, .5),
                 )
                 .set_parent(self.__menu_wrapper)
@@ -184,9 +183,12 @@ class Menu:
 
     def update(self, elapsed_time: float) -> None:
         # ***************** ORANGE_GHOST ************************
-        if self.__orange_ghost.position.x >= self.__menu_background.position.x + self.__menu_background.width - self.__orange_ghost.width:
+        end: float = self.__menu_background.position.x + self.__menu_background.width - self.__orange_ghost.width
+        if (self.__orange_ghost.position.x >= end):
             self.__orange_ghost_target_vector.x = self.__menu_background.position.x
-        elif self.__orange_ghost.position.x <= self.__menu_background.position.x:
+        elif (
+            self.__orange_ghost.position.x <= self.__menu_background.position.x
+        ):
             self.__orange_ghost_target_vector.x = self.__menu_background.position.x - GHOST_WIDTH + self.__menu_background.width
         self.__orange_ghost.move_to(
             target=self.__orange_ghost_target_vector,

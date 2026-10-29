@@ -10,10 +10,11 @@ from src.mlx.libmlx import (
     display_image,
     Image
 )
+from uuid import uuid4
 from src.core.vector2 import Vector2
 from src.utils import Logger
 from src.core.text import Text
-from src.core.event import Event
+from src.core.event import Event, EventHandler, Key
 
 class ImageType(Enum):
     FRAME_IMAGE = auto()
@@ -52,6 +53,7 @@ class BaseImage:
             /,
             *,
             renderer: RendererType,
+            event_handler: EventHandler,
             width: int | float,
             height: int | float,
             image_type: ImageType,
@@ -77,6 +79,10 @@ class BaseImage:
         self.__events: dict[Event, Callable[[], None]] = dict()
         self._is_visible: bool = False
         self._image: Image
+        self.__event_keys: list[int] = list()
+        self.__event_handler: EventHandler = event_handler
+        self.__id: str = str(uuid4())
+        self._has_been_in_window: bool = False
 
     def set_position(self, position: Vector2) -> None:
         self._position.add(position)
@@ -92,7 +98,14 @@ class BaseImage:
     def add_children(self, image: 'BaseImage') -> None:
         self._childrens.append(image)
 
-    def move_to(self, /, *,  target: Vector2, dt: float, speed_per_frame_unit: int=1) -> None:
+    def move_to(
+        self,
+        /,
+        *,
+        target: Vector2,
+        dt: float,
+        speed_per_frame_unit: int=1
+    ) -> None:
         distance_vector: Vector2 = self._position.sub(target)
         distance_vector_normalized: Vector2 = distance_vector.normalize()
         velocity = Vector2(
@@ -105,6 +118,9 @@ class BaseImage:
                 y=self._position.y + velocity.y * dt,
             )
         )
+
+    def add_event(self, key: Key, callback: Callable[[], None]) -> None:
+        self.__event_handler.add_event(self.__id, key, callback)
 
     @property
     def position(self) -> Vector2:
@@ -123,19 +139,26 @@ class BaseImage:
         return self._height
 
     def mount(self) -> None:
-        image_to_window(
-            self._renderer,
-            self._image,
-            int(self._position.x),
-            int(self._position.y)
-        )
+        if not self._has_been_in_window:
+            image_to_window(
+                self._renderer,
+                self._image,
+                int(self._position.x),
+                int(self._position.y)
+            )
+            self._has_been_in_window = True
         for child_image in self._childrens:
             child_image.mount()
         for text in self._texts:
-            text.to_window()
+            text.mount()
+        display_image(self._image)
 
     def unmount(self) -> None:
         hide_image(self._image)
+        for child_image in self._childrens:
+            child_image.unmount()
+        for text in self._texts:
+            text.unmount()
 
     def hide(self) -> None:
         hide_image(self._image)
