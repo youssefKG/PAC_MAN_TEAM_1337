@@ -9,21 +9,21 @@ from src.core import (
 )
 from src.core import Key, EventContainer
 
-BUTTON_LAYOUT_PATH ="src/assests/menu/green_menu.png" 
+BUTTON_LAYOUT_PATH = "src/assests/menu/green_menu.png" 
 BUTTON_LAYOUT_COL = 3
 BUTTON_LAYOUT_ROW = 3
 BUTTON_LAYOUT_TOTAL_COLS = 5
 BUTTON_LAYOUT_TOTAL_ROWS = 4
-BUTTON_WIDTH = .85
-BUTTON_HEIGHT = .3
-GHOST_WIDTH = .05
-GHOST_HEIGHT = .08
+BUTTON_WIDTH = .75
+BUTTON_HEIGHT = .23
 
 
 class MenuButtonType(Enum):
     SETTINGS = auto()
     PLAY = auto()
+    HIGH_SCORES = auto()
     QUIT = auto()
+
 
 
 class MenuButton:
@@ -53,7 +53,10 @@ class MenuButton:
                     total_rows=BUTTON_LAYOUT_TOTAL_ROWS,
                     path=BUTTON_LAYOUT_PATH,
                     position=position,
-                ).set_parent(parent).to_center().create()
+                )
+                .set_parent(parent)
+                .center_x()
+                .create()
         )
         self.__button_background: PixelImage = cast(
                 PixelImage,
@@ -102,14 +105,14 @@ class Menu:
                 width= .25,
                 height=.40,
                 image_type=ImageType.GRID_IMAGE,
-                row=3,
-                col=4,
-                total_cols=5,
-                total_rows=4,
-                path="src/assests/menu/green_menu.png",
-                position=(.5, .5),
-            )
-            .set_parent(parent)
+            row=3,
+            col=4,
+            total_cols=5,
+            total_rows=4,
+            path="src/assests/menu/green_menu.png",
+            position=(.5, .5),
+        )
+        .set_parent(parent)
             .to_center().create()
         )
 
@@ -129,7 +132,7 @@ class Menu:
             MenuButton(
                 engine=self._engine,
                 parent=self.__menu_background,
-                position=(.5, .2),
+                position=(.5, .01),
                 text="PLAY",
                 is_visible=True,
                 type=MenuButtonType.SETTINGS
@@ -137,14 +140,21 @@ class Menu:
             MenuButton(
                 engine=self._engine,
                 parent=self.__menu_background,
-                position=(.5, .5),
+                position=(.5, .25),
                 text="settings",
                 type=MenuButtonType.PLAY
             ),
             MenuButton(
                 engine=self._engine,
                 parent=self.__menu_background,
-                position=(.5, .80),
+                position=(.5, .50),
+                text="HIGH SCORES",
+                type=MenuButtonType.HIGH_SCORES
+            ),
+            MenuButton(
+                engine=self._engine,
+                parent=self.__menu_background,
+                position=(.5, .75),
                 text="QUIT",
                 type=MenuButtonType.QUIT
             )

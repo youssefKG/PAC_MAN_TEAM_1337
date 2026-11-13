@@ -1,4 +1,4 @@
-from src.pacman.game_state import GameStateManager
+from src.pacman.game_state import GameStateManager, GameState
 from src.core import (
     Engine,
     engine,
@@ -11,7 +11,9 @@ class Pacman:
            title="PACMAN",
            monitor_size=True,
         )
-        self.__game_state_manager: GameStateManager = GameStateManager()
+        self.__game_state_manager: GameStateManager = GameStateManager(
+            default_state=GameState.MENU
+        )
         self.__scene_manager: SceneManager = SceneManager(
             engine=self.__engine,
             game_state_manager=self.__game_state_manager

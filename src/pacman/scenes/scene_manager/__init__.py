@@ -4,6 +4,7 @@ from src.pacman.scenes.game_scene import GameScene
 from src.pacman.scenes.settings_scene import SettingsScene
 from src.pacman.scenes.common import Background
 from src.pacman.scenes.base import BaseScene
+from src.pacman.scenes.high_scores_scene import HighScoresScene
 from src.core import Engine
 
 
@@ -14,6 +15,10 @@ class SceneManager:
         self.__menu_scene: MenuScene = MenuScene(self.__engine, self.__game_state_manager)
         self.__game_scene: GameScene = GameScene(self.__engine, self.__game_state_manager)
         self.__settings_scene: SettingsScene = SettingsScene(engine, self.__game_state_manager)
+        self.__high_scores_scene: HighScoresScene = HighScoresScene(
+            engine=self.__engine,
+            game_state_manager=self.__game_state_manager
+        )
         self.__background: Background = Background(self.__engine)
         self.__background.mount()
 
@@ -25,7 +30,7 @@ class SceneManager:
             case GameState.SETTINGS:
                 self.__update_scene(self.__settings_scene, elapsed_time)
             case GameState.HIGH_SCORES:
-                pass
+                self.__update_scene(self.__high_scores_scene, elapsed_time)
             case _:
                 ...
 

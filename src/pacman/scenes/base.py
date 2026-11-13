@@ -14,8 +14,8 @@ class BaseScene(ABC):
 
     @abstractmethod
     def mount(self) -> None:
-        self._events_container.on()
         self._is_visible = True
+        self._events_container.on()
         ...
 
     @abstractmethod

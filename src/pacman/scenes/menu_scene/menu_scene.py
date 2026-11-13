@@ -30,14 +30,14 @@ class MenuScene(BaseScene):
             engine=self._engine,
             event_container=self._events_container,
         )
+        self._events_container.add_event(key=Key.UP, callback=lambda: self.__menu.on_change(Key.UP))
+        self._events_container.add_event(key=Key.DOWN, callback=lambda: self.__menu.on_change(Key.DOWN))
+        self._events_container.add_event(key=Key.ENTER, callback=self.__change_scene)
 
     @override
     def mount(self) -> None:
         super().mount()
         self.__container.mount()
-        self._events_container.add_event(key=Key.UP, callback=lambda: self.__menu.on_change(Key.UP))
-        self._events_container.add_event(key=Key.DOWN, callback=lambda: self.__menu.on_change(Key.DOWN))
-        self._events_container.add_event(key=Key.ENTER, callback=self.__change_scene)
 
     @override
     def unmount(self) -> None:
@@ -53,3 +53,5 @@ class MenuScene(BaseScene):
                 self.__game_state_manager.change_state(GameState.PLAY)
             case MenuButtonType.QUIT:
                 self.__game_state_manager.change_state(GameState.QUIT)
+            case MenuButtonType.HIGH_SCORES:
+                self.__game_state_manager.change_state(GameState.HIGH_SCORES)

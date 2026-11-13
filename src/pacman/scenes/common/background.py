@@ -31,7 +31,7 @@ class Background:
                     position=(0, 0),
               ).set_parent().create()
         )
-        self.__black_transparent_background.set_background_color(RgbColors.BLACK_TRANS)
+        self.__black_transparent_background.set_background_color(RgbColors.GREEN)
         self.__banner: GridImage = cast(
                 GridImage,
                 self._engine.new_image(
@@ -51,7 +51,7 @@ class Background:
         )
         self.__banner.add_text(
             self._engine.new_text(
-                text="PACMAN 42 PARIS",
+                text="PACMAN",
                 font_size=40,
                 lettere_spacing=7,
                 color=RgbColors.WHITE
@@ -105,7 +105,6 @@ class Background:
                 speed_per_frame_unit=100
             )
             spirit.update(elapsed_time)
-
 
     def mount(self) -> None:
         self.__background_image.mount()

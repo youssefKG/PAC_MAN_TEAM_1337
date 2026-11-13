@@ -7,8 +7,8 @@ from src.mlx.libmlx import (
     image_to_window,
     get_monitor_size,
     hide_image,
-    toggle_image,
     display_image,
+    toggle_image,
     Image
 )
 from uuid import uuid4
@@ -80,6 +80,7 @@ class BaseImage:
         self._image: Image
         self.__id: str = str(uuid4())
         self._is_visible: bool = is_visible
+        self.__has_ben_on_screen: bool = False
 
     def set_position(self, position: Vector2) -> None:
         self._position.add(position)
@@ -129,14 +130,18 @@ class BaseImage:
         return self._height
 
     def mount(self) -> None:
-        if not self._is_visible:
+        if self._is_visible:
+            display_image(self._image)
+        else:
             hide_image(self._image)
-        image_to_window(
-            self._renderer,
-            self._image,
-            int(self._position.x),
-            int(self._position.y)
-       )
+        if not self.__has_ben_on_screen:
+            image_to_window(
+                self._renderer,
+                self._image,
+                int(self._position.x),
+                int(self._position.y)
+            )
+            self.__has_ben_on_screen = True
         for child_image in self._childrens:
             child_image.mount()
         for text in self._texts:
@@ -152,10 +157,6 @@ class BaseImage:
     def hide(self) -> None:
         hide_image(self._image)
         self._is_visible = False
-
-    def display(self) -> None:
-        display_image(self._image)
-        self._is_visible = True
 
     def __init_position(self, coordinates: tuple[int | float, int | float]) -> None:
         x, y = coordinates
@@ -197,6 +198,7 @@ class BaseImage:
         self._texts.append(text)
 
     def toggle(self) -> None:
+        self._is_visible = not self._is_visible
         toggle_image(self._image)
 
     def __set_dimensions(
