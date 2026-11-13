@@ -27,12 +27,12 @@ class ImageFactory:
             frames: int=1,
             path: str = "",
             time_per_frame: float = 0.,
-            z_index: int = 1,
             row: int = 1,
             col: int = 1,
             total_cols: int = 1,
             total_rows: int = 1,
             position: tuple[int | float, int | float] | None = None,
+            is_visible:bool = True
        ) -> BaseImage:
         match image_type: 
             case ImageType.FRAME_IMAGE:
@@ -45,8 +45,8 @@ class ImageFactory:
                             frames=frames,
                             path=path,
                             time_per_frame=time_per_frame,
-                            z_index=z_index,
                             position=position,
+                            is_visible=is_visible
                     )
             case ImageType.PIXEL_IMAGE:
                 return PixelImage(
@@ -56,7 +56,7 @@ class ImageFactory:
                             height=height,
                             image_type=image_type,
                             position=position,
-                            z_index=z_index,
+                            is_visible=is_visible
                     )
             case ImageType.GRID_IMAGE:
                 return GridImage(
@@ -65,13 +65,13 @@ class ImageFactory:
                             width=width,
                             height=height,
                             image_type=image_type,
-                            z_index=z_index,
                             row=row,
                             col=col,
                             total_rows=total_rows,
                             total_cols=total_cols,
                             path=path,
                             position=position,
+                            is_visible=is_visible
                     )
             case ImageType.PNG_IMAGE:
                 return PngImage(
@@ -80,8 +80,8 @@ class ImageFactory:
                             width=width,
                             height=height,
                             image_type=image_type,
-                            z_index=z_index,
                             path=path,
                             position=position,
                             time_per_frame=time_per_frame,
+                            is_visible=is_visible
                     )

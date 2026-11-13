@@ -1,17 +1,13 @@
-from enum import Enum, auto
-from typing import  cast
+from enum import Enum, auto 
+from typing import  cast, Literal
 from src.core import (
-    FrameImage,
     ImageType,
     GridImage,
     PixelImage,
     RgbColors,
     Engine,
-    Vector2,
-    )
-from src.pacman.utils import PacmanAssetsPath
+)
 from src.core import Key, EventContainer
-from src.pacman.game_state import PacmanState, GameState
 
 BUTTON_LAYOUT_PATH ="src/assests/menu/green_menu.png" 
 BUTTON_LAYOUT_COL = 3
@@ -23,23 +19,81 @@ BUTTON_HEIGHT = .3
 GHOST_WIDTH = .05
 GHOST_HEIGHT = .08
 
-class MenuButton(Enum):
+
+class MenuButtonType(Enum):
     SETTINGS = auto()
     PLAY = auto()
     QUIT = auto()
 
+
+class MenuButton:
+    def __init__(
+        self,
+        /,
+        *,
+        engine: Engine,
+        position: tuple[int | float, int | float],
+        parent: PixelImage,
+        text: str,
+        type:MenuButtonType,
+        is_visible: bool = False
+     ) -> None:
+        self.__engine: Engine = engine
+        self.__type: MenuButtonType = type
+        self.__is_visible: bool = is_visible
+        self.__button_container: GridImage = cast(
+            GridImage, 
+                self.__engine.new_image(
+                    width=BUTTON_WIDTH,
+                    height=BUTTON_HEIGHT,
+                    image_type=ImageType.GRID_IMAGE,
+                    row=BUTTON_LAYOUT_ROW,
+                    col=BUTTON_LAYOUT_COL,
+                    total_cols=BUTTON_LAYOUT_TOTAL_COLS,
+                    total_rows=BUTTON_LAYOUT_TOTAL_ROWS,
+                    path=BUTTON_LAYOUT_PATH,
+                    position=position,
+                ).set_parent(parent).to_center().create()
+        )
+        self.__button_background: PixelImage = cast(
+                PixelImage,
+                self.__engine.new_image(
+                    image_type=ImageType.PIXEL_IMAGE,
+                    width=.78,
+                    height=.85,
+                    time_per_frame=10,
+                    position=(.5, .5),
+                    is_visible=self.__is_visible
+                )
+                .set_parent(self.__button_container)
+                .to_center().create()
+        )
+        self.__button_background.set_background_color(RgbColors.GREEN)
+        self.__button_background.add_text(
+            self.__engine.new_text(
+                text=text,
+                lettere_spacing=3,
+                font_size=28,
+                color=RgbColors.WHITE).to_center(),
+                position=(.5, .5)
+        )
+
+    def toggle_background(self) -> None:
+        self.__button_background.toggle()
+
+    @property
+    def type(self) -> MenuButtonType:
+        return self.__type
+
 class Menu:
     def __init__(
-            self,
-            *,
-            parent: PixelImage,
-            engine: Engine,
-            event_container: EventContainer,
-            pacman_state: PacmanState
-            ) -> None:
+        self,
+        *,
+        parent: PixelImage,
+        engine: Engine,
+        event_container: EventContainer,
+    ) -> None:
         self._engine: Engine = engine
-        self.__pacman_state: PacmanState = pacman_state
-        self.__active_button: MenuButton = MenuButton.SETTINGS
         self.__event_container: EventContainer = event_container
         self.__parent: PixelImage = parent
         self.__menu_wrapper: GridImage = cast(
@@ -58,6 +112,7 @@ class Menu:
             .set_parent(parent)
             .to_center().create()
         )
+
         self.__menu_background: PixelImage = cast(
             PixelImage,
             self._engine.new_image(
@@ -70,203 +125,49 @@ class Menu:
             .to_center().create()
         )
         self.__menu_background.set_background_color(RgbColors.GREEN)
-        # ********************* START SETTINGS **********************
-        self.__settings_button: GridImage = cast(
-                GridImage,
-                self._engine.new_image(
-                    width=BUTTON_WIDTH,
-                    height=BUTTON_HEIGHT,
-                    image_type=ImageType.GRID_IMAGE,
-                    row=BUTTON_LAYOUT_ROW,
-                    col=BUTTON_LAYOUT_COL,
-                    total_cols=BUTTON_LAYOUT_TOTAL_COLS,
-                    total_rows=BUTTON_LAYOUT_TOTAL_ROWS,
-                    path=BUTTON_LAYOUT_PATH,
-                    position=(.5, .2)
-                    ).set_parent(self.__menu_background).to_center().create()
-        )
-        self.__settings_button_background: PixelImage = cast(
-                PixelImage,
-                self._engine.new_image(
-                    image_type=ImageType.PIXEL_IMAGE,
-                    width=.78,
-                    height=.85,
-                    time_per_frame=10,
-                    position=(.5, .5),
-                    )
-                .set_parent(self.__settings_button)
-                .to_center().create()
-                )
-        self.__settings_button_background.set_background_color(RgbColors.GREEN)
-        self.__settings_button.add_text(
-                self._engine.new_text(
-                    text="SETTINGS",
-                    lettere_spacing=3,
-                    font_size=28,
-                    color=RgbColors.WHITE).to_center(),
-                position=(.5, .5)
-                )
-        # ********************* END SETTINGS **********************
-        # ********************* START PLAY BUTTON **********************
-        self.__play_button: GridImage = cast(
-                GridImage,
-                self._engine.new_image(
-                    width=BUTTON_WIDTH,
-                    height=BUTTON_HEIGHT,
-                    image_type=ImageType.GRID_IMAGE,
-                    row=BUTTON_LAYOUT_ROW,
-                    col=BUTTON_LAYOUT_COL,
-                    total_cols=BUTTON_LAYOUT_TOTAL_COLS,
-                    total_rows=BUTTON_LAYOUT_TOTAL_ROWS,
-                    path=BUTTON_LAYOUT_PATH,
-                    position=(.5, .5)
-                    ).set_parent(self.__menu_background).to_center().create()
-                )
-        self.__play_button_background : PixelImage = cast(
-                PixelImage,
-                self._engine.new_image(
-                    image_type=ImageType.PIXEL_IMAGE,
-                    width=.78,
-                    height=.85,
-                    time_per_frame=10,
-                    position=(.5, .5),
-                    )
-                .set_parent(self.__play_button)
-                .to_center().create()
-                )
-        self.__play_button_background.set_background_color(RgbColors.GREEN)
-        self.__play_button_background.hide()
-        self.__play_button.add_text(
-                self._engine.new_text(
-                    text="PLAY",
-                    lettere_spacing=3,
-                    font_size=28,
-                    color=RgbColors.WHITE
-                    )
-                .to_center(), position=(.5, .5))
-        # ********************* END PALAYR **********************
+        self.__menu_buttons: list[MenuButton] = [
+            MenuButton(
+                engine=self._engine,
+                parent=self.__menu_background,
+                position=(.5, .2),
+                text="PLAY",
+                is_visible=True,
+                type=MenuButtonType.SETTINGS
+            ),
+            MenuButton(
+                engine=self._engine,
+                parent=self.__menu_background,
+                position=(.5, .5),
+                text="settings",
+                type=MenuButtonType.PLAY
+            ),
+            MenuButton(
+                engine=self._engine,
+                parent=self.__menu_background,
+                position=(.5, .80),
+                text="QUIT",
+                type=MenuButtonType.QUIT
+            )
+        ]
+        self.__current_active_button_idx = 0;
 
-        # ********************* START QUIT *************************
-        self.__quit_button: GridImage = cast(
-                GridImage,
-                self._engine.new_image(
-                    width=BUTTON_WIDTH,
-                    height=BUTTON_HEIGHT,
-                    image_type=ImageType.GRID_IMAGE,
-                    row=BUTTON_LAYOUT_ROW,
-                    col=BUTTON_LAYOUT_COL,
-                    total_cols=BUTTON_LAYOUT_TOTAL_COLS,
-                    total_rows=BUTTON_LAYOUT_TOTAL_ROWS,
-                    path=BUTTON_LAYOUT_PATH,
-                    position=(.5, .80)
-                    ).set_parent(self.__menu_background).to_center().create()
-                )
-        self.__quit_button_background: PixelImage = cast(
-                PixelImage,
-                self._engine.new_image(
-                    image_type=ImageType.PIXEL_IMAGE,
-                    width=.78,
-                    height=.85,
-                    time_per_frame=10,
-                    position=(.5, .5),
-                    )
-                .set_parent(self.__quit_button)
-                .to_center().create()
-                )
-        self.__quit_button_background.set_background_color(RgbColors.GREEN)
-        self.__quit_button_background.hide()
-        self.__quit_button.add_text(
-                self._engine.new_text(
-                    text="QUIT",
-                    lettere_spacing=3,
-                    font_size=28,
-                    color=RgbColors.WHITE
-                    )
-                .to_center(), position=(.5, .5))
-        # ********************* END QUIT *************************
+    @property
+    def active_button(self) -> MenuButtonType:
+        return self.__menu_buttons[self.__current_active_button_idx].type
 
-        # ********************* START GHOSTS **********************
-        self.__orange_ghost: FrameImage = cast(
-                FrameImage,
-                self._engine.new_image(
-                    width=GHOST_WIDTH,
-                    height=GHOST_HEIGHT,
-                    frames=8,
-                    image_type=ImageType.FRAME_IMAGE,
-                    path=PacmanAssetsPath.ORANGE_GHOST_FRAME,
-                    time_per_frame=.17,
-                    position=(0, 0)
-                    ).set_parent(self.__menu_background).create()
-                )
-        self.__orange_ghost_target_vector = Vector2(
-                x=self.__menu_background.position.x,
-                y=self.__menu_background.position.y
-                )
-        self.__event_container.add_event(
-            key=Key.KEY_J,
-            callback=lambda: self.on_active_button_change(Key.KEY_J)
-        )
-        self.__event_container.add_event(
-            key=Key.KEY_ENTER,
-            callback=lambda: self.on_active_button_change(Key.KEY_ENTER)
-        )
-
-    def update(self, elapsed_time: float) -> None:
-        # ***************** ORANGE_GHOST ************************
-        end: float = self.__menu_background.position.x + self.__menu_background.width - self.__orange_ghost.width
-        if (self.__orange_ghost.position.x >= end):
-            self.__orange_ghost_target_vector.x = self.__menu_background.position.x
-        elif (
-                self.__orange_ghost.position.x <= self.__menu_background.position.x
-                ):
-            self.__orange_ghost_target_vector.x = self.__menu_background.position.x - GHOST_WIDTH + self.__menu_background.width
-        self.__orange_ghost.move_to(
-                target=self.__orange_ghost_target_vector,
-                dt=elapsed_time,
-                speed_per_frame_unit=45,
-                )
-        self.__orange_ghost.update(elapsed_time)
-
-    def on_active_button_change(self, key: Key) -> None:
-        match key:
-            case Key.KEY_J:
-                match self.__active_button:
-                    case MenuButton.SETTINGS:
-                        self.__active_button = MenuButton.PLAY
-                        self.__settings_button_background.hide()
-                        self.__play_button_background.display()
-                    case MenuButton.PLAY:
-                        self.__active_button = MenuButton.QUIT
-                        self.__play_button_background.hide()
-                        self.__quit_button_background.display()
-                    case MenuButton.QUIT:
-                        self.__active_button = MenuButton.SETTINGS
-                        self.__quit_button_background.hide()
-                        self.__settings_button_background.display()
-            case Key.KEY_K:
-                match self.__active_button:
-                    case MenuButton.SETTINGS:
-                        self.__active_button = MenuButton.QUIT
-                        self.__settings_button_background.unmount()
-                        self.__quit_button_background.mount()
-                    case MenuButton.PLAY:
-                        self.__active_button = MenuButton.SETTINGS
-                        self.__play_button_background.unmount()
-                        self.__settings_button_background.mount()
-                    case MenuButton.QUIT:
-                        self.__active_button = MenuButton.PLAY
-                        self.__quit_button_background.unmount()
-                        self.__play_button_background.mount()
-            case Key.KEY_ENTER:
-                match self.__active_button:
-                    case MenuButton.SETTINGS:
-                        self.__pacman_state.change(GameState.SETTINGS)
-                        self.__menu_wrapper.unmount()
-                    case MenuButton.PLAY:
-                        self.__pacman_state.change(GameState.PLAY)
-                        self.__menu_wrapper.unmount()
-                    case MenuButton.QUIT:
-                        self.__pacman_state.change(GameState.QUIT)
-                        self.__menu_wrapper.unmount()
-            case _:
-                pass
+    def on_change(self, pressed_key: Literal[Key.UP, Key.DOWN]) -> None:
+        match pressed_key:
+            case Key.DOWN:
+                self.__menu_buttons[self.__current_active_button_idx].toggle_background()
+                if self.__current_active_button_idx == len(self.__menu_buttons) - 1:
+                    self.__current_active_button_idx = 0;
+                else:
+                    self.__current_active_button_idx += 1
+                self.__menu_buttons[self.__current_active_button_idx].toggle_background()
+            case Key.UP:
+                self.__menu_buttons[self.__current_active_button_idx].toggle_background()
+                if self.__current_active_button_idx == 0:
+                    self.__current_active_button_idx = len(self.__menu_buttons) -1;
+                else:
+                    self.__current_active_button_idx -= 1
+                self.__menu_buttons[self.__current_active_button_idx].toggle_background()

@@ -2,17 +2,21 @@ from enum import Enum, auto
 
 class GameState(Enum):
     MENU = auto()
-    START = auto()
-    WIN_LOSE = auto()
-    HIGH_SCORE = auto()
-    SETTINGS = auto()
-    QUIT = auto()
     PLAY = auto()
+    SETTINGS = auto()
+    SCORE = auto()
+    QUIT = auto()
+    HIGH_SCORES = auto()
+
+    
+class GameStateManager:
+    def __init__(self, default_state: GameState = GameState.MENU) -> None:
+        self.__state: GameState = default_state
+
+    @property
+    def state(self) -> GameState:
+        return self.__state
 
 
-class PacmanState:
-    def __init__(self) -> None:
-        self.__state: GameState = GameState.MENU
-
-    def change(self, new_state: GameState) -> None:
+    def change_state(self, new_state: GameState) -> None:
         self.__state = new_state

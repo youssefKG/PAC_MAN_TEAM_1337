@@ -85,6 +85,7 @@ class Engine:
             total_cols: int = 1,
             total_rows: int = 1,
             position: tuple[int | float, int | float] | None=None,
+            is_visible: bool = True
         ) -> BaseImage:
         return self.__image_factory(
             width=width,
@@ -98,6 +99,7 @@ class Engine:
             col=col,
             row=row,
             position=position,
+            is_visible=is_visible
         )
 
     def new_text(

@@ -1,8 +1,14 @@
 from typing import override
 from typing_extensions import Self
-from src.mlx.libmlx import Image, RendererType, get_frames_of_images, image_to_window, toggle_image, hide_image, display_image, hide_image
+from src.mlx.libmlx import (
+    Image,
+    RendererType,
+    get_frames_of_images,
+    image_to_window,
+    hide_image,
+    display_image
+)
 from .base import BaseImage, ImageType
-from src.core.vector2 import Vector2
 from src.core.event import EventHandler
 
 class FrameImage(BaseImage):
@@ -19,7 +25,7 @@ class FrameImage(BaseImage):
         time_per_frame: float,
         position: tuple[int | float, int | float] | None,
         frames:  int = 1,
-        z_index: int = 10,
+        is_visible: bool
     ) -> None:
         super().__init__(
             renderer=renderer,
@@ -28,6 +34,7 @@ class FrameImage(BaseImage):
             height=height,
             image_type=image_type,
             position=position,
+            is_visible=is_visible
         )
         self._path: str = path
         self.__frames: int = frames
@@ -52,7 +59,7 @@ class FrameImage(BaseImage):
 
     @override
     def mount(self) -> None:
-        if not self._has_been_in_window:
+        if not self._is_visible:
             for frame_image in self.__frames_image:
                 image_to_window(
                     self._renderer,
@@ -68,6 +75,10 @@ class FrameImage(BaseImage):
     def unmount(self) -> None:
         hide_image(self.__frames_image[self.__current_frame_idx])
         self.__is_hidden = True
+
+    @override
+    def toggle(self) -> None:
+        pass
 
     def update(self, elapsed_time: float) -> None:
         if not self.__is_hidden:

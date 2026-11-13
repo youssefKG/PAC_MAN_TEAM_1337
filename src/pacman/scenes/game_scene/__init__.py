@@ -2,4 +2,4 @@ from .game_scene import GameScene
 
 
 
-all = ["GameScene"]
+__all__ = ["GameScene"]

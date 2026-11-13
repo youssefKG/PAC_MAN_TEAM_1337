@@ -11,11 +11,13 @@ class Event(Enum):
 
 
 class Key(Enum):
-    KEY_I               = 73
-    KEY_J               = 74
-    KEY_K               = 75
-    KEY_L               = 76
-    KEY_ENTER           = 257
+    I               = 73
+    J               = 74
+    K               = 75
+    L               = 76
+    ENTER           = 257
+    DOWN            = 264
+    UP              = 265
 
 class EventContainer:
     def __init__(self) -> None:

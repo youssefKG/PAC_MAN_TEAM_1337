@@ -1,5 +1,3 @@
-from .menu_scene import MenuScene
-from .common import BouncingSpirits
+from .scene_manager import SceneManager
 
-
-__all__ = ["MenuScene", "BouncingSpirits"]
+__all__ = ["SceneManager"]

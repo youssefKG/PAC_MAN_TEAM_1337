@@ -1,3 +1,3 @@
-from .bouncing_spirits import BouncingSpirits
+from .background import Background
 
-__all__ = ["BouncingSpirits"]
+__all__ = ["Background"]

@@ -1,9 +1,9 @@
-from src.pacman.scenes import MenuScene, BouncingSpirits
-from src.pacman.game_state import PacmanState
+from src.pacman.game_state import GameStateManager
 from src.core import (
     Engine,
     engine,
 )
+from src.pacman.scenes import SceneManager
 
 class Pacman:
     def __init__(self) -> None:
@@ -11,17 +11,16 @@ class Pacman:
            title="PACMAN",
            monitor_size=True,
         )
-        self.__pacman_state: PacmanState = PacmanState()
-        self.__menu_scene: MenuScene = MenuScene(engine, self.__pacman_state)
-        self.__bouncing_spirits: BouncingSpirits = BouncingSpirits(self.__engine)
-        self.__bouncing_spirits.renderer()
-        self.__menu_scene.renderer()
+        self.__game_state_manager: GameStateManager = GameStateManager()
+        self.__scene_manager: SceneManager = SceneManager(
+            engine=self.__engine,
+            game_state_manager=self.__game_state_manager
+        )
 
     def run(self) -> None:
         self.__engine.game_loop(self.__update)
 
     def __update(self, elapsed_time: float) -> None:
-        self.__bouncing_spirits.update(elapsed_time)
-        self.__menu_scene.update(elapsed_time)
+        self.__scene_manager.update(elapsed_time)
 
 __all__ = ["Pacman"]

@@ -21,7 +21,7 @@ class GridImage(BaseImage):
         col: int,
         row: int,
         path: str,
-        z_index: int = 1,
+        is_visible: bool
     ) -> None:
         super().__init__(
             renderer=renderer,
@@ -30,7 +30,7 @@ class GridImage(BaseImage):
             height=height,
             image_type=image_type,
             position=position,
-            z_index=z_index,
+            is_visible=is_visible
         )
         self.__total_rows: int = total_rows
         self.__total_cols: int = total_cols
@@ -59,7 +59,4 @@ class GridImage(BaseImage):
 
     def update(self, elapsed_time: float) -> None:
         ...
-
-    def toggle(self) -> None:
-        toggle_image(self._image)
 

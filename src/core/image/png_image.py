@@ -17,7 +17,7 @@ class PngImage(BaseImage):
             path: str,
             time_per_frame: float,
             position: tuple[int | float, int | float] | None=None,
-            z_index: int = 1,
+            is_visible: bool,
     ) -> None:
         super().__init__(
                 renderer=renderer,
@@ -26,7 +26,7 @@ class PngImage(BaseImage):
                 height=height,
                 image_type=image_type,
                 position=position,
-                z_index=z_index,
+                is_visible=is_visible
         )
         self.__path: str = path
         self.__time_passed: float = .0

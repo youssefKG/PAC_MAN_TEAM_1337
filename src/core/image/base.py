@@ -7,6 +7,7 @@ from src.mlx.libmlx import (
     image_to_window,
     get_monitor_size,
     hide_image,
+    toggle_image,
     display_image,
     Image
 )
@@ -58,11 +59,11 @@ class BaseImage:
             height: int | float,
             image_type: ImageType,
             position: tuple[int | float, int | float] | None=None,
+            is_visible: bool,
             top: int = 0,
             right: int = 0,
             left: int = 0,
             bottom: int = 0,
-            z_index: int = 1,
         ) -> None:
         self._renderer: RendererType = renderer
         self.__temp_width: int | float = width
@@ -71,19 +72,14 @@ class BaseImage:
         self._width: int 
         self._height: int
         self.image_type: ImageType = image_type
-        self.__z_index: int = z_index
         self._position: Vector2 = Vector2(x=.0, y=.0)
         self._parent: 'BaseImage | None' = None
         self._texts: list[Text] = list()
         self._childrens: list[BaseImage] = list()
         self.__events: dict[Event, Callable[[], None]] = dict()
-        self._is_visible: bool = False
         self._image: Image
-        self.__event_keys: list[int] = list()
-        self.__event_handler: EventHandler = event_handler
         self.__id: str = str(uuid4())
-        self._has_been_in_window: bool = False
-        self.__is_visible: bool = False
+        self._is_visible: bool = is_visible
 
     def set_position(self, position: Vector2) -> None:
         self._position.add(position)
@@ -125,10 +121,6 @@ class BaseImage:
         return self._position
 
     @property
-    def z_index(self) -> int:
-        return self.__z_index
-
-    @property
     def width(self) -> int:
         return self._width
 
@@ -137,14 +129,18 @@ class BaseImage:
         return self._height
 
     def mount(self) -> None:
-        if not self._has_been_in_window:
-            image_to_window(self._renderer, self._image, int(self._position.x), int(self._position.y))
-            self._has_been_in_window = True
+        if not self._is_visible:
+            hide_image(self._image)
+        image_to_window(
+            self._renderer,
+            self._image,
+            int(self._position.x),
+            int(self._position.y)
+       )
         for child_image in self._childrens:
             child_image.mount()
         for text in self._texts:
             text.mount()
-        display_image(self._image)
 
     def unmount(self) -> None:
         hide_image(self._image)
@@ -155,11 +151,11 @@ class BaseImage:
 
     def hide(self) -> None:
         hide_image(self._image)
-        self.__is_visible = False
+        self._is_visible = False
 
     def display(self) -> None:
         display_image(self._image)
-        self.__is_visible = True
+        self._is_visible = True
 
     def __init_position(self, coordinates: tuple[int | float, int | float]) -> None:
         x, y = coordinates
@@ -199,6 +195,9 @@ class BaseImage:
             Logger.error("invalide coordinates ({x}, {y})", __name__)
             sys.exit(1)
         self._texts.append(text)
+
+    def toggle(self) -> None:
+        toggle_image(self._image)
 
     def __set_dimensions(
         self,
