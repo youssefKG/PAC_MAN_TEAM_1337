@@ -33,13 +33,13 @@ class PngImage(BaseImage):
         self.__time_per_frame: float = time_per_frame
         self._image: Image
 
-    @override
-    def mount(self) -> None:
-        image_to_window(self._renderer, self._image, int(self._position.x), int(self._position.y))
-        for child_image in self._childrens:
-            child_image.mount()
-        for text in self._texts:
-            text.to_window()
+    # @override
+    # def mount(self) -> None:
+    #     image_to_window(self._renderer, self._image, int(self._position.x), int(self._position.y))
+    #     for child_image in self._childrens:
+    #         child_image.mount()
+    #     for text in self._texts:
+    #         text.to_window()
 
     @override
     def create(self) -> Self:

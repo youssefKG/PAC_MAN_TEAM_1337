@@ -184,6 +184,9 @@ class BaseImage:
     def center_x(self) -> Self:
         self._position.add(Vector2(x=-(.5 * self._width), y=0.))
         return self
+    def center_y(self) -> Self:
+        self._position.add(Vector2(x=.0, y=-(self._height * 0.5)))
+        return self
 
     def add_text(self, text: Text, position: tuple[int | float, int | float]) -> None:
         x, y = position
