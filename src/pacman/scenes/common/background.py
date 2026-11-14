@@ -2,7 +2,7 @@ from typing import cast
 from src.core import Engine, ImageType, PixelImage, PngImage, Vector2, RgbColors, GridImage
 import random
 
-TOTAL_SPIRITS = 190
+TOTAL_SPIRITS = 90
 
 class Background:
     def __init__(self, engine: Engine) -> None:

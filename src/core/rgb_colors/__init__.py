@@ -10,7 +10,7 @@ class RgbColors(Enum):
     BLACK          = 0x00000000
     WHITE          = 0xFFFFFFFF
     RED            = 0xFFFF0000
-    GREEN          = 34 << 24 | 0 << 16 | 255 << 8 | 31
+    GREEN          = 44 << 24 | 0 << 16 | 255 << 8 | 31
     BLUE           = 0xFF0000FF
 
     YELLOW         = 0xFFFFFF00
@@ -32,7 +32,7 @@ class RgbColors(Enum):
     OLIVE          = 0xFF808000
     MAROON         = 0xFF800000
     SILVER         = 0xFFC0C0C0
-    BLACK_TRANS    = 140 << 24 | (0 << 16) | (0 << 8) | 0
+    BLACK_TRANS    = 180 << 24 | (0 << 16) | (0 << 8) | 0
     TRANSPARENT    = 0 << 24 | (0 << 16) | (0 << 8) | 0
 
 __all__ = ["RgbColors"]

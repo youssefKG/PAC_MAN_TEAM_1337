@@ -85,14 +85,5 @@ class LeaderBoard:
            )
           .set_parent(self.__wood_background)
           .create()
-       )
-        self.__black_transparent_background.set_background_color(RgbColors.BLACK_TRANS)
-
-        self.__player_score: PlayerScore = PlayerScore(
-            engine=self.__engine,
-            parent=self.__wood_background,
-            position=(.5, .0),
-            is_visible=True,
-            name="YOUSSEF",
-            rank=0
         )
+        self.__black_transparent_background.set_background_color(RgbColors.BLACK_TRANS)
