@@ -9,7 +9,6 @@ from src.mlx.libmlx import (
     display_image
 )
 from .base import BaseImage, ImageType
-from src.core.event import EventHandler
 
 class FrameImage(BaseImage):
     def __init__(
@@ -17,7 +16,6 @@ class FrameImage(BaseImage):
         /, 
         *,
         renderer: RendererType,
-        event_handler: EventHandler,
         width: int | float,
         height: int | float,
         image_type: ImageType,
@@ -29,7 +27,6 @@ class FrameImage(BaseImage):
     ) -> None:
         super().__init__(
             renderer=renderer,
-            event_handler=event_handler,
             width=width,
             height=height,
             image_type=image_type,

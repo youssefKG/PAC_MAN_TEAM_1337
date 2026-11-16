@@ -1,5 +1,5 @@
 from enum import Enum, auto
-from src.mlx.libmlx import RendererType, key_hook, mlx, is_key_pressed
+from src.mlx.libmlx import RendererType, key_hook, is_key_pressed
 from typing import Callable, Annotated 
 from uuid import uuid4
 
@@ -18,6 +18,7 @@ class Key(Enum):
     ENTER           = 257
     DOWN            = 264
     UP              = 265
+    ESC             = 256
 
 class EventContainer:
     def __init__(self) -> None:

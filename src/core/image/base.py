@@ -1,5 +1,5 @@
+from typing import Protocol
 import sys
-from typing import Protocol, Callable
 from typing_extensions import Self
 from enum import Enum, auto
 from src.mlx.libmlx import (
@@ -9,13 +9,13 @@ from src.mlx.libmlx import (
     hide_image,
     display_image,
     toggle_image,
+    delete_image,
     Image
 )
 from uuid import uuid4
 from src.core.vector2 import Vector2
 from src.utils import Logger
 from src.core.text import Text
-from src.core.event import Event, EventHandler, Key
 
 class ImageType(Enum):
     FRAME_IMAGE = auto()
@@ -54,7 +54,6 @@ class BaseImage:
             /,
             *,
             renderer: RendererType,
-            event_handler: EventHandler,
             width: int | float,
             height: int | float,
             image_type: ImageType,
@@ -75,8 +74,7 @@ class BaseImage:
         self._position: Vector2 = Vector2(x=.0, y=.0)
         self._parent: 'BaseImage | None' = None
         self._texts: list[Text] = list()
-        self._childrens: list[BaseImage] = list()
-        self.__events: dict[Event, Callable[[], None]] = dict()
+        self._childrens: dict[str, BaseImage] = dict()
         self._image: Image
         self.__id: str = str(uuid4())
         self._is_visible: bool = is_visible
@@ -93,8 +91,12 @@ class BaseImage:
         self.__init_position(self.__temp_position if self.__temp_position is not None else (0, 0))
         return self
 
+    @property
+    def id(self) -> str:
+        return self.__id
+
     def add_children(self, image: 'BaseImage') -> None:
-        self._childrens.append(image)
+        self._childrens[image.id]  = image
 
     def move_to(
         self,
@@ -142,14 +144,14 @@ class BaseImage:
                 int(self._position.y)
             )
             self.__has_ben_on_screen = True
-        for child_image in self._childrens:
+        for child_image in self._childrens.values():
             child_image.mount()
         for text in self._texts:
             text.mount()
 
     def unmount(self) -> None:
         hide_image(self._image)
-        for child_image in self._childrens:
+        for child_image in self._childrens.values():
             child_image.unmount()
         for text in self._texts:
             text.unmount()
@@ -224,3 +226,13 @@ class BaseImage:
             return dim
         else:
             return int(dim * parent_dim)
+
+    def delete_text(self) -> None:
+        pass
+
+    def delete(self) -> None:
+        delete_image(self._renderer, self._image)
+        for idx, children_image in enumerate(self._childrens.values()):
+            children_image.delete()
+        for text in self._texts:
+            text.delete()

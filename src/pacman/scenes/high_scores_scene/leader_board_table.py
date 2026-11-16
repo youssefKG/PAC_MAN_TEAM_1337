@@ -1,4 +1,4 @@
-from typing import  cast
+from typing import  cast, Annotated
 from src.core import (
     Engine,
     ImageType,
@@ -7,11 +7,43 @@ from src.core import (
     RgbColors,
     PngImage,
 )
-from .player_score import PlayerScore
+from .player_score_row import PlayerScoreRow
 from src.pacman.game_state import GameStateManager
+from src.pacman.validation_models import PlayerScoreModel
+from .players_leaderboard_table_header import PlayersLeaderboardTableHeader
+
+TOTAL_ROWS: int = 11
+PLAYER_SCORE_ROW_HEIGHT: float = 1 / TOTAL_ROWS
+
+class PlayersLeaderboardRows:
+    def __init__(self, engine: Engine, players_score: list[PlayerScoreModel], parent: PixelImage) -> None:
+        self.__players_score: list[PlayerScoreModel] = players_score[:10]
+        self.__engine: Engine = engine
+        self.__players_scores_ui: dict[Annotated[str, "player id"], PlayerScoreRow] = dict()
+        self.__parent: PixelImage = parent
+
+    def update(self, new_players_scores: list[PlayerScoreModel] | None = None) -> None:
+        if new_players_scores:
+            self.__players_score = new_players_scores
+        # TODO: update the players scores
+
+    def render(self) -> None:
+        for rank, player_score in enumerate(self.__players_score):
+            self.__players_scores_ui[player_score.id] = PlayerScoreRow(
+                engine=self.__engine,
+                player_score=player_score,
+                position=(.5,  (PLAYER_SCORE_ROW_HEIGHT + PLAYER_SCORE_ROW_HEIGHT * rank)),
+                rank=rank,
+                parent=self.__parent
+            )
+    def delete(self) -> None:
+        for player_score in self.__players_scores_ui.values():
+            player_score.delete()
 
 
-class LeaderBoard:
+
+
+class LeaderBoardTable:
     def __init__(
         self,
         engine: Engine,
@@ -59,7 +91,8 @@ class LeaderBoard:
                     font_size=24,
                     lettere_spacing=4,
                     color=RgbColors.WHITE,
-              ).to_center(),
+            )
+            .to_center(),
             position=(0.5, 0.5)
         )
         self.__wood_background: PngImage = cast(
@@ -67,8 +100,8 @@ class LeaderBoard:
             self.__engine.new_image(
                 image_type=ImageType.PNG_IMAGE,
                 width=.762,
-                height=.74,
-                position=(.492, .494),
+                height=.75,
+                position=(.494, .5),
                 path="src/assests/backgrounds/wood_background.png"
             )
             .set_parent(self.__leaderboard)
@@ -87,3 +120,13 @@ class LeaderBoard:
           .create()
         )
         self.__black_transparent_background.set_background_color(RgbColors.BLACK_TRANS)
+        self.__players_score_header_table: PlayersLeaderboardTableHeader = PlayersLeaderboardTableHeader(
+                engine=self.__engine,
+                parent=self.__black_transparent_background
+        )
+        self.__players_score_rows: PlayersLeaderboardRows =  PlayersLeaderboardRows(
+            engine=self.__engine,
+            players_score=self.__game_state_manager.players_score,
+            parent=self.__black_transparent_background
+        )
+        self.__players_score_rows.render()

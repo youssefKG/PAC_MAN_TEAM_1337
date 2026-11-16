@@ -64,7 +64,7 @@ class Engine:
             self.__window_width, self.__window_height = cast(int, window_width), cast(int, window_height)
         set_window_size(self.__renderer, self.__window_width, self.__window_height)
         self.__event_handler = EventHandler(self.__renderer)
-        self.__image_factory = ImageFactory(self.__renderer, self.__event_handler)
+        self.__image_factory = ImageFactory(self.__renderer)
         self.__is_initialized = True
         self.__current_time = time.time()
         self.__event_handler.receive()

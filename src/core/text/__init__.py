@@ -1,7 +1,15 @@
 import sys
 from typing_extensions import Self
 
-from src.mlx.libmlx import Image, RendererType, image_to_window, image_from_bit_map, display_image, hide_image
+from src.mlx.libmlx import (
+    Image,
+    RendererType,
+    image_to_window,
+    image_from_bit_map,
+    display_image,
+    delete_image,
+    hide_image
+)
 from .characteres_bit_map import CHARACTERES_BIT_MAP
 from src.core.rgb_colors import RgbColors
 from src.core.vector2 import Vector2
@@ -99,5 +107,9 @@ class Text:
 
     def to_center(self) -> Self:
         return self.center_x().center_y()
+
+    def delete(self) -> None:
+        for ch in self.__characteres_images:
+            delete_image(self.__renderer, ch)
 
 __all__ = ["Text"]

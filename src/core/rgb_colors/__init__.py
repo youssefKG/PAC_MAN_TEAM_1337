@@ -7,10 +7,11 @@ def create_color(r: int, g: int, b: int, t: int=0xFF000000) -> int:
 
 
 class RgbColors(Enum):
-    BLACK          = 0x00000000
+    BLACK          = 0xFF000000
     WHITE          = 0xFFFFFFFF
     RED            = 0xFFFF0000
-    GREEN          = 44 << 24 | 0 << 16 | 255 << 8 | 31
+    GREEN          = 155 << 24 | 0 << 16 | 255 << 8 | 31
+    TRANSPARENT_GREEN = 40 << 24 | 0 << 16 | 255 << 8 | 31
     BLUE           = 0xFF0000FF
 
     YELLOW         = 0xFFFFFF00

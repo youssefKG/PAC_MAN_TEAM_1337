@@ -8,7 +8,7 @@ from src.core import (
 from src.pacman.game_state import GameStateManager, GameState
 from src.pacman.scenes.base import BaseScene
 
-from .leader_board import LeaderBoard
+from .leader_board_table import LeaderBoardTable
 
 
 class HighScoresScene(BaseScene):
@@ -34,7 +34,7 @@ class HighScoresScene(BaseScene):
             .set_parent()
             .create()
         )
-        self.__leaderboard: LeaderBoard = LeaderBoard(
+        self.__leaderboard: LeaderBoardTable = LeaderBoardTable(
             engine=self._engine,
             parent=self.__scene_container,
             game_state_manager=self.__game_state_manager
@@ -44,7 +44,7 @@ class HighScoresScene(BaseScene):
     def mount(self) -> None:
         super().mount()
         self.__scene_container.mount()
-        self._events_container.add_event(key=Key.J, callback=self.change)
+        self._events_container.add_event(key=Key.ESC, callback=self.change)
 
     def change(self) -> None:
         self.unmount()

@@ -425,13 +425,6 @@ def key_hook(renderer: RendererType, function: Callable[[int], None]) -> None:
     refs.append(callback)
     mlx.mlx_key_hook(renderer, callback, None)
 
-
-class _Clock:
-    def __call__(self) -> float:
-        elapsed_time: float = cast(float, mlx.mlx_get_time())
-        return elapsed_time
-
-
 def load_texture(path: str) -> TextureType:
     return cast(
             TextureType,
@@ -581,4 +574,5 @@ def display_image(image: mlx_image_t) -> None:
 def is_key_pressed(renderer: mlx_t, key: int) -> bool:
     return cast(bool, cast(object, mlx.mlx_is_key_down(renderer, key)))
 
-Clock = _Clock()
+def delete_image(renderer: mlx_t, image: mlx_image_t) -> None:
+    mlx.mlx_delete_image(renderer, image)

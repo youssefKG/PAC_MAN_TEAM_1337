@@ -1,5 +1,5 @@
 from enum import Enum, auto 
-from typing import  cast, Literal
+from typing import  cast, Literal, TypeAlias, Annotated
 from src.core import (
     ImageType,
     GridImage,
@@ -22,9 +22,19 @@ class MenuButtonType(Enum):
     SETTINGS = auto()
     PLAY = auto()
     HIGH_SCORES = auto()
+    INSTRUCTIONS = auto()
     QUIT = auto()
 
 
+Button: TypeAlias = tuple[Annotated[str, "button title"], MenuButtonType]
+
+Buttons: list[Button] = [
+    ("PLAY", MenuButtonType.PLAY),
+    ("INSTRUCTIONS", MenuButtonType.INSTRUCTIONS),
+    ("HIGH SCORES", MenuButtonType.HIGH_SCORES),
+    ("SETTINGS", MenuButtonType.SETTINGS),
+    ("QUIT", MenuButtonType.QUIT)
+]
 
 class MenuButton:
     def __init__(
@@ -34,18 +44,21 @@ class MenuButton:
         engine: Engine,
         position: tuple[int | float, int | float],
         parent: PixelImage,
-        text: str,
+        title: str,
         type:MenuButtonType,
+        width: float,
+        height: float,
         is_visible: bool = False
      ) -> None:
         self.__engine: Engine = engine
         self.__type: MenuButtonType = type
         self.__is_visible: bool = is_visible
+        self.__title: str = title
         self.__button_container: GridImage = cast(
             GridImage, 
                 self.__engine.new_image(
-                    width=BUTTON_WIDTH,
-                    height=BUTTON_HEIGHT,
+                    width=width,
+                    height=height,
                     image_type=ImageType.GRID_IMAGE,
                     row=BUTTON_LAYOUT_ROW,
                     col=BUTTON_LAYOUT_COL,
@@ -71,12 +84,12 @@ class MenuButton:
                 .set_parent(self.__button_container)
                 .to_center().create()
         )
-        self.__button_background.set_background_color(RgbColors.GREEN)
+        self.__button_background.set_background_color(RgbColors.TRANSPARENT_GREEN)
         self.__button_background.add_text(
             self.__engine.new_text(
-                text=text,
-                lettere_spacing=3,
-                font_size=28,
+                text=self.__title,
+                lettere_spacing=2,
+                font_size=22,
                 color=RgbColors.WHITE).to_center(),
                 position=(.5, .5)
         )
@@ -102,8 +115,8 @@ class Menu:
         self.__menu_wrapper: GridImage = cast(
             GridImage,
             self._engine.new_image(
-                width= .25,
-                height=.40,
+                width= .30,
+                height=.50,
                 image_type=ImageType.GRID_IMAGE,
             row=3,
             col=4,
@@ -127,38 +140,22 @@ class Menu:
             .set_parent(self.__menu_wrapper)
             .to_center().create()
         )
-        self.__menu_background.set_background_color(RgbColors.GREEN)
-        self.__menu_buttons: list[MenuButton] = [
-            MenuButton(
-                engine=self._engine,
-                parent=self.__menu_background,
-                position=(.5, .01),
-                text="PLAY",
-                is_visible=True,
-                type=MenuButtonType.SETTINGS
-            ),
-            MenuButton(
-                engine=self._engine,
-                parent=self.__menu_background,
-                position=(.5, .25),
-                text="settings",
-                type=MenuButtonType.PLAY
-            ),
-            MenuButton(
-                engine=self._engine,
-                parent=self.__menu_background,
-                position=(.5, .50),
-                text="HIGH SCORES",
-                type=MenuButtonType.HIGH_SCORES
-            ),
-            MenuButton(
-                engine=self._engine,
-                parent=self.__menu_background,
-                position=(.5, .75),
-                text="QUIT",
-                type=MenuButtonType.QUIT
+        self.__menu_background.set_background_color(RgbColors.TRANSPARENT_GREEN)
+        self.__menu_buttons: list[MenuButton] = list()
+        button_height: float = 1 / len(Buttons)
+        for idx, (title, button_type)  in enumerate(Buttons):
+            self.__menu_buttons.append(
+                MenuButton(
+                    engine=self._engine,
+                    parent=self.__menu_background,
+                    position=(.5, button_height * idx),
+                    title=title,
+                    width=BUTTON_WIDTH,
+                    height= button_height,
+                    is_visible=True if idx == 0 else False,
+                    type=button_type
+                )
             )
-        ]
         self.__current_active_button_idx = 0;
 
     @property

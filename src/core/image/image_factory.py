@@ -9,16 +9,14 @@ from .grid_image import GridImage
 from .frame_image import FrameImage
 from .base import ImageType, BaseImage
 from .png_image import PngImage
-from src.core.event import EventHandler
 
 _DEFAULT_IMAGE_WIDTH = 100
 
 _DEFAULT_IMAGE_HEIGHT = 100
 
 class ImageFactory:
-    def __init__(self, renderer: RendererType, event_handler: EventHandler) -> None:
+    def __init__(self, renderer: RendererType) -> None:
         self.__renderer: RendererType = renderer
-        self.__event_handler: EventHandler = event_handler
 
     def __call__(self,
             image_type: ImageType=ImageType.PIXEL_IMAGE,
@@ -38,7 +36,6 @@ class ImageFactory:
             case ImageType.FRAME_IMAGE:
                 return FrameImage(
                             renderer=self.__renderer,
-                            event_handler=self.__event_handler,
                             width=width,
                             height=height,
                             image_type=image_type,
@@ -51,7 +48,6 @@ class ImageFactory:
             case ImageType.PIXEL_IMAGE:
                 return PixelImage(
                             renderer=self.__renderer,
-                            event_handler=self.__event_handler,
                             width=width,
                             height=height,
                             image_type=image_type,
@@ -61,7 +57,6 @@ class ImageFactory:
             case ImageType.GRID_IMAGE:
                 return GridImage(
                             renderer=self.__renderer,
-                            event_handler=self.__event_handler,
                             width=width,
                             height=height,
                             image_type=image_type,
@@ -76,7 +71,6 @@ class ImageFactory:
             case ImageType.PNG_IMAGE:
                 return PngImage(
                             renderer=self.__renderer,
-                            event_handler=self.__event_handler,
                             width=width,
                             height=height,
                             image_type=image_type,

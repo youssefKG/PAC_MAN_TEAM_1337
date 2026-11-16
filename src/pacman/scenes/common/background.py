@@ -31,7 +31,7 @@ class Background:
                     position=(0, 0),
               ).set_parent().create()
         )
-        self.__black_transparent_background.set_background_color(RgbColors.GREEN)
+        self.__black_transparent_background.set_background_color(RgbColors.TRANSPARENT_GREEN)
         self.__banner: GridImage = cast(
                 GridImage,
                 self._engine.new_image(

@@ -1,5 +1,4 @@
-from src.mlx.libmlx import RendererType, Image, load_png_image, image_to_window
-from src.core.event import EventHandler
+from src.mlx.libmlx import RendererType, Image, load_png_image
 from .base import BaseImage, ImageType
 from typing_extensions import Self
 from typing import override
@@ -10,7 +9,6 @@ class PngImage(BaseImage):
              /,
              *,
             renderer: RendererType,
-            event_handler: EventHandler,
             width: int | float,
             height: int | float,
             image_type: ImageType,
@@ -21,7 +19,6 @@ class PngImage(BaseImage):
     ) -> None:
         super().__init__(
                 renderer=renderer,
-                event_handler=event_handler,
                 width=width,
                 height=height,
                 image_type=image_type,

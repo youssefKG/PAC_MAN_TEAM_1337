@@ -9,7 +9,7 @@ class Pacman:
     def __init__(self) -> None:
         self.__engine: Engine = engine(
            title="PACMAN",
-           # window_width=1400,
+           # window_width=1800,
            # window_height=1400,
            monitor_size=True,
         )

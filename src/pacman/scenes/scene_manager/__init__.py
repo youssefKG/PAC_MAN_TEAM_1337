@@ -1,11 +1,15 @@
 from src.pacman.game_state import GameState, GameStateManager
-from src.pacman.scenes.menu_scene import MenuScene
-from src.pacman.scenes.game_scene import GameScene
-from src.pacman.scenes.settings_scene import SettingsScene
+from src.core import Engine
+
+# ************ SCENES START ***************************
 from src.pacman.scenes.common import Background
 from src.pacman.scenes.base import BaseScene
 from src.pacman.scenes.high_scores_scene import HighScoresScene
-from src.core import Engine
+from src.pacman.scenes.instructions_scene import InstructionsScene
+from src.pacman.scenes.menu_scene import MenuScene
+from src.pacman.scenes.game_scene import GameScene
+from src.pacman.scenes.settings_scene import SettingsScene
+# ************ SCENES END ***************************
 
 
 class SceneManager:
@@ -20,6 +24,10 @@ class SceneManager:
             game_state_manager=self.__game_state_manager
         )
         self.__background: Background = Background(self.__engine)
+        self.__insructions_scene: InstructionsScene = InstructionsScene(
+            engine=self.__engine,
+            game_state_manager=self.__game_state_manager
+        )
         self.__background.mount()
 
     def update(self, elapsed_time: float) -> None:

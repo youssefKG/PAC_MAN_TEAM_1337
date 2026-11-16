@@ -23,7 +23,8 @@ class GameStateManager:
         self,
         *,
         default_state: GameState = GameState.MENU,
-        config_path: str = "config.json"
+        config_path: str = "config.json",
+        # parser: ConfigParser
      ) -> None:
         self.__state: GameState = default_state
         self.__config_parser: ConfigParser = ConfigParser(config_path)
@@ -58,6 +59,5 @@ class GameStateManager:
             Logger.error(str(error), "Game State Manager")
 
     @property
-    def players_scores(self) -> list[PlayerScoreModel]:
+    def players_score(self) -> list[PlayerScoreModel]:
         return self.__players_scores
-
