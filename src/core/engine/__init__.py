@@ -117,7 +117,6 @@ class Engine:
                 color=color
             )
 
-
     def set_window_to_monitor_size(self) -> None:
         self.__window_width, self.__window_height = get_monitor_size()
         set_window_size(self.__renderer, self.__window_width, self.__window_height)

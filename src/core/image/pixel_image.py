@@ -2,7 +2,8 @@ from src.mlx.libmlx import (
     RendererType,
     new_image,
     Image,
-    set_background_color
+    set_background_color,
+    put_pixel
 )
 from typing_extensions import Self
 from typing import override
@@ -37,3 +38,6 @@ class PixelImage(BaseImage):
 
     def set_background_color(self, color: RgbColors) -> None:
         set_background_color(self._image, color.value)
+
+    def put_pixel(self, x: int, y: int, color: RgbColors) -> None:
+        put_pixel(self._image, x, y, color.value)

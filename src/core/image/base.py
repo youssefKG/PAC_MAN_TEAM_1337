@@ -232,7 +232,7 @@ class BaseImage:
 
     def delete(self) -> None:
         delete_image(self._renderer, self._image)
-        for idx, children_image in enumerate(self._childrens.values()):
+        for children_image in self._childrens.values():
             children_image.delete()
         for text in self._texts:
             text.delete()

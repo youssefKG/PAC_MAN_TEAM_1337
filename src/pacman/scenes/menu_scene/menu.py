@@ -115,9 +115,9 @@ class Menu:
         self.__menu_wrapper: GridImage = cast(
             GridImage,
             self._engine.new_image(
-                width= .30,
-                height=.50,
-                image_type=ImageType.GRID_IMAGE,
+            width= .30,
+            height=.50,
+            image_type=ImageType.GRID_IMAGE,
             row=3,
             col=4,
             total_cols=5,

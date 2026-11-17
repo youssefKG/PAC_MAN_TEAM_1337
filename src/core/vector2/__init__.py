@@ -60,5 +60,4 @@ class Vector2:
     def __add__(self, vector: 'Vector2') -> 'Vector2':
         return Vector2(x=vector.x + self.__x, y=vector.y + self.__y)
 
-
 __all__ = ["Vector2"]

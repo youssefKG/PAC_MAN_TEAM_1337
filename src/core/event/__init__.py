@@ -19,6 +19,7 @@ class Key(Enum):
     DOWN            = 264
     UP              = 265
     ESC             = 256
+    LEFT            = 263
 
 class EventContainer:
     def __init__(self) -> None:
