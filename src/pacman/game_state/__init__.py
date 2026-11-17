@@ -12,6 +12,7 @@ class GameState(Enum):
     SCORE = auto()
     QUIT = auto()
     HIGH_SCORES = auto()
+    INSTRUCTIONS = auto()
 
 HIGH_SCORES_PATH = "high_scores.json"
 
@@ -44,7 +45,9 @@ class GameStateManager:
             elif not os.access(HIGH_SCORES_PATH, os.R_OK):
                 raise GameStateManagerError()
             with open(HIGH_SCORES_PATH, "r") as file:
-                players_scores: list[PlayerScoreModel] = PlayerScoreRootModel.model_validate_json(file.read()).root
+                players_scores: list[PlayerScoreModel] = PlayerScoreRootModel.model_validate_json(
+                    file.read()
+                ).root
                 players_scores.sort(key=lambda player_score: player_score.points, reverse=True)
                 return players_scores
         except ValidationError as error:
@@ -53,7 +56,9 @@ class GameStateManager:
     def save_high_scores_players(self) -> None:
         try:
             with open(HIGH_SCORES_PATH, "w") as high_scores_file:
-                players_scores: str = PlayerScoreRootModel(self.__players_scores).model_dump_json(indent=4)
+                players_scores: str = PlayerScoreRootModel(
+                    self.__players_scores
+                ).model_dump_json(indent=4)
                 _ = high_scores_file.write(players_scores)
         except Exception as error:
             Logger.error(str(error), "Game State Manager")

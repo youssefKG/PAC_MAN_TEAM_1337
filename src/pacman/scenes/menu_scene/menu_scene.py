@@ -55,3 +55,5 @@ class MenuScene(BaseScene):
                 self.__game_state_manager.change_state(GameState.QUIT)
             case MenuButtonType.HIGH_SCORES:
                 self.__game_state_manager.change_state(GameState.HIGH_SCORES)
+            case MenuButtonType.INSTRUCTIONS:
+                self.__game_state_manager.change_state(GameState.INSTRUCTIONS)

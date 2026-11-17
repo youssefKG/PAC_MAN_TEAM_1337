@@ -39,6 +39,9 @@ class SceneManager:
                 self.__update_scene(self.__settings_scene, elapsed_time)
             case GameState.HIGH_SCORES:
                 self.__update_scene(self.__high_scores_scene, elapsed_time)
+            case GameState.INSTRUCTIONS:
+                self.__update_scene(self.__insructions_scene, elapsed_time)
+                pass
             case _:
                 ...
 
