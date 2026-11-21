@@ -1,5 +1,5 @@
 from typing import cast
-from src.core import Engine, GridImage, ImageType, PixelImage, FrameImage, RgbColors, EventContainer
+from src.core import Engine, GridImage, ImageType, PixelImage, FrameImage, RgbColors
 from src.mazegenerator import MazeGenerator
 from src.core import Vector2
 
@@ -96,9 +96,6 @@ class Maze:
             for x in range(self.__cell_width):
                 self.__maze_background.put_pixel(x, y, RgbColors.PINK)
 
-    def move_pacman(self, new_position: Vector2) -> None:
-        #self.__pacman.move_to(new_position, )
-        pass
 
     @property
     def pacman_position(self) -> Vector2:
@@ -106,10 +103,3 @@ class Maze:
 
     def update(self, elapsed_time: float) -> None:
         self.__pacman.update(elapsed_time)
-        # self.__pacman.move_to(
-        #     target=Vector2(
-        #         x=float(self.__maze_background.width + self.__maze_background.position.x - self.__pacman.width),
-        #         y=self.__maze_background.position.y  + self.__maze_background.height - self.__pacman.height
-        #     ),
-        #     dt=2
-        # )

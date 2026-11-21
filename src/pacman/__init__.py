@@ -9,8 +9,6 @@ class Pacman:
     def __init__(self) -> None:
         self.__engine: Engine = engine(
            title="PACMAN",
-           # window_width=1000,
-           # window_height=1000,
            monitor_size=True,
         )
         self.__game_state_manager: GameStateManager = GameStateManager(

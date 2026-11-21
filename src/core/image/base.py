@@ -23,13 +23,6 @@ class ImageType(Enum):
     GRID_IMAGE = auto()
     PNG_IMAGE = auto()
 
-class Position(Enum):
-    CENTER = auto()
-    LEFT = auto()
-    RIGHT = auto()
-    TOP = auto()
-    BOTTOM = auto()
-
 
 class ImageInterface(Protocol):
     def set_position(self, position: Vector2) -> None:

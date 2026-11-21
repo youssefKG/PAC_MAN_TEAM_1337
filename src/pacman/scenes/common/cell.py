@@ -8,8 +8,6 @@ class Cell:
         self.__row: int = row
         self.__is_42: int = is_42
 
-
-
 class Maze:
     def __init__(
         self,

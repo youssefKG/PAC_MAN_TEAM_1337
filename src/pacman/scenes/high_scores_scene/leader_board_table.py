@@ -41,8 +41,6 @@ class PlayersLeaderboardRows:
             player_score.delete()
 
 
-
-
 class LeaderBoardTable:
     def __init__(
         self,

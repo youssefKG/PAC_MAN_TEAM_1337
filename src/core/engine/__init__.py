@@ -12,6 +12,7 @@ from src.mlx.libmlx import  (
     loop_hook,
     get_monitor_size,
     get_mouse_position,
+    close_window
 )
 from src.core.image import ImageFactory, ImageType
 from src.utils import Logger
@@ -62,6 +63,8 @@ class Engine:
             self.__window_width, self.__window_height = get_monitor_size()
         else:
             self.__window_width, self.__window_height = cast(int, window_width), cast(int, window_height)
+        print(self.__window_width, self.__window_height)
+        # self.__window_width *= 2
         set_window_size(self.__renderer, self.__window_width, self.__window_height)
         self.__event_handler = EventHandler(self.__renderer)
         self.__image_factory = ImageFactory(self.__renderer)
@@ -140,6 +143,12 @@ class Engine:
 
     def add_events_container(self, event_container: EventContainer) -> None:
         self.__event_handler.add_container(event_container)
+
+    def exit(self) -> None:
+        pass
+
+    def close_window(self) -> None:
+        close_window(self.__renderer)
 
 engine: Engine = Engine()
 __all__ = ["engine", "Engine"]
