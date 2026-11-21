@@ -1,9 +1,10 @@
 import sys
 import os
 import json
+from JSONParser import JSONParser
 
 
-class Parser:
+class ConfigParser:
 
     def __init__(self, json_parser: JSONParser) -> None:
 
@@ -37,25 +38,18 @@ class Parser:
     def __remove_coments(self, content: str) -> None:
         lines_content = self.__json_parser.parse(content)
 
-
     def split_json_structure(self, content: str) -> None:
-
+        ...
         
     def parse(self) -> None:
-        self.__remove_comments(self.__read_config_file)
+        content = self.__read_config_file()
+        return self.__json_parser.parse(content)
+# try:
+config_parser = ConfigParser(JSONParser())
+print("check argument well!.")
+print("*****" * 7)
+print(config_parser.parse())
 
-         
+# except Exception as e:
+#     print(e)
 
-        
-
-
-
- 
-
- 
-
-
-
-if __name__ == '__main__':
-
-    parser = Parser()
