@@ -1,7 +1,6 @@
 from typing import cast
 from src.mazegenerator import MazeGenerator
 from src.core import PixelImage, Engine, ImageType, GridImage, RgbColors, FrameImage
-import math
 
 class Maze:
     def __init__(
@@ -20,24 +19,11 @@ class Maze:
         self.__maze_wrapper: GridImage = self.__new_maze_wrapper()
         self.__maze_background: PixelImage = self.__new_maze_background()
         self.__cell_size: int = self.__cell_dimension
-        self.__cell_border_size: int = math.ceil(self.__cell_size * 0.15)
-        self.__cell_content_size: int = math.ceil(self.__cell_size * 0.7)
+        self.__cell_border_size: int = int(self.__cell_size * 0.15)
+        self.__cell_content_size: int = int(self.__cell_size * 0.7)
         self.__cells_42: list[tuple[int, int]] = self._cells_42()
-        self.__pacman: FrameImage = cast(
-            FrameImage,
-            self.__engine.new_image(
-                image_type=ImageType.FRAME_IMAGE,
-                width=self.__cell_content_size,
-                height=self.__cell_content_size,
-                path="src/assests/frames/pacman.png",
-                frames=8,
-                position=(self.__cell_border_size, self.__cell_border_size),
-                time_per_frame=.1,
-            )
-            .set_parent(self.__maze_background)
-            .create()
-        )
-
+        self.__pacman: FrameImage = self.__new_pacman()
+        self.__orange_ghost: FrameImage = self.__new_orange_ghost()
     def __new_maze_background(self) -> PixelImage:
         maze_background: PixelImage = cast(
             PixelImage,
@@ -52,6 +38,38 @@ class Maze:
           )
         maze_background.set_background_color(RgbColors.TRANSPARENT_GREEN)
         return maze_background
+
+    def __new_pacman(self) -> FrameImage:
+        return cast(
+            FrameImage,
+            self.__engine.new_image(
+                image_type=ImageType.FRAME_IMAGE,
+                width=self.__cell_content_size,
+                height=self.__cell_content_size,
+                path="src/assests/frames/pacman.png",
+                frames=8,
+                position=(self.__cell_border_size, self.__cell_border_size),
+                time_per_frame=.1,
+            )
+            .set_parent(self.__maze_background)
+            .create()
+        )
+
+    def __new_orange_ghost(self) -> FrameImage:
+        return cast(
+            FrameImage,
+            self.__engine.new_image(
+                image_type=ImageType.FRAME_IMAGE,
+                width=self.__cell_content_size,
+                height=self.__cell_content_size,
+                path="src/assests/frames/orange_ghost.png",
+                frames=8,
+                position=(self.__cell_border_size + self.__cell_size, self.__cell_border_size),
+                time_per_frame=.1,
+            )
+            .set_parent(self.__maze_background)
+            .create()
+        )
 
     def __new_maze_wrapper(self) -> GridImage:
         max_cells: int = max(self.__vertical_cells, self.__horizontal_cells)
@@ -87,7 +105,6 @@ class Maze:
 
     def __is_open(self, cell_hexa: int, direction: int) -> bool:
         return (cell_hexa & (1 << direction)) != 0
-
 
     def __draw_cell(self, cell_hexa: int, row: int, col: int) -> None:
         north: bool = self.__is_open(cell_hexa, 0)
@@ -132,7 +149,6 @@ class Maze:
 
             self.__maze_background.np_put_pixel(start_x, end_x, start_y, end_y, RgbColors.GREEN)
         if (row, col) in self.__cells_42:
-            print(row, col)
             start_x = col * cell_size + self.__cell_border_size
             end_x = start_x + self.__cell_content_size
             start_y = row * cell_size + self.__cell_border_size
@@ -144,15 +160,6 @@ class Maze:
         y = int(((self.__vertical_cells) / 2) - 3)
         x = int(((self.__horizontal_cells) / 2) - 4)
         cells_42: list[tuple[int, int]] = list()
-        print(x, y)
-
-
-        # for i in range(y, y + 3):
-        #     self.draw_cell_42(cells_grid[i][x])
-        # for i in range(x + 1, x + 3):
-        #     self.draw_cell_42(cells_grid[y + 2][i])
-        # for i in range(y + 3, y + 5):
-        #     self.draw_cell_42(cells_grid[i][x + 2])
 
         for i in range(y, y + 3):
             cells_42.append((i, x))
@@ -177,3 +184,4 @@ class Maze:
 
     def update(self, elapsed_time: float) -> None:
         self.__pacman.update(elapsed_time)
+        self.__orange_ghost.update(elapsed_time)

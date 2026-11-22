@@ -10,8 +10,8 @@ from src.mazegenerator import MazeGenerator
 from .maze import Maze
 from .guide import Guide
 
-VERTICAL_CELLS = 14
-HORIZONTAL_CELLS = 14
+VERTICAL_CELLS = 20
+HORIZONTAL_CELLS = 20
 
 class InstructionsScene(BaseScene):
     def __init__(
@@ -35,14 +35,15 @@ class InstructionsScene(BaseScene):
             size=(HORIZONTAL_CELLS, VERTICAL_CELLS)
         )
         self.__maze_generator.generate()
+        self.__maze_guide_wrapper: PixelImage = self.__new_maze_guide_wrapper()
         self.__guide: Guide = Guide(
             engine=self._engine,
-            parent=self.__scene_container
+            parent=self.__maze_guide_wrapper
         )
         self.__maze: Maze = Maze(
             engine=self._engine,
             maze_generator=self.__maze_generator,
-            parent=self.__scene_container,
+            parent=self.__maze_guide_wrapper,
             vertical_cells=VERTICAL_CELLS,
             horizontal_cells=HORIZONTAL_CELLS,
         )
@@ -83,5 +84,19 @@ class InstructionsScene(BaseScene):
         self._events_container.add_event(key=Key.ESC, callback=lambda: self.__on_key_pressed(Key.ESC))
         self._events_container.add_event(key=Key.LEFT, callback=lambda: self.__move_pacman(Key.LEFT))
         self._events_container.add_event(key=Key.J, callback=lambda: self._engine.close_window())
+
+    def __new_maze_guide_wrapper(self) -> PixelImage:
+        return cast(
+            PixelImage, 
+            self._engine.new_image(
+                image_type=ImageType.PIXEL_IMAGE,
+                width=.8,
+                height=0.7,
+                position=(.5, .5)
+            )
+            .set_parent(self.__scene_container)
+            .to_center()
+            .create()
+        )
 
 __all__ = ["InstructionsScene"]

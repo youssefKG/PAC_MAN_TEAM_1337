@@ -1,7 +1,6 @@
 import os
 from enum import Enum, auto
 from src.pacman.validation_models import PlayerScoreModel, PlayerScoreRootModel
-from src.pacman.config_parser import ConfigParser
 from pydantic import ValidationError
 from src.utils import Logger
 
@@ -28,7 +27,6 @@ class GameStateManager:
         # parser: ConfigParser
      ) -> None:
         self.__state: GameState = default_state
-        self.__config_parser: ConfigParser = ConfigParser(config_path)
         self.__players_scores: list[PlayerScoreModel] = self.__load_high_scores_players()
 
     @property

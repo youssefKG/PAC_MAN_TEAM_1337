@@ -45,4 +45,13 @@ class PixelImage(BaseImage):
 
 
     def np_put_pixel(self, start_x: int, end_x: int, start_y: int, end_y: int, color: RgbColors) -> None:
-        np_put_pixel(self._image, self._width, self._height, start_x, end_x, start_y, end_y, color.value)
+        np_put_pixel(
+            self._image,
+            self._width,
+            self._height,
+            start_x,
+            end_x,
+            start_y,
+            end_y,
+            color.value
+        )

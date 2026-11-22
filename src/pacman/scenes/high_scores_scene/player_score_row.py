@@ -2,6 +2,7 @@ from typing import cast
 from uuid import uuid4
 from src.core import Engine, PixelImage, ImageType, GridImage, RgbColors
 from src.pacman.validation_models import PlayerScoreModel
+
 RANK_IMAGE_WIDTH  =0.12
 RANK_IMAGE_HEIGHT: float = 1.
 

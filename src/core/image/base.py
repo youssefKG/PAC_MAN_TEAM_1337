@@ -28,9 +28,6 @@ class ImageInterface(Protocol):
     def set_position(self, position: Vector2) -> None:
         ...
 
-    def to_window(self) -> None:
-        ...
-
     def move_to(self, /, *,  target: Vector2, dt: float, speed_per_frame_unit: int=1) -> None:
         ...
 

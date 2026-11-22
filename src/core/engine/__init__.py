@@ -106,18 +106,22 @@ class Engine:
         )
 
     def new_text(
-            self, 
-            text: str,
-            font_size: int | float,
-            lettere_spacing: int,
-            color: RgbColors
+        self, 
+        /,
+        *,
+        text: str,
+        font_size: int | float,
+        color: RgbColors,
+        line_spacing: int=5,
+        lettere_spacing: int=1,
      ) -> Text:
         return Text(
                 renderer=self.__renderer,
                 text=text,
                 font_size=font_size,
                 lettere_spacing=lettere_spacing,
-                color=color
+                color=color,
+                line_spacing=line_spacing
             )
 
     def set_window_to_monitor_size(self) -> None:

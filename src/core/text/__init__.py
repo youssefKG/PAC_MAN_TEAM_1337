@@ -1,5 +1,5 @@
 import sys
-from typing_extensions import Self
+from typing_extensions import Self, Annotated
 
 from src.mlx.libmlx import (
     Image,
@@ -25,11 +25,13 @@ class Text:
         font_size: int | float,
         lettere_spacing: int,
         color: RgbColors,
+        line_spacing: int = 4,
      ) -> None:
         self.__text: str = text
         self.__font_size: int | float = font_size
         self.__lettere_spacing: int = lettere_spacing
-        self.__characteres_images: list[Image] = list()
+        self.__characteres_images: list[tuple[Image | None, Annotated[str, "character"]]] = list()
+        self.__line_spacing: int = line_spacing
         self.__renderer: RendererType = renderer
         self.__text_path: str = "src/assests/alpha/alpha.png"
         self.__position: Vector2 = Vector2(x=.0, y=.0)
@@ -46,7 +48,9 @@ class Text:
 
     def __set_characteres_images(self) -> None:
         for ch in self.__text:
-            if ch not in CHARACTERES_BIT_MAP:
+            if ch == '\n':
+                self.__characteres_images.append((None, ch))
+            elif ch not in CHARACTERES_BIT_MAP:
                 Logger.error(f"Cannot find bit map for charatere {ch}", __name__)
                 sys.exit(1)
             else:
@@ -58,43 +62,36 @@ class Text:
                     int(self.__font_size),
                     self.__color.value
                 )
-                self.__characteres_images.append(ch_image)
-
+                self.__characteres_images.append((ch_image, ch))
 
     def mount(self) -> None:
         offset: int = int(self.__position.x)
+        y: int = int(self.__position.y)
         if not self.__has_been_on_window:
-            for idx, image in enumerate(self.__characteres_images):
-                image_to_window(
-                    self.__renderer,
-                    image,
-                    offset,
-                    int(self.__position.y)
-                )
-                if idx != len(self.__characteres_images):
-                    offset += self.__lettere_spacing
-                offset += int(self.__font_size)
-                self.__has_been_on_window = True
+            for idx, (image, ch) in enumerate(self.__characteres_images):
+                if image:
+                    image_to_window(
+                        self.__renderer,
+                        image,
+                        offset,
+                        int(y)
+                    )
+                    if idx != len(self.__characteres_images):
+                        offset += self.__lettere_spacing
+                    offset += int(self.__font_size)
+                    self.__has_been_on_window = True
+                elif ch == '\n':
+                    y += int(self.__font_size) + self.__line_spacing
+                    offset = int(self.__position.x)
         else:
-            for  image in self.__characteres_images:
-                display_image(image)
+            for  image, _ in self.__characteres_images:
+                if image:
+                    display_image(image)
 
     def unmount(self) -> None:
-        for  image in self.__characteres_images:
-            hide_image(image)
-
-    def to_window(self) -> None:
-        offset: int = int(self.__position.x)
-        for idx, image in enumerate(self.__characteres_images):
-            image_to_window(
-                self.__renderer,
-                image,
-                offset,
-                int(self.__position.y)
-            )
-            if idx != len(self.__characteres_images):
-                offset += self.__lettere_spacing
-            offset += int(self.__font_size)
+        for  image, _ in self.__characteres_images:
+            if image:
+                hide_image(image)
 
     def center_x(self) -> Self:
         text_width = len(self.__text) * (self.__font_size + (self.__lettere_spacing))
@@ -109,7 +106,8 @@ class Text:
         return self.center_x().center_y()
 
     def delete(self) -> None:
-        for ch in self.__characteres_images:
-            delete_image(self.__renderer, ch)
+        for image, _ in self.__characteres_images:
+            if image:
+                delete_image(self.__renderer, image)
 
 __all__ = ["Text"]
