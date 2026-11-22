@@ -41,8 +41,6 @@ class PlayersLeaderboardRows:
             player_score.delete()
 
 
-
-
 class LeaderBoardTable:
     def __init__(
         self,
@@ -64,23 +62,19 @@ class LeaderBoardTable:
                 col=2,
                 row=3,
                 path="src/assests/menu/green_menu.png",
-                position=(0.5, .2)
+                position=(0.5, .25)
             )
             .set_parent(self.__parent)
             .center_x()
             .create()
         )
-        self.__leaderboard_panel: GridImage = cast(
-            GridImage,
+        self.__leaderboard_panel: PngImage = cast(
+            PngImage,
             self.__engine.new_image(
-                width=.8,
+                width=.4,
                 height=.1,
-                image_type=ImageType.GRID_IMAGE,
-                total_rows=4,
-                total_cols=5,
-                col=0,
-                row=1,
-                path="src/assests/menu/green_menu.png",
+                image_type=ImageType.PNG_IMAGE,
+                path="src/assests/banner.png",
                 position=(0.5, -.084),
             )
             .set_parent(self.__leaderboard).center_x().create()

@@ -52,7 +52,7 @@ class MenuScene(BaseScene):
             case MenuButtonType.PLAY:
                 self.__game_state_manager.change_state(GameState.PLAY)
             case MenuButtonType.QUIT:
-                self.__game_state_manager.change_state(GameState.QUIT)
+                self._engine.close_window()
             case MenuButtonType.HIGH_SCORES:
                 self.__game_state_manager.change_state(GameState.HIGH_SCORES)
             case MenuButtonType.INSTRUCTIONS:

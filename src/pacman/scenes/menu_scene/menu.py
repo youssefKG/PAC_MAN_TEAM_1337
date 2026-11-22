@@ -89,7 +89,7 @@ class MenuButton:
             self.__engine.new_text(
                 text=self.__title,
                 lettere_spacing=2,
-                font_size=22,
+                font_size=18,
                 color=RgbColors.WHITE).to_center(),
                 position=(.5, .5)
         )
@@ -115,8 +115,8 @@ class Menu:
         self.__menu_wrapper: GridImage = cast(
             GridImage,
             self._engine.new_image(
-            width= .30,
-            height=.50,
+            width= .25,
+            height=.45,
             image_type=ImageType.GRID_IMAGE,
             row=3,
             col=4,

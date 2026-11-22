@@ -9,8 +9,6 @@ class Pacman:
     def __init__(self) -> None:
         self.__engine: Engine = engine(
            title="PACMAN",
-           # window_width=1000,
-           # window_height=1000,
            monitor_size=True,
         )
         self.__game_state_manager: GameStateManager = GameStateManager(
@@ -22,9 +20,6 @@ class Pacman:
         )
 
     def run(self) -> None:
-        self.__engine.game_loop(self.__update)
-
-    def __update(self, elapsed_time: float) -> None:
-        self.__scene_manager.update(elapsed_time)
+        self.__engine.game_loop(lambda elapsed_time: self.__scene_manager.update(elapsed_time))
 
 __all__ = ["Pacman"]

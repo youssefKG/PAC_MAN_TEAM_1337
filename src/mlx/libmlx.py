@@ -384,6 +384,7 @@ refs: list[object] = []
 def put_pixel(image: mlx_image_t, x: int, y: int, color: int) -> None:
     mlx.mlx_put_pixel(image, x, y, color)
 
+
 def get_monitor_size() -> tuple[int ,int]:
     width: ctypes.c_int32 = ctypes.c_int32()
     height: ctypes.c_int32 = ctypes.c_int32()
@@ -400,7 +401,7 @@ def new_image(mlx_ptr: mlx_t, width: int, height: int) -> mlx_image_t:
     return  texture
 
 def set_window_size(renderer: mlx_t, width: int, height: int) -> None:
-    mlx.mlx_set_window_size(renderer, ctypes.c_int32(width), ctypes.c_int32(height))
+    mlx.mlx_set_window_size(renderer, width, height)
 
 def delete_image(renderer: mlx_t, image: mlx_image_t) -> None:
     mlx.mlx_delete_image(renderer, image)
@@ -417,6 +418,8 @@ def loop_hook(
         None,
     )
 
+def close_window(renderer: mlx_t) -> None:
+    mlx.mlx_close_window(renderer)
 
 def key_hook(renderer: RendererType, function: Callable[[int], None]) -> None:
     def my_hook(mlx_key_data: mlx_key_data_t, _: object) -> None:
@@ -576,3 +579,8 @@ def is_key_pressed(renderer: mlx_t, key: int) -> bool:
 
 def delete_image(renderer: mlx_t, image: mlx_image_t) -> None:
     mlx.mlx_delete_image(renderer, image)
+
+def np_put_pixel(image: mlx_image_t, width: int, height: int, start_x: int, end_x: int, start_y: int, end_y: int, color: int) -> None:
+    image_view = get_image_view(image, width, height)
+    image_pixels = np.ndarray(shape=(height, width), buffer=image_view, dtype=np.int32)
+    image_pixels[start_y:end_y, start_x:end_x] = ctypes.c_int32(color)

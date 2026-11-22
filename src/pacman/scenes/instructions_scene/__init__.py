@@ -1,13 +1,18 @@
 from typing import override, cast
 
-from src.pacman.scenes.base import BaseScene
-from src.pacman.game_state import GameStateManager, GameState
-from src.pacman.scenes.common import Maze
 from src.core import Engine, PixelImage, ImageType, Key
+from src.pacman.game_state import GameStateManager, GameState
+
+from src.pacman.scenes.base import BaseScene
+
 from src.mazegenerator import MazeGenerator
 
-VERTICAL_CELLS = 20
-HORIZONTAL_CELLS = 20
+from .maze import Maze
+from .guide import Guide
+
+VERTICAL_CELLS = 14
+HORIZONTAL_CELLS = 14
+
 class InstructionsScene(BaseScene):
     def __init__(
         self,
@@ -30,16 +35,19 @@ class InstructionsScene(BaseScene):
             size=(HORIZONTAL_CELLS, VERTICAL_CELLS)
         )
         self.__maze_generator.generate()
+        self.__guide: Guide = Guide(
+            engine=self._engine,
+            parent=self.__scene_container
+        )
         self.__maze: Maze = Maze(
             engine=self._engine,
             maze_generator=self.__maze_generator,
             parent=self.__scene_container,
             vertical_cells=VERTICAL_CELLS,
             horizontal_cells=HORIZONTAL_CELLS,
-            position=(.65, .5)
         )
-        self._events_container.add_event(key=Key.ESC, callback=lambda: self.__on_key_pressed(Key.ESC))
-        self._events_container.add_event(key=Key.LEFT, callback=lambda: self.__move_pacman(Key.LEFT))
+        self.__maze.draw()
+        self.__set_events_to_events_container()
 
     @override
     def mount(self) -> None:
@@ -69,5 +77,11 @@ class InstructionsScene(BaseScene):
     @override
     def update(self, elapsed_time: float) -> None:
         self.__maze.update(elapsed_time)
+        self.__guide.update(elapsed_time)
+
+    def __set_events_to_events_container(self) -> None:
+        self._events_container.add_event(key=Key.ESC, callback=lambda: self.__on_key_pressed(Key.ESC))
+        self._events_container.add_event(key=Key.LEFT, callback=lambda: self.__move_pacman(Key.LEFT))
+        self._events_container.add_event(key=Key.J, callback=lambda: self._engine.close_window())
 
 __all__ = ["InstructionsScene"]
