@@ -1,6 +1,6 @@
 import json
+from typing import Any
 from FSMParser import FSMJson
-
 
 class JSONParser:
 
@@ -80,9 +80,11 @@ class JSONParser:
         else:
             raise json.JSONDecodeError(msg="Error: Invalid Json, found normal character after closing json", doc="darwin", pos=1)
 
+    def load_config(self, cleaned_json: str) -> dict[str, Any]:
+        return json.loads(cleaned_json)
+
     def parse(self, content: str) -> None:
         for character in content:
-
             if self.current_state == FSMJson.IN_START:
                 self.parse_in_start(character)
 

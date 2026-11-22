@@ -1,7 +1,21 @@
 import sys
 import os
 import json
+from typing import Any
 from JSONParser import JSONParser
+from enum import Enum, auto
+
+class ConfigKeys(Enum):
+    highscore_filename = auto()
+    levels = auto()
+    width = auto()
+    height = auto()
+    pacgum = auto()
+    points_per_pacgum = auto()
+    points_per_super_pacgum = auto()
+    points_per_ghost = auto()
+    seed = auto()
+    level_max_time = auto()
 
 
 class ConfigParser:
@@ -35,15 +49,17 @@ class ConfigParser:
          with open(self.__config_file, "r", encoding='utf-8') as file:
             return file.read()
 
-    def __remove_coments(self, content: str) -> None:
-        lines_content = self.__json_parser.parse(content)
-
-    def split_json_structure(self, content: str) -> None:
-        ...
-        
     def parse(self) -> None:
         content = self.__read_config_file()
-        return self.__json_parser.parse(content)
+        cleaned_json = self.__json_parser.parse(content)
+        config = self.__json_parser.load_config(cleaned_json)
+        print("member names: ", ConfigKeys._member_names_)
+
+        for key_config, value_config in config.items():
+            if key_config in ConfigKeys._member_names_:
+                # continue here should pass configbuilder for building config and set defaults values
+                pass
+        
 # try:
 config_parser = ConfigParser(JSONParser())
 print("check argument well!.")
