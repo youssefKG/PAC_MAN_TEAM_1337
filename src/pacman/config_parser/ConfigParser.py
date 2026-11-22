@@ -3,25 +3,12 @@ import os
 import json
 from typing import Any
 from JSONParser import JSONParser
-from enum import Enum, auto
-
-class ConfigKeys(Enum):
-    highscore_filename = auto()
-    levels = auto()
-    width = auto()
-    height = auto()
-    pacgum = auto()
-    points_per_pacgum = auto()
-    points_per_super_pacgum = auto()
-    points_per_ghost = auto()
-    seed = auto()
-    level_max_time = auto()
+from ConfigModel import Config
 
 
 class ConfigParser:
 
     def __init__(self, json_parser: JSONParser) -> None:
-
         self.__display_usage()
         self.__is_json(sys.argv[1])
         self.__is_exists(sys.argv[1])
@@ -52,20 +39,24 @@ class ConfigParser:
     def parse(self) -> None:
         content = self.__read_config_file()
         cleaned_json = self.__json_parser.parse(content)
-        config = self.__json_parser.load_config(cleaned_json)
-        print("member names: ", ConfigKeys._member_names_)
+        config = Config.model_validate_json(cleaned_json)
+        return config
 
-        for key_config, value_config in config.items():
-            if key_config in ConfigKeys._member_names_:
-                # continue here should pass configbuilder for building config and set defaults values
-                pass
-        
-# try:
-config_parser = ConfigParser(JSONParser())
-print("check argument well!.")
-print("*****" * 7)
-print(config_parser.parse())
+if __name__ == '__main__':
+    config_parser = ConfigParser(JSONParser())
+    print("check argument well!.")
+    print("*****" * 7)
+    config = config_parser.parse()
+    print("highscore_filename:", config.highscore_filename)
+    print("levels:", config.levels)
+    print("width:", config.width)
+    print("height:", config.height)
+    print("pacgum:", config.pacgum)
+    print("points_per_pacgum:", config.pacgum)
+    print("points_per_super_pacgum:", config.points_per_super_pacgum)
+    print("seed:", config.seed)
+    print("level_max_time:", config.seed)
 
-# except Exception as e:
-#     print(e)
+
+
 
