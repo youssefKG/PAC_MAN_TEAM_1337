@@ -6,8 +6,8 @@ from .maze import Maze
 from src.core import Engine, PixelImage, ImageType, Key
 from src.mazegenerator import MazeGenerator
 
-VERTICAL_CELLS = 20
-HORIZONTAL_CELLS = 20
+VERTICAL_CELLS = 16
+HORIZONTAL_CELLS = 16
 class InstructionsScene(BaseScene):
     def __init__(
         self,
@@ -69,7 +69,6 @@ class InstructionsScene(BaseScene):
 
     @override
     def update(self, elapsed_time: float) -> None:
-        pass
-        # self.__maze.update(elapsed_time)
+        self.__maze.update(elapsed_time)
 
 __all__ = ["InstructionsScene"]

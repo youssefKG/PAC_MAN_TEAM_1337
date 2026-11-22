@@ -10,8 +10,8 @@ class RgbColors(Enum):
     BLACK          = 0xFF000000
     WHITE          = 0xFFFFFFFF
     RED            = 0xFFFF0000
-    GREEN          = 155 << 24 | 0 << 16 | 255 << 8 | 31
-    TRANSPARENT_GREEN = 45 << 24 | 0 << 16 | 255 << 8 | 31
+    GREEN          = 255 << 24 | 0 << 16 | 255 << 8
+    TRANSPARENT_GREEN = 45 << 24 | 0 << 16 | 255 << 8
     BLUE           = 0xFF0000FF
 
     YELLOW         = 0xFFFFFF00

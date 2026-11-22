@@ -12,7 +12,7 @@ class Pacman:
            monitor_size=True,
         )
         self.__game_state_manager: GameStateManager = GameStateManager(
-            default_state=GameState.INSTRUCTIONS
+            default_state=GameState.MENU
         )
         self.__scene_manager: SceneManager = SceneManager(
             engine=self.__engine,
@@ -20,9 +20,6 @@ class Pacman:
         )
 
     def run(self) -> None:
-        self.__engine.game_loop(self.__update)
-
-    def __update(self, elapsed_time: float) -> None:
-        self.__scene_manager.update(elapsed_time)
+        self.__engine.game_loop(lambda elapsed_time: self.__scene_manager.update(elapsed_time))
 
 __all__ = ["Pacman"]
