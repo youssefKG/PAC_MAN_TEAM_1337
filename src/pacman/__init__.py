@@ -12,7 +12,7 @@ class Pacman:
            monitor_size=True,
         )
         self.__game_state_manager: GameStateManager = GameStateManager(
-            default_state=GameState.MENU
+            default_state=GameState.INSTRUCTIONS
         )
         self.__scene_manager: SceneManager = SceneManager(
             engine=self.__engine,

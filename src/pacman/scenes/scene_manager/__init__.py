@@ -35,12 +35,12 @@ class SceneManager:
         match self.__game_state_manager.state:
             case GameState.MENU:
                 self.__update_scene(self.__menu_scene, elapsed_time)
-            case GameState.SETTINGS:
-                self.__update_scene(self.__settings_scene, elapsed_time)
             case GameState.HIGH_SCORES:
                 self.__update_scene(self.__high_scores_scene, elapsed_time)
             case GameState.INSTRUCTIONS:
                 self.__update_scene(self.__insructions_scene, elapsed_time)
+            # case GameState.SETTINGS:
+            #     self.__update_scene(self.__settings_scene, elapsed_time)
             case _:
                 ...
 

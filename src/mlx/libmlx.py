@@ -580,3 +580,7 @@ def is_key_pressed(renderer: mlx_t, key: int) -> bool:
 def delete_image(renderer: mlx_t, image: mlx_image_t) -> None:
     mlx.mlx_delete_image(renderer, image)
 
+def np_put_pixel(image: mlx_image_t, width: int, height: int, start_x: int, end_x: int, start_y: int, end_y: int, color: int) -> None:
+    image_view = get_image_view(image, width, height)
+    image_pixels = np.ndarray(shape=(height, width), buffer=image_view, dtype=np.int32)
+    image_pixels[start_y:end_y, start_x:end_x] = ctypes.c_int32(color)

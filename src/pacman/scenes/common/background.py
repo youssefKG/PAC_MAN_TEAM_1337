@@ -32,17 +32,13 @@ class Background:
               ).set_parent().create()
         )
         self.__black_transparent_background.set_background_color(RgbColors.TRANSPARENT_GREEN)
-        self.__banner: GridImage = cast(
-                GridImage,
+        self.__banner: PngImage = cast(
+                PngImage,
                 self._engine.new_image(
-                    width= 0.3,
+                    width= 0.2,
                     height=0.1,
-                    image_type=ImageType.GRID_IMAGE,
-                    row=5,
-                    col=4,
-                    total_cols=5,
-                    total_rows=8,
-                    path="src/assests/15.png",
+                    image_type=ImageType.PNG_IMAGE,
+                    path="src/assests/banner.png",
                     position=(.50, .0)
                 )
                 .set_parent(self.__black_transparent_background)

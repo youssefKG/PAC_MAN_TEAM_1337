@@ -59,7 +59,6 @@ class EventHandler:
                     events_container.run(event_key)
 
     def add_container(self, container: EventContainer) -> None:
-        print("a container being added")
         self.__events_containers.append(container)
 
 __all__ = ["EventHandler"]

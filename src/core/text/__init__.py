@@ -17,14 +17,14 @@ from src.utils import Logger
 
 class Text:
     def __init__(
-            self,
-            /,
-            *,
-            renderer: RendererType,
-            text: str,
-            font_size: int | float,
-            lettere_spacing: int,
-            color: RgbColors,
+        self,
+        /,
+        *,
+        renderer: RendererType,
+        text: str,
+        font_size: int | float,
+        lettere_spacing: int,
+        color: RgbColors,
      ) -> None:
         self.__text: str = text
         self.__font_size: int | float = font_size

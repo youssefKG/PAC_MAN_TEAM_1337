@@ -1,6 +1,7 @@
 from typing import cast
 from src.mazegenerator import MazeGenerator
 from src.core import PixelImage, Engine, ImageType, GridImage, RgbColors, FrameImage
+import math
 
 class Maze:
     def __init__(
@@ -18,9 +19,10 @@ class Maze:
         self.__horizontal_cells: int =  horizontal_cells
         self.__maze_wrapper: GridImage = self.__new_maze_wrapper()
         self.__maze_background: PixelImage = self.__new_maze_background()
-        self.__cell_size = self.__cell_dimension
-        self.__cell_border_size: int = int(self.__cell_size * 0.3)
-        self.__cell_content_size: int = int(self.__cell_size * 0.7)
+        self.__cell_size: int = self.__cell_dimension
+        self.__cell_border_size: int = math.ceil(self.__cell_size * 0.15)
+        self.__cell_content_size: int = math.ceil(self.__cell_size * 0.7)
+        self.__cells_42: list[tuple[int, int]] = self._cells_42()
         self.__pacman: FrameImage = cast(
             FrameImage,
             self.__engine.new_image(
@@ -29,28 +31,18 @@ class Maze:
                 height=self.__cell_content_size,
                 path="src/assests/frames/pacman.png",
                 frames=8,
-                position=(0., 0.),
+                position=(self.__cell_border_size, self.__cell_border_size),
                 time_per_frame=.1,
             )
             .set_parent(self.__maze_background)
             .create()
         )
 
-    @property
-    def __background_dimension(self) -> tuple[int, int]:
-        max_cells: int = max(self.__vertical_cells, self.__horizontal_cells)
-        _, window_height = self.__engine.window_dimension
-        return (
-            int ((window_height * .5) / max_cells),
-            int ((window_height * .5) / max_cells),
-        )
-
-
     def __new_maze_background(self) -> PixelImage:
         maze_background: PixelImage = cast(
             PixelImage,
             self.__engine.new_image(
-                width=.78,
+                width=.77,
                 height=.75,
                 image_type=ImageType.PIXEL_IMAGE,
                 position=(.5, .5)
@@ -58,14 +50,14 @@ class Maze:
             .to_center()
             .create()
           )
-        maze_background.set_background_color(RgbColors.WHITE)
+        maze_background.set_background_color(RgbColors.TRANSPARENT_GREEN)
         return maze_background
 
     def __new_maze_wrapper(self) -> GridImage:
         max_cells: int = max(self.__vertical_cells, self.__horizontal_cells)
         _, window_height = self.__engine.window_dimension
-        width = int ((window_height * .6) / max_cells) * self.__horizontal_cells
-        height = int ((window_height * .6) / max_cells) * self.__vertical_cells
+        width = int ((window_height * .5) / max_cells) * self.__horizontal_cells
+        height = int ((window_height * .5) / max_cells) * self.__vertical_cells
         return cast(
             GridImage, 
             self.__engine.new_image(
@@ -102,60 +94,86 @@ class Maze:
         east: bool  = self.__is_open(cell_hexa, 1)
         south: bool = self.__is_open(cell_hexa, 2)
         west: bool = self.__is_open(cell_hexa, 3)
-        print(north, south, east, west, cell_hexa)
         start_x: int
         start_y: int
         end_x: int
         end_y: int
+        cell_size: int = (self.__cell_border_size * 2) + self.__cell_content_size
         if north:
-            start_x = col * self.__cell_size
-            end_x = start_x + self.__cell_size
+            start_x = col * cell_size
+            end_x = start_x + cell_size
 
-            start_y = row * self.__cell_size
+            start_y = row * cell_size
             end_y = start_y + self.__cell_border_size
 
-            self.__draw_border(start_x, end_x, start_y, end_y)
+            self.__maze_background.np_put_pixel(start_x, end_x, start_y, end_y, RgbColors.GREEN)
         if east:
-            start_x = col * self.__cell_size + self.__cell_border_size + self.__cell_content_size
+            start_x = col * cell_size + self.__cell_border_size + self.__cell_content_size
             end_x = start_x + self.__cell_border_size
 
-            start_y = row * self.__cell_size
-            end_y = start_y + self.__cell_size
+            start_y = row * cell_size
+            end_y = start_y + cell_size
 
-            self.__draw_border(start_x, end_x, start_y, end_y)
-
+            self.__maze_background.np_put_pixel(start_x, end_x, start_y, end_y, RgbColors.GREEN)
         if south:
-            start_x = col * self.__cell_size
-            end_x = start_x + self.__cell_size
+            start_x = col * cell_size
+            end_x = start_x + cell_size
 
-            start_y = row * self.__cell_size + self.__cell_content_size + self.__cell_border_size
+            start_y = row * cell_size + self.__cell_content_size + self.__cell_border_size
             end_y = start_y + self.__cell_border_size
 
-            self.__draw_border(start_x, end_x, start_y, end_y)
+            self.__maze_background.np_put_pixel(start_x, end_x, start_y, end_y, RgbColors.GREEN)
         if west:
-            start_x = col * self.__cell_size
+            start_x = col * cell_size
             end_x = start_x + self.__cell_border_size
 
-            start_y = row * self.__cell_size
-            end_y = start_y + self.__cell_size
-            self.__draw_border(start_x, end_x, start_y, end_y)
+            start_y = row * cell_size
+            end_y = start_y + cell_size
 
+            self.__maze_background.np_put_pixel(start_x, end_x, start_y, end_y, RgbColors.GREEN)
+        if (row, col) in self.__cells_42:
+            print(row, col)
+            start_x = col * cell_size + self.__cell_border_size
+            end_x = start_x + self.__cell_content_size
+            start_y = row * cell_size + self.__cell_border_size
+            end_y = start_y + self.__cell_content_size
+            self.__maze_background.np_put_pixel(start_x, end_x, start_y, end_y, RgbColors.WHITE)
+
+    def _cells_42(self) -> list[tuple[int, int]]:
+        """Draw a “42” pattern in the maze for decoration."""
+        y = int(((self.__vertical_cells) / 2) - 3)
+        x = int(((self.__horizontal_cells) / 2) - 4)
+        cells_42: list[tuple[int, int]] = list()
+        print(x, y)
+
+
+        # for i in range(y, y + 3):
+        #     self.draw_cell_42(cells_grid[i][x])
+        # for i in range(x + 1, x + 3):
+        #     self.draw_cell_42(cells_grid[y + 2][i])
+        # for i in range(y + 3, y + 5):
+        #     self.draw_cell_42(cells_grid[i][x + 2])
+
+        for i in range(y, y + 3):
+            cells_42.append((i, x))
+        for i in range(x + 1, x + 3):
+            cells_42.append((y + 2, i))
+        for i in range(y + 3, y + 5):
+            cells_42.append((i, x + 2))
+
+        for i in range(x + 4, x + 7):
+            cells_42.append((y, i))
+        for i in range(y + 1, y + 3):
+            cells_42.append((i, x + 6))
+        for i in range(x + 4, x + 7):
+            cells_42.append((y + 2, i))
+        for i in range(y + 3, y + 5):
+            cells_42.append((i, x + 4))
+        for i in range(y + 3, y + 5):
+            cells_42.append((i,x + 4))
+        for i in range(x + 4, x + 7):
+            cells_42.append((y + 4,i))
+        return cells_42
 
     def update(self, elapsed_time: float) -> None:
         self.__pacman.update(elapsed_time)
-        pass
-
-    def __draw_border(
-        self,
-        start_x: int ,
-        end_x: int,
-        start_y: int,
-        end_y: int
-    ) -> None:
-        for y in range(start_y, end_y):
-            for x in range(start_x, end_x):
-                self.__maze_background.put_pixel(
-                    x,
-                    y,
-                    RgbColors.GREEN
-                )
