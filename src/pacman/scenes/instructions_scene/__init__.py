@@ -10,8 +10,8 @@ from src.mazegenerator import MazeGenerator
 from .maze import Maze
 from .guide import Guide
 
-VERTICAL_CELLS = 20
-HORIZONTAL_CELLS = 20
+VERTICAL_CELLS = 150
+HORIZONTAL_CELLS = 150
 
 class InstructionsScene(BaseScene):
     def __init__(

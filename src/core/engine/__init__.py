@@ -1,6 +1,5 @@
 import sys
 from typing import Callable, cast, TypeVar, Literal, overload
-from src.core.image import BaseImage
 from src.core.vector2 import Vector2
 from src.core.text import Text
 from typing_extensions import Self

@@ -21,8 +21,8 @@ class Entity:
         self._cell_border_size: int = cell_border_size
         self._cell_content_size: int = cell_content_size
         self._position: tuple[int, int] = (
-                col * self._cell_size + self._cell_border_size,
-                self._row * self._cell_size + self._cell_border_size
+            col * self._cell_size + self._cell_border_size,
+            self._row * self._cell_size + self._cell_border_size
         )
 
 class Pacman(Entity): 
@@ -52,14 +52,14 @@ class Pacman(Entity):
 
     def __new_pacman(self) -> FrameImage:
         return self._engine.new_image(
-                image_type=ImageType.FRAME_IMAGE,
-                width=self._cell_content_size,
-                height=self._cell_content_size,
-                path="src/assests/frames/pacman.png",
-                time_per_frame=.2,
-                position=self._position,
-                frames=8,
-            ).set_parent(self._parent).to_center().create()
+            image_type=ImageType.FRAME_IMAGE,
+            width=self._cell_content_size,
+            height=self._cell_content_size,
+            path="src/assests/frames/pacman.png",
+            time_per_frame=.2,
+            position=self._position,
+            frames=8,
+        ).set_parent(self._parent).to_center().create()
 
 
 class OrangeGhost(Entity): 

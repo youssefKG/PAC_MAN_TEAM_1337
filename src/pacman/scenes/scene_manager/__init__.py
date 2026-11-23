@@ -7,7 +7,7 @@ from src.pacman.scenes.base import BaseScene
 from src.pacman.scenes.high_scores_scene import HighScoresScene
 from src.pacman.scenes.instructions_scene import InstructionsScene
 from src.pacman.scenes.menu_scene import MenuScene
-from src.pacman.scenes.game_scene import GameScene
+# from src.pacman.scenes.game_scene import GameScene
 from src.pacman.scenes.settings_scene import SettingsScene
 # ************ SCENES END ***************************
 
@@ -17,7 +17,7 @@ class SceneManager:
         self.__engine: Engine = engine
         self.__game_state_manager: GameStateManager = game_state_manager
         self.__menu_scene: MenuScene = MenuScene(self.__engine, self.__game_state_manager)
-        self.__game_scene: GameScene = GameScene(self.__engine, self.__game_state_manager)
+        # self.__game_scene: GameScene = GameScene(self.__engine, self.__game_state_manager)
         self.__settings_scene: SettingsScene = SettingsScene(engine, self.__game_state_manager)
         self.__high_scores_scene: HighScoresScene = HighScoresScene(
             engine=self.__engine,
