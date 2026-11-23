@@ -1,7 +1,6 @@
-from typing import cast, override
+from typing import override
 from src.core import (
     ImageType,
-    PixelImage,
     Engine,
 )
 from src.core import Key
@@ -16,14 +15,13 @@ class MenuScene(BaseScene):
         self.__window_height: int
         self.__window_width, self.__window_height = self._engine.window_dimension
         self.__game_state_manager: GameStateManager = game_state_manager
-        self.__container = cast(
-                PixelImage,
-                    self._engine.new_image(
+        self.__container = (
+            self._engine.new_image(
                     image_type=ImageType.PIXEL_IMAGE,
                     width=self.__window_width,
                     height=self.__window_height,
                     position=(0, 0),
-              ).set_parent().create()
+             ).set_parent().create()
         )
         self.__menu: Menu = Menu(
             parent=self.__container ,

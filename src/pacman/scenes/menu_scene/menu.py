@@ -1,5 +1,5 @@
 from enum import Enum, auto 
-from typing import  cast, Literal, TypeAlias, Annotated
+from typing import  Literal, TypeAlias, Annotated
 from src.core import (
     ImageType,
     GridImage,
@@ -54,8 +54,7 @@ class MenuButton:
         self.__type: MenuButtonType = type
         self.__is_visible: bool = is_visible
         self.__title: str = title
-        self.__button_container: GridImage = cast(
-            GridImage, 
+        self.__button_container: GridImage = (
                 self.__engine.new_image(
                     width=width,
                     height=height,
@@ -71,8 +70,7 @@ class MenuButton:
                 .center_x()
                 .create()
         )
-        self.__button_background: PixelImage = cast(
-                PixelImage,
+        self.__button_background: PixelImage = (
                 self.__engine.new_image(
                     image_type=ImageType.PIXEL_IMAGE,
                     width=.78,
@@ -112,9 +110,23 @@ class Menu:
         self._engine: Engine = engine
         self.__event_container: EventContainer = event_container
         self.__parent: PixelImage = parent
-        self.__menu_wrapper: GridImage = cast(
-            GridImage,
-            self._engine.new_image(
+        self.__menu_wrapper: GridImage = self.__new_menu_wrapper()
+        self.__menu_background: PixelImage = self.__new_menu_background()
+        self.__menu_background.set_background_color(RgbColors.TRANSPARENT_GREEN)
+        self.__menu_buttons: list[MenuButton] = self.__new_menu_buttons()
+        self.__current_active_button_idx = 0;
+
+
+    def __new_menu_background(self) -> PixelImage:
+        return self._engine.new_image(
+            image_type=ImageType.PIXEL_IMAGE,
+            width=.7,
+            height=.7,
+            position=(.5, .5),
+        ).set_parent(self.__menu_wrapper).to_center().create()
+
+    def __new_menu_wrapper(self) -> GridImage:
+        return self._engine.new_image(
             width= .25,
             height=.45,
             image_type=ImageType.GRID_IMAGE,
@@ -124,39 +136,23 @@ class Menu:
             total_rows=4,
             path="src/assests/menu/green_menu.png",
             position=(.5, .5),
-        )
-        .set_parent(parent)
-            .to_center().create()
-        )
+        ).set_parent(self.__parent) .to_center().create()
 
-        self.__menu_background: PixelImage = cast(
-            PixelImage,
-            self._engine.new_image(
-                image_type=ImageType.PIXEL_IMAGE,
-                width=.7,
-                height=.7,
-                position=(.5, .5),
-            )
-            .set_parent(self.__menu_wrapper)
-            .to_center().create()
-        )
-        self.__menu_background.set_background_color(RgbColors.TRANSPARENT_GREEN)
-        self.__menu_buttons: list[MenuButton] = list()
+    def __new_menu_buttons(self) -> list[MenuButton]:
         button_height: float = 1 / len(Buttons)
-        for idx, (title, button_type)  in enumerate(Buttons):
-            self.__menu_buttons.append(
-                MenuButton(
-                    engine=self._engine,
-                    parent=self.__menu_background,
-                    position=(.5, button_height * idx),
-                    title=title,
-                    width=BUTTON_WIDTH,
-                    height= button_height,
-                    is_visible=True if idx == 0 else False,
-                    type=button_type
-                )
-            )
-        self.__current_active_button_idx = 0;
+        return [
+            MenuButton(
+                engine=self._engine,
+                parent=self.__menu_background,
+                position=(.5, button_height * idx),
+                title=title,
+                width=BUTTON_WIDTH,
+                height= button_height,
+                is_visible=True if idx == 0 else False,
+                type=button_type
+            ) for idx, (title, button_type) in enumerate(Buttons)
+        ]
+
 
     @property
     def active_button(self) -> MenuButtonType:

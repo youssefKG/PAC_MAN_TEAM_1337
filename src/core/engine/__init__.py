@@ -1,5 +1,5 @@
 import sys
-from typing import Callable, cast, TypeVar
+from typing import Callable, cast, TypeVar, Literal, overload
 from src.core.image import BaseImage
 from src.core.vector2 import Vector2
 from src.core.text import Text
@@ -14,7 +14,7 @@ from src.mlx.libmlx import  (
     get_mouse_position,
     close_window
 )
-from src.core.image import ImageFactory, ImageType
+from src.core.image import ImageFactory, ImageType, PixelImage, GridImage, FrameImage, PngImage
 from src.utils import Logger
 from src.core.rgb_colors import RgbColors
 from src.core.event import EventHandler, EventContainer
@@ -63,8 +63,6 @@ class Engine:
             self.__window_width, self.__window_height = get_monitor_size()
         else:
             self.__window_width, self.__window_height = cast(int, window_width), cast(int, window_height)
-        print(self.__window_width, self.__window_height)
-        # self.__window_width *= 2
         set_window_size(self.__renderer, self.__window_width, self.__window_height)
         self.__event_handler = EventHandler(self.__renderer)
         self.__image_factory = ImageFactory(self.__renderer)
@@ -72,6 +70,86 @@ class Engine:
         self.__current_time = time.time()
         self.__event_handler.receive()
         return self
+
+    @overload
+    def new_image(
+            self,
+            /,
+            *,
+            width: int | float,
+            height: int | float,
+            image_type: Literal[ImageType.PIXEL_IMAGE],
+            frames: int = 1,
+            path: str = "",
+            time_per_frame: float = 0,
+            col: int = 1,
+            row: int = 1,
+            total_cols: int = 1,
+            total_rows: int = 1,
+            position: tuple[int | float, int | float] | None=None,
+            is_visible: bool = True
+        ) -> PixelImage:
+        ...
+
+    @overload
+    def new_image(
+            self,
+            /,
+            *,
+            width: int | float,
+            height: int | float,
+            image_type: Literal[ImageType.GRID_IMAGE],
+            frames: int = 1,
+            path: str = "",
+            time_per_frame: float = 0,
+            col: int = 1,
+            row: int = 1,
+            total_cols: int = 1,
+            total_rows: int = 1,
+            position: tuple[int | float, int | float] | None=None,
+            is_visible: bool = True
+        ) -> GridImage:
+        ...
+
+    @overload
+    def new_image(
+            self,
+            /,
+            *,
+            width: int | float,
+            height: int | float,
+            image_type: Literal[ImageType.PNG_IMAGE],
+            frames: int = 1,
+            path: str = "",
+            time_per_frame: float = 0,
+            col: int = 1,
+            row: int = 1,
+            total_cols: int = 1,
+            total_rows: int = 1,
+            position: tuple[int | float, int | float] | None=None,
+            is_visible: bool = True
+        ) -> PngImage:
+        ...
+
+    @overload
+    def new_image(
+            self,
+            /,
+            *,
+            width: int | float,
+            height: int | float,
+            image_type: Literal[ImageType.FRAME_IMAGE],
+            frames: int = 1,
+            path: str = "",
+            time_per_frame: float = 0,
+            col: int = 1,
+            row: int = 1,
+            total_cols: int = 1,
+            total_rows: int = 1,
+            position: tuple[int | float, int | float] | None=None,
+            is_visible: bool = True
+        ) -> FrameImage:
+        ...
 
     def new_image(
             self,
@@ -89,7 +167,7 @@ class Engine:
             total_rows: int = 1,
             position: tuple[int | float, int | float] | None=None,
             is_visible: bool = True
-        ) -> BaseImage:
+        ) -> PixelImage | GridImage | FrameImage | PngImage:
         return self.__image_factory(
             width=width,
             height=height,
@@ -147,9 +225,6 @@ class Engine:
 
     def add_events_container(self, event_container: EventContainer) -> None:
         self.__event_handler.add_container(event_container)
-
-    def exit(self) -> None:
-        pass
 
     def close_window(self) -> None:
         close_window(self.__renderer)

@@ -1,4 +1,3 @@
-from typing import cast
 from src.mazegenerator import MazeGenerator
 from src.core import PixelImage, Engine, ImageType, GridImage, RgbColors, FrameImage
 
@@ -24,41 +23,30 @@ class Maze:
         self.__cells_42: list[tuple[int, int]] = self._cells_42()
         self.__pacman: FrameImage = self.__new_pacman()
         self.__orange_ghost: FrameImage = self.__new_orange_ghost()
+        
     def __new_maze_background(self) -> PixelImage:
-        maze_background: PixelImage = cast(
-            PixelImage,
-            self.__engine.new_image(
-                width=.77,
-                height=.75,
-                image_type=ImageType.PIXEL_IMAGE,
-                position=(.5, .5)
-            ).set_parent(self.__maze_wrapper)
-            .to_center()
-            .create()
-          )
+        maze_background: PixelImage = self.__engine.new_image(
+            width=.77,
+            height=.75,
+            image_type=ImageType.PIXEL_IMAGE,
+            position=(.5, .5)
+        ).set_parent(self.__maze_wrapper).to_center().create()
         maze_background.set_background_color(RgbColors.TRANSPARENT_GREEN)
         return maze_background
 
     def __new_pacman(self) -> FrameImage:
-        return cast(
-            FrameImage,
-            self.__engine.new_image(
-                image_type=ImageType.FRAME_IMAGE,
-                width=self.__cell_content_size,
-                height=self.__cell_content_size,
-                path="src/assests/frames/pacman.png",
-                frames=8,
-                position=(self.__cell_border_size, self.__cell_border_size),
-                time_per_frame=.1,
-            )
-            .set_parent(self.__maze_background)
-            .create()
-        )
+        return self.__engine.new_image(
+            image_type=ImageType.FRAME_IMAGE,
+            width=self.__cell_content_size,
+            height=self.__cell_content_size,
+            path="src/assests/frames/pacman.png",
+            frames=8,
+            position=(self.__cell_border_size, self.__cell_border_size),
+            time_per_frame=.1,
+        ).set_parent(self.__maze_background).create()
 
     def __new_orange_ghost(self) -> FrameImage:
-        return cast(
-            FrameImage,
-            self.__engine.new_image(
+        return self.__engine.new_image(
                 image_type=ImageType.FRAME_IMAGE,
                 width=self.__cell_content_size,
                 height=self.__cell_content_size,
@@ -66,19 +54,14 @@ class Maze:
                 frames=8,
                 position=(self.__cell_border_size + self.__cell_size, self.__cell_border_size),
                 time_per_frame=.1,
-            )
-            .set_parent(self.__maze_background)
-            .create()
-        )
+            ).set_parent(self.__maze_background).create()
 
     def __new_maze_wrapper(self) -> GridImage:
         max_cells: int = max(self.__vertical_cells, self.__horizontal_cells)
         _, window_height = self.__engine.window_dimension
         width = int ((window_height * .5) / max_cells) * self.__horizontal_cells
         height = int ((window_height * .5) / max_cells) * self.__vertical_cells
-        return cast(
-            GridImage, 
-            self.__engine.new_image(
+        return self.__engine.new_image(
                 image_type=ImageType.GRID_IMAGE,
                 width=width,
                 height=height,
@@ -88,11 +71,7 @@ class Maze:
                 row=3,
                 path="src/assests/menu/green_menu.png",
                 position=(.65, .5)
-            )
-            .set_parent(self.__parent)
-            .to_center()
-            .create()
-        )
+            ).set_parent(self.__parent).to_center().create()
 
     @property
     def __cell_dimension(self) -> int:

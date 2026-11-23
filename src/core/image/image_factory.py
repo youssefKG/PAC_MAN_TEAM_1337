@@ -31,7 +31,7 @@ class ImageFactory:
             total_rows: int = 1,
             position: tuple[int | float, int | float] | None = None,
             is_visible:bool = True
-       ) -> BaseImage:
+       ) -> FrameImage | GridImage | PngImage | PixelImage:
         match image_type: 
             case ImageType.FRAME_IMAGE:
                 return FrameImage(

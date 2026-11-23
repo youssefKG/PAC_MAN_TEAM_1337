@@ -1,4 +1,4 @@
-from typing import  cast, Annotated
+from typing import Annotated
 from src.core import (
     Engine,
     ImageType,
@@ -51,34 +51,24 @@ class LeaderBoardTable:
         self.__game_state_manager: GameStateManager = game_state_manager
         self.__engine: Engine = engine
         self.__parent: PixelImage = parent
-        self.__leaderboard: GridImage = cast(
-            GridImage, 
-            self.__engine.new_image(
-                width=.35,
-                height=0.64,
-                image_type=ImageType.GRID_IMAGE,
-                total_rows=4,
-                total_cols=5,
-                col=2,
-                row=3,
-                path="src/assests/menu/green_menu.png",
-                position=(0.5, .25)
-            )
-            .set_parent(self.__parent)
-            .center_x()
-            .create()
-        )
-        self.__leaderboard_panel: PngImage = cast(
-            PngImage,
-            self.__engine.new_image(
-                width=.4,
-                height=.1,
-                image_type=ImageType.PNG_IMAGE,
-                path="src/assests/banner.png",
-                position=(0.5, -.084),
-            )
-            .set_parent(self.__leaderboard).center_x().create()
-        )
+        self.__leaderboard: GridImage = self.__engine.new_image(
+            width=.35,
+            height=0.64,
+            image_type=ImageType.GRID_IMAGE,
+            total_rows=4,
+            total_cols=5,
+            col=2,
+            row=3,
+            path="src/assests/menu/green_menu.png",
+            position=(0.5, .25)
+        ).set_parent(self.__parent).center_x().create()
+        self.__leaderboard_panel: PngImage = self.__engine.new_image(
+            width=.4,
+            height=.1,
+            image_type=ImageType.PNG_IMAGE,
+            path="src/assests/banner.png",
+            position=(0.5, -.084),
+        ).set_parent(self.__leaderboard).center_x().create()
         self.__leaderboard_panel.add_text(
             text=self.__engine.new_text(
                     text="LEADERBOARD",
@@ -89,21 +79,14 @@ class LeaderBoardTable:
             .to_center(),
             position=(0.5, 0.5)
         )
-        self.__wood_background: PngImage = cast(
-            PngImage,
-            self.__engine.new_image(
-                image_type=ImageType.PNG_IMAGE,
-                width=.762,
-                height=.75,
-                position=(.494, .5),
-                path="src/assests/backgrounds/wood_background.png"
-            )
-            .set_parent(self.__leaderboard)
-            .to_center()
-            .create()
-        )
-        self.__black_transparent_background: PixelImage = cast(
-           PixelImage,
+        self.__wood_background: PngImage = self.__engine.new_image(
+            image_type=ImageType.PNG_IMAGE,
+            width=.762,
+            height=.75,
+            position=(.494, .5),
+            path="src/assests/backgrounds/wood_background.png"
+        ).set_parent(self.__leaderboard).to_center().create()
+        self.__black_transparent_background: PixelImage = (
            self.__engine.new_image(
                width=1.,
                height=1.,

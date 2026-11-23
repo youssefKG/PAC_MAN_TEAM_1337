@@ -5,8 +5,7 @@ class PlayersLeaderboardTableHeader:
     def __init__(self, *, engine: Engine, parent: PixelImage) -> None:
         self.__engine: Engine = engine
         self.__parent: PixelImage = parent
-        self.__players_score_table_header_background: PixelImage = cast(
-            PixelImage,
+        self.__players_score_table_header_background: PixelImage = (
             self.__engine.new_image(
                 image_type=ImageType.PIXEL_IMAGE,
                 width=1.,

@@ -1,4 +1,4 @@
-from typing import override, cast
+from typing import override
 from src.core import (
     Engine,
     ImageType,
@@ -23,17 +23,12 @@ class HighScoresScene(BaseScene):
         self.__engine: Engine = engine
         self.__game_state_manager: GameStateManager = game_state_manager
         self.__window_width, self.__window_height = self.__engine.window_dimension
-        self.__scene_container: PixelImage = cast(
-            PixelImage,
-            self._engine.new_image(
-                image_type=ImageType.PIXEL_IMAGE,
-                width=self.__window_width,
-                height=self.__window_height,
-                position=(0, 0)
-            )
-            .set_parent()
-            .create()
-        )
+        self.__scene_container: PixelImage = self._engine.new_image(
+            image_type=ImageType.PIXEL_IMAGE,
+            width=self.__window_width,
+            height=self.__window_height,
+            position=(0, 0)
+        ).set_parent().create()
         self.__leaderboard: LeaderBoardTable = LeaderBoardTable(
             engine=self._engine,
             parent=self.__scene_container,

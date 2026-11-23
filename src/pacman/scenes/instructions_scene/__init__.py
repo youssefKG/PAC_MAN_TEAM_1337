@@ -1,4 +1,4 @@
-from typing import override, cast
+from typing import override 
 
 from src.core import Engine, PixelImage, ImageType, Key
 from src.pacman.game_state import GameStateManager, GameState
@@ -22,15 +22,12 @@ class InstructionsScene(BaseScene):
         super().__init__(engine=engine)
         self.__game_state_manager: GameStateManager = game_state_manager
         self.__window_width, self.__window_height = self._engine.window_dimension
-        self.__scene_container: PixelImage = cast(
-            PixelImage,
-            self._engine.new_image(
-                image_type=ImageType.PIXEL_IMAGE,
-                width=self.__window_width,
-                height=self.__window_height,
-           position=(0, 0),
-            ).set_parent().create()
-        )
+        self.__scene_container: PixelImage = self._engine.new_image(
+            image_type=ImageType.PIXEL_IMAGE,
+            width=self.__window_width,
+            height=self.__window_height,
+            position=(0, 0),
+        ).set_parent().create()
         self.__maze_generator: MazeGenerator = MazeGenerator(
             size=(HORIZONTAL_CELLS, VERTICAL_CELLS)
         )
@@ -86,17 +83,11 @@ class InstructionsScene(BaseScene):
         self._events_container.add_event(key=Key.J, callback=lambda: self._engine.close_window())
 
     def __new_maze_guide_wrapper(self) -> PixelImage:
-        return cast(
-            PixelImage, 
-            self._engine.new_image(
-                image_type=ImageType.PIXEL_IMAGE,
-                width=.8,
-                height=0.7,
-                position=(.5, .5)
-            )
-            .set_parent(self.__scene_container)
-            .to_center()
-            .create()
-        )
+        return  self._engine.new_image(
+            image_type=ImageType.PIXEL_IMAGE,
+            width=.8,
+            height=0.7,
+            position=(.5, .5)
+        ).set_parent(self.__scene_container).to_center().create()
 
 __all__ = ["InstructionsScene"]

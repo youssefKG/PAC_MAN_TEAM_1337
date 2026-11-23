@@ -1,4 +1,3 @@
-from typing import cast
 from uuid import uuid4
 from src.core import Engine, PixelImage, ImageType, GridImage, RgbColors
 from src.pacman.validation_models import PlayerScoreModel
@@ -23,8 +22,7 @@ class PlayerScoreRow:
         self.__parent: PixelImage = parent
         self.__engine: Engine = engine
         self.__position: tuple[float | int, float | int] = position
-        self.__background_image: PixelImage  = cast(
-            PixelImage,
+        self.__background_image: PixelImage  = (
             self.__engine.new_image(
                 width=1.,
                 height=0.09,
@@ -61,8 +59,7 @@ class PlayerScoreRow:
         self.__background_image.toggle()
 
     def get_rank_badge(self) -> GridImage:
-        return cast(
-            GridImage,
+        return (
             self.__engine.new_image(
                 width=0.2,
                 height=1.,
@@ -82,8 +79,7 @@ class PlayerScoreRow:
         rank_image: GridImage | PixelImage
         match self.__rank:
             case 0:
-                rank_image =  cast(
-                    GridImage,
+                rank_image = (
                     self.__engine.new_image(
                         width=RANK_IMAGE_WIDTH,
                         height=RANK_IMAGE_HEIGHT,
@@ -100,8 +96,7 @@ class PlayerScoreRow:
                     .create()
                 )
             case 1:
-                rank_image =  cast(
-                    GridImage,
+                rank_image =  (
                     self.__engine.new_image(
                         width=RANK_IMAGE_WIDTH,
                         height=RANK_IMAGE_HEIGHT,
@@ -118,8 +113,7 @@ class PlayerScoreRow:
                     .create()
                 )
             case 2:
-                rank_image =  cast(
-                    GridImage,
+                rank_image = (
                     self.__engine.new_image(
                         width=RANK_IMAGE_WIDTH,
                         height=RANK_IMAGE_HEIGHT,
@@ -136,8 +130,7 @@ class PlayerScoreRow:
                     .create()
                 )
             case _:
-                rank_image = cast(
-                        PixelImage,
+                rank_image = (
                         self.__engine.new_image(
                             image_type=ImageType.PIXEL_IMAGE,
                             width=RANK_IMAGE_WIDTH,

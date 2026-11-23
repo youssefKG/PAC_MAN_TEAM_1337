@@ -55,5 +55,4 @@ class GridImage(BaseImage):
         pass
 
     def update(self, elapsed_time: float) -> None:
-        ...
-
+        _ = elapsed_time

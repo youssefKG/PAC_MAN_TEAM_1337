@@ -1,5 +1,4 @@
-from typing import cast
-from src.core import Engine, ImageType, PixelImage, PngImage, Vector2, RgbColors, GridImage
+from src.core import Engine, ImageType, PngImage, Vector2, RgbColors
 import random
 
 TOTAL_SPIRITS = 90
@@ -12,39 +11,30 @@ class Background:
         self.__window_width, self.__window_height = self._engine.window_dimension
         self.__boucing_spirits: list[PngImage] = self.__generate_bouncing_spirits(TOTAL_SPIRITS)
         self.__velocity: list[Vector2] = self.__generate_random_velocities(TOTAL_SPIRITS)
-        self.__background_image = cast(
-                PngImage,
-                    self._engine.new_image(
-                    image_type=ImageType.PNG_IMAGE,
-                    width=self.__window_width,
-                    height=self.__window_height,
-                    position=(0, 0),
-                    path="src/assests/backgrounds/cenote_light_beam.png",
-              ).set_parent().create()
+        self.__background_image = (
+            self._engine.new_image(
+                image_type=ImageType.PNG_IMAGE,
+                width=self.__window_width,
+                height=self.__window_height,
+                position=(0, 0),
+                path="src/assests/backgrounds/cenote_light_beam.png",
+          ).set_parent().create()
         )
-        self.__black_transparent_background = cast(
-                PixelImage,
-                    self._engine.new_image(
-                    image_type=ImageType.PIXEL_IMAGE,
-                    width=self.__window_width,
-                    height=self.__window_height,
-                    position=(0, 0),
-              ).set_parent().create()
-        )
+        self.__black_transparent_background = self._engine.new_image(
+            image_type=ImageType.PIXEL_IMAGE,
+            width=self.__window_width,
+            height=self.__window_height,
+            position=(0, 0),
+        ).set_parent().create()
         self.__black_transparent_background.set_background_color(RgbColors.TRANSPARENT_GREEN)
-        self.__banner: PngImage = cast(
-                PngImage,
-                self._engine.new_image(
-                    width= 0.2,
-                    height=0.1,
-                    image_type=ImageType.PNG_IMAGE,
-                    path="src/assests/banner.png",
-                    position=(.50, .0)
-                )
-                .set_parent(self.__black_transparent_background)
-                .center_x()
-                .create()
-        )
+
+        self.__banner: PngImage = self._engine.new_image(
+            width= 0.2,
+            height=0.1,
+            image_type=ImageType.PNG_IMAGE,
+            path="src/assests/banner.png",
+            position=(.50, .0)
+        ).set_parent(self.__black_transparent_background).center_x().create()
         self.__banner.add_text(
             self._engine.new_text(
                 text="PACMAN",
@@ -65,8 +55,7 @@ class Background:
 
     def __generate_bouncing_spirits(self, total: int) -> list[PngImage]:
         return [
-                cast(
-                    PngImage,
+                (
                     self._engine.new_image(
                         image_type=ImageType.PNG_IMAGE,
                         width=18,
