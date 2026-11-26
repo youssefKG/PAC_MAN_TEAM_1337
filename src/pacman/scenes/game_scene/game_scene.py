@@ -20,15 +20,12 @@ class GameScene(BaseScene):
         super().__init__(engine=engine)
         self.__game_state_manager: GameStateManager = game_state_manager
         self.__window_width, self.__window_height = self._engine.window_dimension
-        self.__scene_container: PixelImage = cast(
-            PixelImage,
-            self._engine.new_image(
+        self.__scene_container: PixelImage = self._engine.new_image(
                 image_type=ImageType.PIXEL_IMAGE,
                 width=self.__window_width,
                 height=self.__window_height,
            position=(0, 0),
             ).set_parent().create()
-        )
         self.__maze_generator: MazeGenerator = MazeGenerator(
             size=(HORIZONTAL_CELLS, VERTICAL_CELLS)
         )
