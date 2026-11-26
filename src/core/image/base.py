@@ -113,6 +113,10 @@ class BaseImage:
     def position(self) -> Vector2:
         return self._position
 
+    @position.setter
+    def position(self, new_position: Vector2) -> None:
+        self._position.x, self._position.y = new_position.x, new_position.y
+
     @property
     def width(self) -> int:
         return self._width

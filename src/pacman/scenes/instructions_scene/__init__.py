@@ -14,8 +14,8 @@ from src.mazegenerator import MazeGenerator
 from .maze import Maze
 from .guide import Guide
 
-VERTICAL_CELLS = 14
-HORIZONTAL_CELLS = 14
+VERTICAL_CELLS = 124
+HORIZONTAL_CELLS = 124
 
 class InstructionState(Enum):
     START = auto()
@@ -105,7 +105,7 @@ class InstructionsScene(BaseScene):
             engine=self._engine,
             parent=self.__maze.maze,
             position=self.__get_position(0, 0),
-            size=self.__maze.cell_content_size,
+            size=int(self.__maze.cell_content_size),
             maze=self.__maze
         )
     
@@ -113,7 +113,7 @@ class InstructionsScene(BaseScene):
         return Pinky(
             engine=self._engine,
             parent=self.__maze.maze,
-            position=self.__get_position(3, 3),
+            position=self.__get_position(10, 10),
             size=self.__maze.cell_content_size,
             maze=self.__maze
         )
@@ -122,7 +122,7 @@ class InstructionsScene(BaseScene):
         return Blinky(
             engine=self._engine,
             parent=self.__maze.maze,
-            position=self.__get_position(3, 3),
+            position=self.__get_position(9, 8),
             size=self.__maze.cell_content_size,
             maze=self.__maze
         )
@@ -131,7 +131,7 @@ class InstructionsScene(BaseScene):
         return Clyde(
             engine=self._engine,
             parent=self.__maze.maze,
-            position=self.__get_position(3, 3),
+            position=self.__get_position(3, 8),
             size=self.__maze.cell_content_size,
             maze=self.__maze
         )
@@ -145,7 +145,7 @@ class InstructionsScene(BaseScene):
             horizontal_cells=HORIZONTAL_CELLS,
         )
 
-    def __get_position(self, row: int, col: int) -> tuple[int | float, int | float]:
+    def __get_position(self, row: int, col: int) -> tuple[int, int]:
         return (
             row * self.__maze.cell_size + self.__maze.cell_border_size,
             col * self.__maze.cell_size + self.__maze.cell_border_size
