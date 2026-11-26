@@ -54,7 +54,6 @@ class FrameImage(BaseImage):
         )
         return self
 
-
     @override
     def mount(self) -> None:
         if not self.__has_been_on_screen:
