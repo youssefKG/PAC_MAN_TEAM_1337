@@ -1,19 +1,16 @@
-
 from src.core import (
     Engine,
     FrameImage,
     ImageType,
     PixelImage,
-    GridImage,
     RgbColors,
     PngImage
 )
 
 class Guide:
-    def __init__(self, *, engine: Engine, parent: PixelImage) -> None:
+    def __init__(self, /, *, engine: Engine, parent: PixelImage) -> None:
         self.__engine: Engine = engine
         self.__parent: PixelImage = parent
-        # self.__guide_wrapper: GridImage = self.__new_instruction_wrapper()
         self.__guide_background: PixelImage = self.__new_guide_background()
         self.__guide_character: FrameImage = self.__new_guide_character()
         self.__dialogue: PngImage = self.__new_dialogue()
@@ -23,19 +20,6 @@ class Guide:
 
     def update(self, elapsed_time: float) -> None:
         self.__guide_character.update(elapsed_time)
-
-    def __new_instruction_wrapper(self) -> GridImage:
-        return self.__engine.new_image(
-                image_type=ImageType.GRID_IMAGE,
-                width=.3,
-                height=.2,
-                total_cols=5,
-                total_rows=4,
-                col=2,
-                row=3,
-                path="src/assests/menu/green_menu.png",
-                position=(.1, .5)
-            ).set_parent(self.__parent).center_y().create()
 
     def __new_guide_character(self) -> FrameImage:
         return self.__engine.new_image(
@@ -55,7 +39,6 @@ class Guide:
                 image_type=ImageType.PIXEL_IMAGE,
                 position=(.1, .5)
             ).set_parent(self.__parent).center_y().create()
-        # maze_background.set_background_color(RgbColors.TRANSPARENT_GREEN)
         return maze_background
 
     def __new_dialogue(self) -> PngImage:

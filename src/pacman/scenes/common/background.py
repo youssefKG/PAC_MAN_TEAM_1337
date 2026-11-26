@@ -1,7 +1,7 @@
 from src.core import Engine, ImageType, PngImage, Vector2, RgbColors
 import random
 
-TOTAL_SPIRITS = 90
+TOTAL_SPIRITS =0
 
 class Background:
     def __init__(self, engine: Engine) -> None:

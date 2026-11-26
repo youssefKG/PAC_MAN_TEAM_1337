@@ -17,9 +17,14 @@ class Vector2:
         self.__x = position.x
         self.__y = position.y
 
-    def add(self, other: "Vector2") -> None:
-        self.__x += other.x
-        self.__y += other.y
+    def add(self, other: "Vector2 | None" = None, x: int | float=.0, y: int | float=.0) -> None:
+        if other is not None:
+            self.__x += other.x
+            self.__y += other.y
+        else:
+            self.__x += x
+            self.__y += y
+
 
     @property
     def x(self) -> float:

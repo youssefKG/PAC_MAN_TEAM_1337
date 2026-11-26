@@ -1,5 +1,5 @@
 from src.mazegenerator import MazeGenerator
-from src.core import PixelImage, Engine, ImageType, GridImage, RgbColors, FrameImage
+from src.core import PixelImage, Engine, ImageType, GridImage, RgbColors, FrameImage, Vector2
 import math
 
 class Maze:
@@ -19,7 +19,7 @@ class Maze:
         self.__maze_wrapper: GridImage = self.__new_maze_wrapper()
         self.__maze_background: PixelImage = self.__new_maze_background()
         self.__cell_size: int = self.__cell_dimension
-        self.__cell_border_size: int = math.ceil(self.__cell_size * 0.15)
+        self.__cell_border_size: int = math.ceil(self.__cell_size * 0.10)
         self.__cell_content_size: int = self.__cell_size - (
             self.__cell_border_size * 2
         )
@@ -36,22 +36,48 @@ class Maze:
         maze_background.set_background_color(RgbColors.TRANSPARENT_GREEN)
         return maze_background
 
+
+    @property
+    def cell_size(self) -> int:
+        return self.__cell_border_size * 2 + self.__cell_content_size
+
+    @property
+    def cell_content_size(self) -> int:
+        return self.__cell_content_size
+
+    @property
+    def maze(self) -> PixelImage:
+        return self.__maze
+
+    @property
+    def cell_border_size(self) -> int:
+        return self.__cell_border_size
+
+    @property
+    def vertical_cells(self) -> int:
+        return self.__vertical_cells
+
+
+    @property
+    def horizontal_cells(self) -> int: 
+        return self.__horizontal_cells
+
     def __new_maze(self) -> PixelImage:
         width: int = (self.__cell_border_size * 2 + self.__cell_content_size) * self.__horizontal_cells
         height: int = (self.__cell_border_size * 2 + self.__cell_content_size) * self.__vertical_cells
-        return self.__engine.new_image(
+        maze: PixelImage = self.__engine.new_image(
             image_type=ImageType.PIXEL_IMAGE,
             width=width,
             height=height,
             position=(.5, .5),
         ).set_parent(self.__maze_background).to_center().create()
-
+        return maze
 
     def __new_maze_wrapper(self) -> GridImage:
         max_cells: int = max(self.__vertical_cells, self.__horizontal_cells)
         _, window_height = self.__engine.window_dimension
-        width = int ((window_height * .8) / max_cells) * self.__horizontal_cells
-        height = int ((window_height * .8) / max_cells) * self.__vertical_cells
+        width = int ((window_height * .5) / max_cells) * self.__horizontal_cells
+        height = int ((window_height * .5) / max_cells) * self.__vertical_cells
         return self.__engine.new_image(
                 image_type=ImageType.GRID_IMAGE,
                 width=width,
@@ -61,7 +87,7 @@ class Maze:
                 col=2,
                 row=3,
                 path="src/assests/menu/green_menu.png",
-                position=(.5, .5)
+                position=(.7, .5)
             ).set_parent(self.__parent).to_center().create()
 
     @property
@@ -71,20 +97,25 @@ class Maze:
     def draw(self) -> None:
         for row, cells_row in enumerate(self.__maze_generator.maze):
             for col, cell_hexa in enumerate(cells_row):
-                print(f"[{cell_hexa}]", end='') if len(str(cell_hexa)) == 2 else print(f"[ {cell_hexa}]", end='')
                 self.__draw_cell(cell_hexa, row, col)
-            print()
-        print("*" * 30)
 
-    def __is_open(self, cell_hexa: int, direction: int) -> bool:
+    def has_border(self, cell_hexa: int, direction: int) -> bool:
         return (cell_hexa & (1 << direction)) != 0
 
 
+    @property
+    def maze_hexa(self) -> list[list[int]]:
+        return self.__maze_generator.maze
+
+    @property
+    def position(self) -> Vector2:
+        return self.__maze.position
+
     def __draw_cell(self, cell_hexa: int, row: int, col: int) -> None:
-        north: bool = self.__is_open(cell_hexa, 0)
-        east: bool  = self.__is_open(cell_hexa, 1)
-        south: bool = self.__is_open(cell_hexa, 2)
-        west: bool = self.__is_open(cell_hexa, 3)
+        north: bool = self.has_border(cell_hexa, 0)
+        east: bool  = self.has_border(cell_hexa, 1)
+        south: bool = self.has_border(cell_hexa, 2)
+        west: bool = self.has_border(cell_hexa, 3)
         start_x: int
         start_y: int
         end_x: int
@@ -150,7 +181,6 @@ class Maze:
 
             self.__maze.np_put_pixel(start_x, end_x, start_y, end_y, RgbColors.GREEN)
         if (row, col) in self.__cells_42:
-            # print(row, col)
             start_x = col * cell_size + self.__cell_border_size
             end_x = start_x + self.__cell_content_size
             start_y = row * cell_size + self.__cell_border_size
@@ -184,5 +214,3 @@ class Maze:
             cells_42.append((y + 4,i))
         return cells_42
 
-    def update(self, elapsed_time: float) -> None:
-        pass

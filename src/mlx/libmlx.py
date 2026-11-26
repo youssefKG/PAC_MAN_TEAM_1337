@@ -16,7 +16,6 @@ from os import path
 from logging import critical
 from platform import system
 import numpy as np
-from src.core.rgb_colors import RgbColors
 
 # ============================================================================
 

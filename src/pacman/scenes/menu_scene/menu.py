@@ -153,7 +153,6 @@ class Menu:
             ) for idx, (title, button_type) in enumerate(Buttons)
         ]
 
-
     @property
     def active_button(self) -> MenuButtonType:
         return self.__menu_buttons[self.__current_active_button_idx].type

@@ -1,13 +1,11 @@
 from src.mlx.libmlx import (
     RendererType,
 )
-
-
 # Images
 from .pixel_image import PixelImage
 from .grid_image import GridImage
 from .frame_image import FrameImage
-from .base import ImageType, BaseImage
+from .base import ImageType
 from .png_image import PngImage
 
 _DEFAULT_IMAGE_WIDTH = 100

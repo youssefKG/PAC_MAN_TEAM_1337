@@ -18,8 +18,13 @@ class Key(Enum):
     ENTER           = 257
     DOWN            = 264
     UP              = 265
+    RIGHT              = 262
     ESC             = 256
     LEFT            = 263
+    W               = 87
+    D               = 68
+    A               = 65
+    S               = 83
 
 class EventContainer:
     def __init__(self) -> None:

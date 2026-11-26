@@ -22,4 +22,7 @@ class Pacman:
     def run(self) -> None:
         self.__engine.game_loop(lambda elapsed_time: self.__scene_manager.update(elapsed_time))
 
+    def stop(self) -> None:
+        self.__engine.close_window()
+
 __all__ = ["Pacman"]

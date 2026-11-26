@@ -28,9 +28,18 @@ class MenuScene(BaseScene):
             engine=self._engine,
             event_container=self._events_container,
         )
-        self._events_container.add_event(key=Key.UP, callback=lambda: self.__menu.on_change(Key.UP))
-        self._events_container.add_event(key=Key.DOWN, callback=lambda: self.__menu.on_change(Key.DOWN))
-        self._events_container.add_event(key=Key.ENTER, callback=self.__change_scene)
+        self._events_container.add_event(
+            key=Key.UP,
+            callback=lambda: self.__menu.on_change(Key.UP)
+        )
+        self._events_container.add_event(
+            key=Key.DOWN,
+            callback=lambda: self.__menu.on_change(Key.DOWN)
+        )
+        self._events_container.add_event(
+            key=Key.ENTER,
+            callback=self.__change_scene
+        )
 
     @override
     def mount(self) -> None:

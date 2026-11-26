@@ -60,6 +60,7 @@ class Engine:
         self.__renderer = Renderer(1, 1, title.encode("ASCII"), True)
         if monitor_size:
             self.__window_width, self.__window_height = get_monitor_size()
+            # self.__window_width *= 2
         else:
             self.__window_width, self.__window_height = cast(int, window_width), cast(int, window_height)
         set_window_size(self.__renderer, self.__window_width, self.__window_height)
