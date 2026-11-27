@@ -1,18 +1,7 @@
-from src.core import Engine, FrameImage, ImageType, PixelImage, PngImage, Vector2, Key
+from src.core import Engine, FrameImage, ImageType, PixelImage, PngImage, Vector2
 from .entities import Entity, Direction
-from .maze import Maze
-from enum import Enum
+from .maze import Maze, Wall
 import math
-
-
-class Wall(Enum):
-    NORTH = 0
-    EAST = 1
-    SOUTH = 2
-    WEST = 3
-
-MIN_DISTANCE = 5
-SPEED = 0
 
 class Pacman(Entity): 
     def __init__(
@@ -52,7 +41,7 @@ class Pacman(Entity):
 
     def update(self, elapsed_time: float) -> None:
         # TODO: make the step dynamic
-        step: int = int((self.__speed) * elapsed_time) + SPEED
+        step: int = int(self.__maze.cell_size * elapsed_time) + 1
         pacman_position = int(self._pacman.position.x - self._parent.position.x), int(self._pacman.position.y - self._parent.position.y)
         x, y = pacman_position
         col = int(x / self.__maze.cell_size)
@@ -89,9 +78,9 @@ class Pacman(Entity):
             row * self.__maze.cell_size + self.__maze.cell_border_size,
         )
         distance: float = math.dist((int(x), int(y)), (int(cell_x), int(cell_y)))
-        if int(distance) <= MIN_DISTANCE:
-            # TODO: Correct pacman position based on direction
+        if int(distance) <= int(self.__maze.cell_size * 0.2):
             self.__direction = self.__next_direction
+            self._pacman.position.add(x=cell_x - x, y=cell_y - y)
 
     def __move_up(self, step: int, pacman_position: tuple[int, int], col: int, row: int) -> None:
         _, y = pacman_position
@@ -101,8 +90,8 @@ class Pacman(Entity):
             self.__maze.maze_hexa[row][col],
             Wall.NORTH.value
         )
-        if not has_north_wall or next_y > north_border_y:
-            self._pacman.position.add(x=0.0, y=-step)
+        if not has_north_wall or next_y >= north_border_y:
+            self._pacman.position.y -= step
 
     def __move_down(self, step: int, pacman_position: tuple[int, int], col: int, row: int) -> None:
         _, y = pacman_position
@@ -113,7 +102,7 @@ class Pacman(Entity):
         south_wall_y = row * self.__maze.cell_size + self.__maze.cell_content_size + self.__maze.cell_border_size
         next_y = y + self.__maze.cell_content_size + step
         if not has_south_border or  next_y <= south_wall_y:
-            self._pacman.position.add(x=0, y=step)
+            self._pacman.position.y += step
 
     def __move_left(self, step: int, pacman_position: tuple[int, int], col: int, row: int) -> None:
         x, _ = pacman_position
@@ -124,7 +113,7 @@ class Pacman(Entity):
         west_wall_x = col * self.__maze.cell_size + self.__maze.cell_border_size
         next_x = x - step
         if not has_south_border or  next_x > west_wall_x:
-            self._pacman.position.add(x=-step, y=.0)
+            self._pacman.position.x -= step
 
     def __move_right(self, step: int, pacman_position: tuple[int, int], col: int, row: int) -> None:
         x, _ = pacman_position
@@ -135,6 +124,7 @@ class Pacman(Entity):
         east_wall_x = col * self.__maze.cell_size + self.__maze.cell_border_size
         next_x = x + step
         if not has_south_border or  next_x < east_wall_x:
-            self._pacman.position.add(x=step, y=.0)
+            self._pacman.position.x += step
+
     def position(self) -> Vector2:
         return self._pacman.position

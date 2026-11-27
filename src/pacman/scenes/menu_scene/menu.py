@@ -24,6 +24,7 @@ class MenuButtonType(Enum):
     HIGH_SCORES = auto()
     INSTRUCTIONS = auto()
     QUIT = auto()
+    NORDINE = auto()
 
 
 Button: TypeAlias = tuple[Annotated[str, "button title"], MenuButtonType]
@@ -32,7 +33,6 @@ Buttons: list[Button] = [
     ("PLAY", MenuButtonType.PLAY),
     ("INSTRUCTIONS", MenuButtonType.INSTRUCTIONS),
     ("HIGH SCORES", MenuButtonType.HIGH_SCORES),
-    ("SETTINGS", MenuButtonType.SETTINGS),
     ("QUIT", MenuButtonType.QUIT)
 ]
 

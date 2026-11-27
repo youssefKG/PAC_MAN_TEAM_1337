@@ -1,6 +1,12 @@
 from src.mazegenerator import MazeGenerator
-from src.core import PixelImage, Engine, ImageType, GridImage, RgbColors, FrameImage, Vector2
-import math
+from src.core import PixelImage, Engine, ImageType, GridImage, RgbColors, Vector2
+from enum import Enum
+
+class Wall(Enum):
+    NORTH = 0
+    EAST = 1
+    SOUTH = 2
+    WEST = 3
 
 class Maze:
     def __init__(
@@ -9,7 +15,8 @@ class Maze:
         maze_generator: MazeGenerator,
         parent: PixelImage,
         vertical_cells: int,
-        horizontal_cells: int
+        horizontal_cells: int,
+        size: float | int = .7
     ) -> None:
         self.__maze_generator: MazeGenerator = maze_generator
         self.__parent: PixelImage = parent
@@ -19,10 +26,12 @@ class Maze:
         self.__maze_wrapper: GridImage = self.__new_maze_wrapper()
         self.__maze_background: PixelImage = self.__new_maze_background()
         self.__cell_size: int = self.__cell_dimension
-        self.__cell_border_size: int = math.ceil(self.__cell_size * 0.10)
+        self.__cell_border_size: int = int(self.__cell_size * 0.15)
         self.__cell_content_size: int = self.__cell_size - (
             self.__cell_border_size * 2
         )
+        self.__size: int | float = size
+        self.__cell_size = self.__cell_border_size * 2 + self.__cell_content_size
         self.__maze: PixelImage = self.__new_maze()
         self.__cells_42: list[tuple[int, int]] = self._cells_42()
 
@@ -75,9 +84,8 @@ class Maze:
 
     def __new_maze_wrapper(self) -> GridImage:
         max_cells: int = max(self.__vertical_cells, self.__horizontal_cells)
-        _, window_height = self.__engine.window_dimension
-        width = int ((window_height * .7) / max_cells) * self.__horizontal_cells
-        height = int ((window_height * .7) / max_cells) * self.__vertical_cells
+        width = int ((self.__parent.height * .7) / max_cells) * self.__horizontal_cells
+        height = int ((self.__parent.height * .7) / max_cells) * self.__vertical_cells
         return self.__engine.new_image(
             image_type=ImageType.GRID_IMAGE,
             width=width,
@@ -92,7 +100,7 @@ class Maze:
 
     @property
     def __cell_dimension(self) -> int:
-        return self.__maze_background.height // self.__vertical_cells
+        return int(self.__maze_background.height / self.__vertical_cells)
 
     def draw(self) -> None:
         for row, cells_row in enumerate(self.__maze_generator.maze):
