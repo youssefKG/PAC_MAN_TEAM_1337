@@ -50,16 +50,16 @@ class InstructionsScene(BaseScene):
         self.__tutorial_step: TutorialStep = TutorialStep.MOVEMENT
         self.__pressed_keys: list[tuple[Key, Key]] = list()
         self.__add_pacman_events()
-        self._events_container.add_event(key=Key.ESC, callback=self.__on_esc_pressed)
+        self._events_container.add_event(key=Key.ESC, callback=self._engine.close_window)
 
     @override
     def mount(self) -> None:
         super().mount()
         self.__scene_container.mount()
 
-    def __on_esc_pressed(self) -> None:
-        self.unmount()
-        self.__game_state_manager.change_state(GameState.MENU)
+    # def __on_esc_pressed(self) -> None:
+    #     self.unmount()
+    #     self.__game_state_manager.change_state(GameState.MENU)
 
     def __new_super_pacgum(self) -> SuperPacgum:
         return  SuperPacgum(
@@ -91,19 +91,19 @@ class InstructionsScene(BaseScene):
     def __add_pacman_events(self) -> None:
         # ****************** UP MOVEMENT ***************************
         self._events_container.add_event(key=Key.W, callback=lambda: self.__change_pacman_direction(Key.UP))
-        self._events_container.add_event(key=Key.A, callback=lambda: self.__change_pacman_direction(Key.W))
+        self._events_container.add_event(key=Key.UP, callback=lambda: self.__change_pacman_direction(Key.W))
 
         # ************ DOWN MOVEMENT ***********************
+        self._events_container.add_event(key=Key.DOWN, callback=lambda: self.__change_pacman_direction(Key.DOWN))
         self._events_container.add_event(key=Key.S, callback=lambda: self.__change_pacman_direction(Key.S))
-        self._events_container.add_event(key=Key.D, callback=lambda: self.__change_pacman_direction(Key.DOWN))
 
         # ************ LEFT MOVEMENT ***********************
-        self._events_container.add_event(key=Key.S, callback=lambda: self.__change_pacman_direction(Key.LEFT))
-        self._events_container.add_event(key=Key.D, callback=lambda: self.__change_pacman_direction(Key.A))
+        self._events_container.add_event(key=Key.LEFT, callback=lambda: self.__change_pacman_direction(Key.LEFT))
+        self._events_container.add_event(key=Key.A, callback=lambda: self.__change_pacman_direction(Key.A))
 
         # ************ RIGHT MOVEMENT ***********************
-        self._events_container.add_event(key=Key.D, callback=lambda: self.__change_pacman_direction(Key.RIGHT))
-        self._events_container.add_event(key=Key.S, callback=lambda: self.__change_pacman_direction(Key.D))
+        self._events_container.add_event(key=Key.RIGHT, callback=lambda: self.__change_pacman_direction(Key.RIGHT))
+        self._events_container.add_event(key=Key.D, callback=lambda: self.__change_pacman_direction(Key.D))
 
     def __change_pacman_direction(self, pressed_key: Key) -> None:
         match pressed_key:
