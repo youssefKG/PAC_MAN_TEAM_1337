@@ -1,6 +1,6 @@
 from .background import Background
-from .entity import Entity
-from .pacman import Pacman, Wall, Direction
+from .entity import Entity, Direction
+from .pacman import Pacman, Wall
 from .ghosts import Clyde, Blinky, Pinky 
 from .maze import Maze
 

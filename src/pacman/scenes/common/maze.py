@@ -1,7 +1,6 @@
 from src.mazegenerator import MazeGenerator
-from src.core import PixelImage, Engine, ImageType, GridImage, RgbColors, Vector2
+from src.core import PixelImage, Engine, ImageType, GridImage, RgbColors, FrameImage, Vector2
 import math
-
 
 class Maze:
     def __init__(
@@ -77,19 +76,19 @@ class Maze:
     def __new_maze_wrapper(self) -> GridImage:
         max_cells: int = max(self.__vertical_cells, self.__horizontal_cells)
         _, window_height = self.__engine.window_dimension
-        width = int ((window_height * .5) / max_cells) * self.__horizontal_cells
-        height = int ((window_height * .5) / max_cells) * self.__vertical_cells
+        width = int ((window_height * .7) / max_cells) * self.__horizontal_cells
+        height = int ((window_height * .7) / max_cells) * self.__vertical_cells
         return self.__engine.new_image(
-                image_type=ImageType.GRID_IMAGE,
-                width=width,
-                height=height,
-                total_cols=5,
-                total_rows=4,
-                col=2,
-                row=3,
-                path="src/assests/menu/green_menu.png",
-                position=(.7, .5)
-            ).set_parent(self.__parent).to_center().create()
+            image_type=ImageType.GRID_IMAGE,
+            width=width,
+            height=height,
+            total_cols=5,
+            total_rows=4,
+            col=2,
+            row=3,
+            path="src/assests/menu/green_menu.png",
+            position=(.5, .5)
+        ).set_parent(self.__parent).to_center().create()
 
     @property
     def __cell_dimension(self) -> int:

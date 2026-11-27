@@ -2,7 +2,6 @@ from .entity import Entity
 from src.core import Engine, FrameImage, ImageType, PixelImage, PngImage
 from .maze import Maze
 
-
 class __Ghost(Entity):
     def __init__(
         self,
@@ -103,7 +102,7 @@ class Pinky(__Ghost):
         speed: int=90,
         maze: Maze,
     ) -> None:
-        self._path = "src/assests/frames/blinky.png"
+        self._path: str = "src/assests/codex_images/clyde.png"
         super().__init__(
             engine=engine,
             parent=parent,
