@@ -1,3 +1,4 @@
+from typing import override
 from src.core import Engine, FrameImage, ImageType, PixelImage, PngImage, Vector2
 from .entities import Entity, Direction
 from .maze import Maze, Wall
@@ -79,7 +80,6 @@ class Pacman(Entity):
         )
         distance: float = math.dist((int(x), int(y)), (int(cell_x), int(cell_y)))
         if distance <= self.__maze.cell_size * 0.2:
-            print(distance)
             self.__direction = self.__next_direction
             self._pacman.position.add(x=cell_x - x, y=cell_y - y)
 
@@ -127,5 +127,6 @@ class Pacman(Entity):
         if not has_south_border or  next_x < east_wall_x:
             self._pacman.position.x += step
 
-    def position(self) -> Vector2:
-        return self._pacman.position
+    @override
+    def position(self) -> tuple[int | float, int | float]:
+        return self._pacman.position.x, self._pacman.position.y

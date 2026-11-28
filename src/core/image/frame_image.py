@@ -6,7 +6,8 @@ from src.mlx.libmlx import (
     get_frames_of_images,
     image_to_window,
     hide_image,
-    display_image
+    display_image,
+    delete_image
 )
 from .base import BaseImage, ImageType
 
@@ -87,3 +88,11 @@ class FrameImage(BaseImage):
     @property
     def __get_current_image(self) -> Image:
         return self.__frames_image[self.__current_frame_idx]
+
+    @override
+    def delete(self) -> None:
+        if self._parent is not None:
+            self._parent.delete_children(self.id)
+        for frame_img in self.__frames_image:
+            hide_image(frame_img)
+            delete_image(self._renderer, frame_img)

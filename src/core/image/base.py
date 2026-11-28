@@ -88,6 +88,10 @@ class BaseImage:
     def add_children(self, image: 'BaseImage') -> None:
         self._childrens[image.id]  = image
 
+    def delete_children(self, id: str) -> None:
+        if id in self._childrens:
+            del self._childrens[id]
+
     def move_to(
         self,
         /,
@@ -226,6 +230,8 @@ class BaseImage:
 
     def delete(self) -> None:
         delete_image(self._renderer, self._image)
+        if self._parent is not None:
+            self._parent.delete_children(self.id)
         for children_image in self._childrens.values():
             children_image.delete()
         for text in self._texts:

@@ -1,3 +1,4 @@
+from typing import override
 from .entities import Entity
 from src.core import Engine, FrameImage, ImageType, PixelImage, PngImage
 from .maze import Maze
@@ -9,7 +10,7 @@ class __Ghost(Entity):
         *,
         engine: Engine,
         parent: PixelImage | PngImage,
-        position: tuple[int | float, int | float],
+        position: tuple[int, int],
         size: int,
         speed: int=90,
         maze: Maze,
@@ -38,8 +39,9 @@ class __Ghost(Entity):
     def update(self, elapsed_time: float) -> None:
         self._ghost.update(elapsed_time)
 
-
-        pass
+    @override
+    def position(self) -> tuple[int | float, int | float]:
+        return self._ghost.position.x, self._ghost.position.y
 
 class Clyde(__Ghost): 
     def __init__(
@@ -48,7 +50,7 @@ class Clyde(__Ghost):
         *,
         engine: Engine,
         parent: PixelImage | PngImage,
-        position: tuple[int | float, int | float],
+        position: tuple[int, int],
         size: int,
         speed: int=90,
         maze: Maze,
@@ -65,6 +67,10 @@ class Clyde(__Ghost):
         # self.__direction: Direction | None = None
         self.__speed: int = speed
 
+    @override
+    def position(self) -> tuple[int | float, int | float]:
+        return self._ghost.position.x, self._ghost.position.y
+
 class Blinky(__Ghost): 
     def __init__(
         self,
@@ -72,7 +78,7 @@ class Blinky(__Ghost):
         *,
         engine: Engine,
         parent: PixelImage | PngImage,
-        position: tuple[int | float, int | float],
+        position: tuple[int, int],
         size: int,
         speed: int=90,
         maze: Maze,
@@ -89,6 +95,10 @@ class Blinky(__Ghost):
         # self.__direction: Direction | None = None
         self.__speed: int = speed
 
+    @override
+    def position(self) -> tuple[int | float, int | float]:
+        return self._ghost.position.x, self._ghost.position.y
+
 
 class Pinky(__Ghost): 
     def __init__(
@@ -97,7 +107,7 @@ class Pinky(__Ghost):
         *,
         engine: Engine,
         parent: PixelImage | PngImage,
-        position: tuple[int | float, int | float],
+        position: tuple[int, int],
         size: int,
         speed: int=90,
         maze: Maze,
@@ -113,3 +123,7 @@ class Pinky(__Ghost):
         )
         # self.__direction: Direction | None = None
         self.__speed: int = speed
+
+    @override
+    def position(self) -> tuple[int | float, int | float]:
+        return self._ghost.position.x, self._ghost.position.y

@@ -8,7 +8,7 @@ from src.pacman.scenes.base import BaseScene
 from .entities import Direction
 from .pacman import Pacman
 from .ghosts import Pinky
-from .super_pacgum import SuperPacgum
+from .pacgum import Pacgum
 
 from src.mazegenerator import MazeGenerator
 
@@ -45,7 +45,7 @@ class InstructionsScene(BaseScene):
         self.__guide: Guide = Guide(engine=self._engine, parent=self.__maze_guide_wrapper)
         self.__maze: Maze = self.__new_maze()
         self.__maze.draw()
-        self.__gums: list[SuperPacgum] = self.__new_gums()
+        self.__pacgums: list[Pacgum] = self.__new_gums()
         self.__pacman: Pacman = self.__new_pacman()
         self.__pinky: Pinky = self.__new_pinky()
         self.__tutorial_step: TutorialStep = TutorialStep.MOVEMENT
@@ -58,8 +58,8 @@ class InstructionsScene(BaseScene):
         super().mount()
         self.__scene_container.mount()
 
-    def __new_super_pacgum(self, row: int, col: int) -> SuperPacgum:
-        return  SuperPacgum(
+    def __new_super_pacgum(self, row: int, col: int) -> Pacgum:
+        return Pacgum(
             engine=self._engine,
             parent=self.__maze.maze,
             position=self.__get_position(col, row),
@@ -72,21 +72,28 @@ class InstructionsScene(BaseScene):
         super().unmount()
         self.__scene_container.unmount()
 
-    def __new_gums(self) -> list[SuperPacgum]:
+    def __new_gums(self) -> list[Pacgum]:
         return [
             self.__new_super_pacgum(col, row)
             for col in range(HORIZONTAL_CELLS)
             for row in range(VERTICAL_CELLS) if (col, row) not in self.__maze.cells_42 and (row, col) != (0, 0)
         ]
 
+    def __update_pacgums(self, elapsed_time: float) -> None:
+        for idx, gum in enumerate(self.__pacgums):
+            if self.__pacman.is_collide(gum):
+                gum.delete()
+                del self.__pacgums[idx]
+            else:
+                gum.update(elapsed_time)
+
     @override
     def update(self, elapsed_time: float) -> None:
         self.__guide.update(elapsed_time)
         if self.__tutorial_step not in (TutorialStep.DEFEAT, TutorialStep.VICTORY):
-            for gum in self.__gums:
-                gum.update(elapsed_time)
             self.__pinky.update(elapsed_time)
             self.__pacman.update(elapsed_time)
+            self.__update_pacgums(elapsed_time)
         # match self.__tutorial_step:
         #     case TutorialStep.COLLECT_GUM:
         #         if self.__pacman.is_collide(self.__pacgum):

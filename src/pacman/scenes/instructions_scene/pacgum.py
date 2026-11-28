@@ -1,8 +1,9 @@
+from typing import override
 from .entities import Entity
 from src.core import Engine, FrameImage, ImageType, PngImage, PixelImage
 from .maze import Maze
 
-class SuperPacgum(Entity):
+class Pacgum(Entity):
     def __init__(
         self,
         /,
@@ -37,3 +38,10 @@ class SuperPacgum(Entity):
 
     def update(self, elapsed_time: float) -> None:
         self._pacgum.update(elapsed_time)
+
+    @override
+    def position(self) -> tuple[int | float, int | float]:
+        return self._pacgum.position.x, self._pacgum.position.y
+
+    def delete(self) -> None:
+        self._pacgum.delete()
