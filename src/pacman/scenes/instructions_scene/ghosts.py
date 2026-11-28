@@ -53,7 +53,7 @@ class Clyde(__Ghost):
         speed: int=90,
         maze: Maze,
     ) -> None:
-        self._path = "src/assests/frames/blinky.png"
+        self._path = "src/assests/frames/clyde.png"
         super().__init__(
             engine=engine,
             parent=parent,
@@ -102,7 +102,7 @@ class Pinky(__Ghost):
         speed: int=90,
         maze: Maze,
     ) -> None:
-        self._path = "src/assests/frames/blinky.png"
+        self._path = "src/assests/frames/pinky.png"
         super().__init__(
             engine=engine,
             parent=parent,
