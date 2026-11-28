@@ -29,10 +29,10 @@ class SuperPacgum(Entity):
             image_type=ImageType.FRAME_IMAGE,
             width=self._size,
             height=self._size,
-            path="src/assests/gold.png",
+            path="src/assests/light_gum.png",
             time_per_frame=.1,
             position=self._position,
-            frames=6
+            frames=8
         ).set_parent(self._parent).create()
 
     def update(self, elapsed_time: float) -> None:

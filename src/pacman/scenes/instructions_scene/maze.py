@@ -45,7 +45,6 @@ class Maze:
         maze_background.set_background_color(RgbColors.TRANSPARENT_GREEN)
         return maze_background
 
-
     @property
     def cell_size(self) -> int:
         return self.__cell_border_size * 2 + self.__cell_content_size
@@ -84,8 +83,8 @@ class Maze:
 
     def __new_maze_wrapper(self) -> GridImage:
         max_cells: int = max(self.__vertical_cells, self.__horizontal_cells)
-        width = int ((self.__parent.height * .7) / max_cells) * self.__horizontal_cells
-        height = int ((self.__parent.height * .7) / max_cells) * self.__vertical_cells
+        width = int ((self.__parent.height * .9) / max_cells) * self.__horizontal_cells
+        height = int ((self.__parent.height * .9) / max_cells) * self.__vertical_cells
         return self.__engine.new_image(
             image_type=ImageType.GRID_IMAGE,
             width=width,
@@ -194,6 +193,10 @@ class Maze:
             start_y = row * cell_size + self.__cell_border_size
             end_y = start_y + self.__cell_content_size
             self.__maze.np_put_pixel(start_x, end_x, start_y, end_y, RgbColors.WHITE)
+
+    @property
+    def cells_42(self) -> list[tuple[int, int]]:
+        return self.__cells_42
 
     def _cells_42(self) -> list[tuple[int, int]]:
         """Draw a “42” pattern in the maze for decoration."""

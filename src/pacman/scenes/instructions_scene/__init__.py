@@ -7,7 +7,7 @@ from src.pacman.game_state import GameStateManager, GameState
 from src.pacman.scenes.base import BaseScene
 from .entities import Direction
 from .pacman import Pacman
-from .ghosts import Pinky, Blinky, Clyde
+from .ghosts import Pinky
 from .super_pacgum import SuperPacgum
 
 from src.mazegenerator import MazeGenerator
@@ -17,10 +17,12 @@ from .guide import Guide
 
 VERTICAL_CELLS = 14
 HORIZONTAL_CELLS = 14
+import random
 
 class TutorialStep(Enum):
     MOVEMENT = auto()
-    COLLECT_PAC_DOTS = auto()
+    COLLECT_GUM = auto()
+    COLLECT_SUPER_GUM = auto()
     GHOST_INTERACTION = auto()
     GHOST_ACTIVATION = auto()
     DEFEAT = auto()
@@ -32,6 +34,7 @@ class InstructionsScene(BaseScene):
         engine: Engine,
         game_state_manager: GameStateManager
     ) -> None:
+        random.seed(10)
         super().__init__(engine=engine)
         self.__game_state_manager: GameStateManager = game_state_manager
         self.__window_width, self.__window_height = self._engine.window_dimension
@@ -42,11 +45,9 @@ class InstructionsScene(BaseScene):
         self.__guide: Guide = Guide(engine=self._engine, parent=self.__maze_guide_wrapper)
         self.__maze: Maze = self.__new_maze()
         self.__maze.draw()
+        self.__gums: list[SuperPacgum] = self.__new_gums()
         self.__pacman: Pacman = self.__new_pacman()
         self.__pinky: Pinky = self.__new_pinky()
-        self.__blinky: Blinky = self.__new_blinky()
-        self.__clyde: Clyde = self.__new_clyde()
-        self.__pacgum: SuperPacgum = self.__new_super_pacgum()
         self.__tutorial_step: TutorialStep = TutorialStep.MOVEMENT
         self.__pressed_keys: list[tuple[Key, Key]] = list()
         self.__add_pacman_events()
@@ -57,15 +58,11 @@ class InstructionsScene(BaseScene):
         super().mount()
         self.__scene_container.mount()
 
-    # def __on_esc_pressed(self) -> None:
-    #     self.unmount()
-    #     self.__game_state_manager.change_state(GameState.MENU)
-
-    def __new_super_pacgum(self) -> SuperPacgum:
+    def __new_super_pacgum(self, row: int, col: int) -> SuperPacgum:
         return  SuperPacgum(
             engine=self._engine,
             parent=self.__maze.maze,
-            position=self.__get_position(13, 13),
+            position=self.__get_position(col, row),
             size=int(self.__maze.cell_content_size),
             maze=self.__maze
         )
@@ -75,14 +72,59 @@ class InstructionsScene(BaseScene):
         super().unmount()
         self.__scene_container.unmount()
 
+    def __new_gums(self) -> list[SuperPacgum]:
+        return [
+            self.__new_super_pacgum(col, row)
+            for col in range(HORIZONTAL_CELLS)
+            for row in range(VERTICAL_CELLS) if (col, row) not in self.__maze.cells_42 and (row, col) != (0, 0)
+        ]
+
     @override
     def update(self, elapsed_time: float) -> None:
         self.__guide.update(elapsed_time)
-        self.__pacman.update(elapsed_time)
-        self.__pinky.update(elapsed_time)
-        self.__blinky.update(elapsed_time)
-        self.__clyde.update(elapsed_time)
-        self.__pacgum.update(elapsed_time)
+        if self.__tutorial_step not in (TutorialStep.DEFEAT, TutorialStep.VICTORY):
+            for gum in self.__gums:
+                gum.update(elapsed_time)
+            self.__pinky.update(elapsed_time)
+            self.__pacman.update(elapsed_time)
+        # match self.__tutorial_step:
+        #     case TutorialStep.COLLECT_GUM:
+        #         if self.__pacman.is_collide(self.__pacgum):
+        #             pass
+        #     case TutorialStep.MOVEMENT:
+        #         pass
+        # print(self.__tutorial_step.name)
+        # match self.__tutorial_step:
+        #     case TutorialStep.MOVEMENT:
+        #         pass
+        #     case TutorialStep.COLLECT_SUPER_GUM:
+        #         pass
+        #     case TutorialStep.COLLECT_SUPER_GUM:
+        #         pass
+        #     case TutorialStep.COLLECT_GUM:
+        #         pass
+        #     case TutorialStep.DEFEAT:
+        #         pass
+        #     case TutorialStep.VICTORY:
+        #         pass
+        # if self.__tutorial_step == TutorialStep.COLLECT_GUM:
+        #     if self.__collected_dots != 0:
+        #         self.__tutorial_step = TutorialStep.GHOST_ACTIVATION
+        # if self.__tutorial_step == TutorialStep.GHOST_ACTIVATION:
+        #     if self.__pacman.is_collide(self.__pinky):
+        #         if self.__hearts_count == 0:
+        #             self.__tutorial_step = TutorialStep.DEFEAT
+        #         else:
+        #             self.__hearts_count -= 1
+        # if self.__tutorial_step not in (TutorialStep.DEFEAT, self.__tutorial_step):
+        #     self.__pinky.update(elapsed_time)
+        #     self.__pacgum.update(elapsed_time)
+        #     self.__pacman.update(elapsed_time)
+        # else:
+        #     if self.__tutorial_step == TutorialStep.DEFEAT:
+        #         pass
+        #     if self.__tutorial_step == TutorialStep.DEFEAT:
+        #         pass
 
     def on_escape(self) -> None:
         self.unmount()
@@ -126,7 +168,7 @@ class InstructionsScene(BaseScene):
             case _:
                 ...
         if len(self.__pressed_keys) == 4 and self.__tutorial_step == TutorialStep.MOVEMENT:
-            self.__tutorial_step = TutorialStep.COLLECT_PAC_DOTS
+            self.__tutorial_step = TutorialStep.COLLECT_GUM
 
     def __new_maze_guide_wrapper(self) -> PixelImage:
         return self._engine.new_image(
@@ -159,24 +201,6 @@ class InstructionsScene(BaseScene):
             engine=self._engine,
             parent=self.__maze.maze,
             position=self.__get_position(10, 10),
-            size=self.__maze.cell_content_size,
-            maze=self.__maze
-        )
-
-    def __new_blinky(self) -> Blinky:
-        return Blinky(
-            engine=self._engine,
-            parent=self.__maze.maze,
-            position=self.__get_position(9, 8),
-            size=self.__maze.cell_content_size,
-            maze=self.__maze
-        )
-
-    def __new_clyde(self) -> Clyde:
-        return Clyde(
-            engine=self._engine,
-            parent=self.__maze.maze,
-            position=self.__get_position(3, 8),
             size=self.__maze.cell_content_size,
             maze=self.__maze
         )
